@@ -1,12 +1,14 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Plus, Radio, Sparkles, Users } from "lucide-react";
+import { BookOpen, Plus, Radio, Sparkles, Users } from "lucide-react";
 
 import { PageShell } from "@/components/site-shell";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
 import { getPlayableGames } from "@/lib/content.functions";
 import { getMyState } from "@/lib/play.functions";
+import { getContinueReading } from "@/lib/depth.functions";
 
 export const Route = createFileRoute("/_authenticated/play/")({
   head: () => ({
