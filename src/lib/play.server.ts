@@ -40,8 +40,8 @@ async function awardStoryPoints(db: Admin, userId: string, amount: number, reaso
   }
 }
 
-async function logEvent(db: Admin, gameId: string, kind: string, payload: Record<string, unknown>) {
-  await db.from("game_events").insert({ game_id: gameId, kind, payload });
+async function logEvent(db: Admin, gameId: string, kind: string, payload: Record<string, string | number | boolean | null | undefined>) {
+  await db.from("game_events").insert({ game_id: gameId, kind, payload: payload as never });
 }
 
 /** Creates the profile/wallet rows for a freshly signed-up account. Idempotent. */
@@ -194,14 +194,12 @@ export async function advanceGame(gameId: string): Promise<{ status: string; act
     .select("id")
     .maybeSingle();
 
-  await db
-    .from("games")
-    .update({
-      status: "active",
-      current_round: round,
-      started_at: game.status === "waiting" ? new Date(now).toISOString() : undefined,
-    })
-    .eq("id", gameId);
+  const gameUpdate: { status: "active"; current_round: number; started_at?: string } = {
+    status: "active",
+    current_round: round,
+  };
+  if (game.status === "waiting") gameUpdate.started_at = new Date(now).toISOString();
+  await db.from("games").update(gameUpdate).eq("id", gameId);
   await logEvent(db, gameId, "turn_started", { turn_id: turn?.id, player_id: seat.user_id, round });
 
   return { status: "active", activeTurnId: turn?.id ?? null };
