@@ -42,6 +42,10 @@ export const getMyReadingProgress = createServerFn({ method: "GET" })
   .inputValidator((data: { seriesId?: string }) => data)
   .handler(async ({ data, context }) => getReadingProgress(context.userId, data.seriesId));
 
+export const getContinueReading = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => fetchContinueReading(context.userId));
+
 export const saveReadingProgress = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((data: { chapterId: string; seriesId: string; percent: number; completed?: boolean }) =>
