@@ -55,10 +55,10 @@ export const Route = createFileRoute("/creators/$username")({
   ),
 });
 
-function CreatorPage() {
+function CreatorLayout() {
   const { username } = Route.useParams();
   const { data } = useSuspenseQuery(creatorQuery(username));
-  const { profile, series, contributions, achievements, followers } = data;
+  const { profile, followers } = data;
 
   return (
     <PageShell>
@@ -68,69 +68,30 @@ function CreatorPage() {
           <h1 className="font-display text-3xl tracking-tight">{profile.display_name}</h1>
           <p className="text-sm text-muted-foreground">@{profile.username}</p>
           <div className="mt-2 flex flex-wrap gap-4 text-sm text-muted-foreground">
-            <Link to="/creators/$username/achievements" params={{ username }} className="hover:text-foreground">
-              Storyteller level {profile.level}
-            </Link>
+            <span>Storyteller level {profile.level}</span>
             <span>{profile.story_points} story points</span>
             <span>{followers} followers</span>
           </div>
         </div>
       </header>
-      {profile.bio ? <p className="mt-5 max-w-2xl text-muted-foreground">{profile.bio}</p> : null}
 
-      {series.length > 0 ? (
-        <section className="mt-12">
-          <h2 className="font-display text-2xl">Series</h2>
-          <div className="mt-4 grid grid-cols-2 gap-5 md:grid-cols-3 lg:grid-cols-4">
-            {series.map((s) => (
-              <Link key={s.id} to="/series/$slug" params={{ slug: s.slug }} className="group">
-                <StoryCover
-                  title={s.title}
-                  genre={s.genre}
-                  className="transition-transform group-hover:-translate-y-1"
-                />
-                <h3 className="mt-3 text-sm font-semibold">{s.title}</h3>
-                <p className="text-xs text-muted-foreground">{s.reader_count} readers</p>
-              </Link>
-            ))}
-          </div>
-        </section>
-      ) : null}
+      <nav className="mt-8 flex gap-6 border-b border-border pb-px">
+        {TAB_LINKS.map((t) => (
+          <Link
+            key={t.to}
+            to={t.to}
+            params={{ username }}
+            activeProps={{ className: "border-b-2 border-primary text-foreground" }}
+            className="-mb-px pb-3 text-sm text-muted-foreground transition-colors hover:text-foreground"
+          >
+            {t.label}
+          </Link>
+        ))}
+      </nav>
 
-      {achievements.length > 0 ? (
-        <section className="mt-12">
-          <h2 className="font-display text-2xl">Badges</h2>
-          <div className="mt-4 flex flex-wrap gap-2">
-            {achievements.map((a) => (
-              <Badge key={a.achievement_code} variant="secondary">
-                {a.achievements?.name ?? a.achievement_code}
-              </Badge>
-            ))}
-          </div>
-        </section>
-      ) : null}
-
-      {contributions.length > 0 ? (
-        <section className="mt-12">
-          <h2 className="font-display text-2xl">Recent turns</h2>
-          <ul className="mt-4 space-y-3">
-            {contributions.map((c) => (
-              <li key={c.id} className="rounded-xl border border-border bg-card p-4">
-                <p className="text-sm text-muted-foreground italic">"{c.original_text}"</p>
-                {c.chapters ? (
-                  <Link
-                    to="/chapters/$slug"
-                    params={{ slug: c.chapters.slug }}
-                    className="mt-2 inline-block text-xs text-primary underline-offset-4 hover:underline"
-                  >
-                    in {c.chapters.title}
-                  </Link>
-                ) : null}
-              </li>
-            ))}
-          </ul>
-        </section>
-      ) : null}
+      <div className="mt-8">
+        <Outlet />
+      </div>
     </PageShell>
   );
 }
