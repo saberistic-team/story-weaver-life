@@ -111,6 +111,9 @@ export function SiteHeader() {
           ) : (
             <>
               <Button asChild variant="ghost" size="sm" className="hidden sm:inline-flex">
+                <Link to="/pricing">Pricing</Link>
+              </Button>
+              <Button asChild variant="ghost" size="sm" className="hidden sm:inline-flex">
                 <Link to="/auth">Sign in</Link>
               </Button>
               <Button asChild size="sm">
