@@ -256,6 +256,7 @@ export async function submitTurn(userId: string, gameId: string, text: string) {
 
   await awardSparks(db, userId, game.reward_sparks, "turn_submitted");
   await awardStoryPoints(db, userId, 25, "turn_submitted");
+  await awardAchievementInternal(db, userId, "first_contribution");
 
   let polished: string | null = null;
   if (contribution && game.polish_style !== "disabled") {
