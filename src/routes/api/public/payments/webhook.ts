@@ -1,17 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { createClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
-import {
-  verifyWebhook,
-  EventName,
-  type PaddleEnv,
-} from "@/lib/paddle.server";
-import type {
-  SubscriptionCreatedNotification,
-  SubscriptionUpdatedNotification,
-  SubscriptionCanceledNotification,
-  TransactionCompletedNotification,
-} from "@paddle/paddle-node-sdk";
+import { verifyWebhook, EventName, type PaddleEnv } from "@/lib/paddle.server";
+
+type WebhookData = Record<string, unknown>;
+
 
 
 type SupabaseClient = ReturnType<typeof createClient<Database>>;
