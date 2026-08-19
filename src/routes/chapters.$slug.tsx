@@ -122,8 +122,11 @@ function ChapterPage() {
       fetchMyLikes({ data: { targetType: "chapter", targetIds: [chapter.id] } })
         .then((set) => setLiked(set.has(chapter.id)))
         .catch(() => {});
+      fetchBlockedIds({ data: undefined })
+        .then((ids) => setBlockedIds(new Set(ids)))
+        .catch(() => {});
     }
-  }, [chapter.id, chapter.slug, chapter.series_id, user, saveProgress, fetchMyLikes]);
+  }, [chapter.id, chapter.slug, chapter.series_id, user, saveProgress, fetchMyLikes, fetchBlockedIds]);
 
   const gated = !user && readCount > config.guestFreeChapters;
   const paragraphs = chapter.published_content.split(/\n\n+/).filter(Boolean);
