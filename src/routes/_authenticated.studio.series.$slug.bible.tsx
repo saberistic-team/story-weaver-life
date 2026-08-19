@@ -178,7 +178,7 @@ function BiblePage() {
                 {kind}s
               </h2>
               <div className="grid gap-4 sm:grid-cols-2">
-                {grouped[kind].map((entry) => (
+                {(grouped[kind] ?? []).map((entry) => (
                   <EditableEntry key={entry.id} entry={entry} onUpdate={onUpdate} />
                 ))}
               </div>
