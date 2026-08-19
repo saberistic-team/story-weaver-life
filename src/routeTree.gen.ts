@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as DiscoverRouteImport } from './routes/discover'
+import { Route as BooksSlugRouteImport } from './routes/books.$slug'
 import { Route as SeriesSlugRouteImport } from './routes/series.$slug'
 
 const IndexRoute = IndexRouteImport.update({
@@ -29,6 +30,11 @@ const DiscoverRoute = DiscoverRouteImport.update({
   path: '/discover',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BooksSlugRoute = BooksSlugRouteImport.update({
+  id: '/books/$slug',
+  path: '/books/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SeriesSlugRoute = SeriesSlugRouteImport.update({
   id: '/series/$slug',
   path: '/series/$slug',
@@ -39,12 +45,14 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/discover': typeof DiscoverRoute
+  '/books/$slug': typeof BooksSlugRoute
   '/series/$slug': typeof SeriesSlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/discover': typeof DiscoverRoute
+  '/books/$slug': typeof BooksSlugRoute
   '/series/$slug': typeof SeriesSlugRoute
 }
 export interface FileRoutesById {
@@ -52,20 +60,23 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/discover': typeof DiscoverRoute
+  '/books/$slug': typeof BooksSlugRoute
   '/series/$slug': typeof SeriesSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/discover' | '/series/$slug'
+  fullPaths: '/' | '/auth' | '/discover' | '/books/$slug' | '/series/$slug'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/discover' | '/series/$slug'
-  id: '__root__' | '/' | '/auth' | '/discover' | '/series/$slug'
+  to: '/' | '/auth' | '/discover' | '/books/$slug' | '/series/$slug'
+  id:
+    '__root__' | '/' | '/auth' | '/discover' | '/books/$slug' | '/series/$slug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRoute
   DiscoverRoute: typeof DiscoverRoute
+  BooksSlugRoute: typeof BooksSlugRoute
   SeriesSlugRoute: typeof SeriesSlugRoute
 }
 
@@ -92,6 +103,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DiscoverRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/books/$slug': {
+      id: '/books/$slug'
+      path: '/books/$slug'
+      fullPath: '/books/$slug'
+      preLoaderRoute: typeof BooksSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/series/$slug': {
       id: '/series/$slug'
       path: '/series/$slug'
@@ -106,6 +124,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRoute,
   DiscoverRoute: DiscoverRoute,
+  BooksSlugRoute: BooksSlugRoute,
   SeriesSlugRoute: SeriesSlugRoute,
 }
 export const routeTree = rootRouteImport
