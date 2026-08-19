@@ -1,7 +1,7 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { ArrowLeft, ArrowRight, BookOpen, Heart, MessageCircle, Share2, Sparkles, Wand2 } from "lucide-react";
+import { ArrowLeft, ArrowRight, BookOpen, Heart, Lock, MessageCircle, Share2, Sparkles, Wand2 } from "lucide-react";
 
 import { PageShell } from "@/components/site-shell";
 import { Badge } from "@/components/ui/badge";
@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { getChapter, getConfig } from "@/lib/content.functions";
 import { saveReadingProgress } from "@/lib/depth.functions";
+import { getCurrentTier, tierMeets, type UserTier } from "@/lib/subscriptions.functions";
 import { useSession } from "@/hooks/use-session";
 import { useServerFn } from "@tanstack/react-start";
 import {
@@ -22,6 +23,7 @@ import {
   reportFn,
 } from "@/lib/social.functions";
 import { toast } from "sonner";
+
 
 const chapterQuery = (slug: string) =>
   queryOptions({
