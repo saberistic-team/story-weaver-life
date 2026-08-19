@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as DiscoverRouteImport } from './routes/discover'
+import { Route as AuthenticatedNotificationsRouteImport } from './routes/_authenticated.notifications'
 import { Route as BooksSlugRouteImport } from './routes/books.$slug'
 import { Route as ChaptersSlugRouteImport } from './routes/chapters.$slug'
 import { Route as CreatorsUsernameRouteImport } from './routes/creators.$username'
@@ -48,6 +49,12 @@ const DiscoverRoute = DiscoverRouteImport.update({
   path: '/discover',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedNotificationsRoute =
+  AuthenticatedNotificationsRouteImport.update({
+    id: '/notifications',
+    path: '/notifications',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const BooksSlugRoute = BooksSlugRouteImport.update({
   id: '/books/$slug',
   path: '/books/$slug',
@@ -130,6 +137,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/discover': typeof DiscoverRoute
+  '/notifications': typeof AuthenticatedNotificationsRoute
   '/books/$slug': typeof BooksSlugRouteWithChildren
   '/chapters/$slug': typeof ChaptersSlugRoute
   '/creators/$username': typeof CreatorsUsernameRouteWithChildren
@@ -150,6 +158,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/discover': typeof DiscoverRoute
+  '/notifications': typeof AuthenticatedNotificationsRoute
   '/books/$slug': typeof BooksSlugRouteWithChildren
   '/chapters/$slug': typeof ChaptersSlugRoute
   '/play/$id': typeof AuthenticatedPlayIdRoute
@@ -170,6 +179,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/discover': typeof DiscoverRoute
+  '/_authenticated/notifications': typeof AuthenticatedNotificationsRoute
   '/books/$slug': typeof BooksSlugRouteWithChildren
   '/chapters/$slug': typeof ChaptersSlugRoute
   '/creators/$username': typeof CreatorsUsernameRouteWithChildren
@@ -192,6 +202,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/discover'
+    | '/notifications'
     | '/books/$slug'
     | '/chapters/$slug'
     | '/creators/$username'
@@ -212,6 +223,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/discover'
+    | '/notifications'
     | '/books/$slug'
     | '/chapters/$slug'
     | '/play/$id'
@@ -231,6 +243,7 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/auth'
     | '/discover'
+    | '/_authenticated/notifications'
     | '/books/$slug'
     | '/chapters/$slug'
     | '/creators/$username'
@@ -288,6 +301,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/discover'
       preLoaderRoute: typeof DiscoverRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/notifications': {
+      id: '/_authenticated/notifications'
+      path: '/notifications'
+      fullPath: '/notifications'
+      preLoaderRoute: typeof AuthenticatedNotificationsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/books/$slug': {
       id: '/books/$slug'
@@ -398,6 +418,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedNotificationsRoute: typeof AuthenticatedNotificationsRoute
   AuthenticatedPlayIdRoute: typeof AuthenticatedPlayIdRoute
   AuthenticatedPlayNewRoute: typeof AuthenticatedPlayNewRoute
   AuthenticatedPlayIndexRoute: typeof AuthenticatedPlayIndexRoute
@@ -405,6 +426,7 @@ interface AuthenticatedRouteRouteChildren {
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedNotificationsRoute: AuthenticatedNotificationsRoute,
   AuthenticatedPlayIdRoute: AuthenticatedPlayIdRoute,
   AuthenticatedPlayNewRoute: AuthenticatedPlayNewRoute,
   AuthenticatedPlayIndexRoute: AuthenticatedPlayIndexRoute,

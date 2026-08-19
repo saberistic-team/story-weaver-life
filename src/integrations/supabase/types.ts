@@ -1286,6 +1286,57 @@ export type Database = {
           },
         ]
       }
+      user_blocks: {
+        Row: {
+          blocked_id: string
+          blocker_id: string
+          created_at: string
+          id: string
+        }
+        Insert: {
+          blocked_id: string
+          blocker_id: string
+          created_at?: string
+          id?: string
+        }
+        Update: {
+          blocked_id?: string
+          blocker_id?: string
+          created_at?: string
+          id?: string
+        }
+        Relationships: []
+      }
+      user_preferences: {
+        Row: {
+          digest_enabled: boolean
+          notify_achievements: boolean
+          notify_follows: boolean
+          notify_reactions: boolean
+          notify_turn: boolean
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          digest_enabled?: boolean
+          notify_achievements?: boolean
+          notify_follows?: boolean
+          notify_reactions?: boolean
+          notify_turn?: boolean
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          digest_enabled?: boolean
+          notify_achievements?: boolean
+          notify_follows?: boolean
+          notify_reactions?: boolean
+          notify_turn?: boolean
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -1330,6 +1381,16 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      create_notification: {
+        Args: {
+          _body: string
+          _kind: string
+          _link: string
+          _title: string
+          _user_id: string
+        }
+        Returns: undefined
+      }
       game_is_visible: { Args: { _game_id: string }; Returns: boolean }
       has_role: {
         Args: {

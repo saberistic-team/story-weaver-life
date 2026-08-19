@@ -1,10 +1,12 @@
 import { Link } from "@tanstack/react-router";
-import { Flame, Menu, Sparkles } from "lucide-react";
-import { useState, type ReactNode } from "react";
+import { Bell, Flame, Menu, Sparkles } from "lucide-react";
+import { useEffect, useState, type ReactNode } from "react";
 
 import { Button } from "@/components/ui/button";
 import { useSession } from "@/hooks/use-session";
 import { supabase } from "@/integrations/supabase/client";
+import { getNotifications } from "@/lib/social.functions";
+import { useServerFn } from "@tanstack/react-start";
 import { cn } from "@/lib/utils";
 
 const NAV = [
@@ -12,6 +14,44 @@ const NAV = [
   { to: "/play", label: "Play" },
   { to: "/studio", label: "Studio" },
 ] as const;
+
+function NotificationBell() {
+  const { user } = useSession();
+  const [unread, setUnread] = useState(0);
+  const fetchNotifications = useServerFn(getNotifications);
+
+  useEffect(() => {
+    if (!user) return;
+    const load = () => {
+      fetchNotifications({ data: { unreadOnly: true } })
+        .then((list) => setUnread(list.length))
+        .catch(() => {});
+    };
+    load();
+    const sub = supabase
+      .channel("notifications")
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "notifications", filter: `user_id=eq.${user.id}` },
+        () => setUnread((n) => n + 1),
+      )
+      .subscribe();
+    return () => {
+      void supabase.removeChannel(sub);
+    };
+  }, [user, fetchNotifications]);
+
+  return (
+    <Link to="/notifications" className="relative rounded-md p-2 text-muted-foreground hover:bg-secondary">
+      <Bell className="size-5" />
+      {unread > 0 ? (
+        <span className="absolute right-1 top-1 flex size-4 items-center justify-center rounded-full bg-primary text-[10px] font-medium text-primary-foreground">
+          {unread > 9 ? "9+" : unread}
+        </span>
+      ) : null}
+    </Link>
+  );
+}
 
 export function SiteHeader() {
   const { user } = useSession();
@@ -43,6 +83,7 @@ export function SiteHeader() {
         <div className="ml-auto flex items-center gap-2">
           {user ? (
             <>
+              <NotificationBell />
               <Button asChild variant="ghost" size="sm" className="hidden sm:inline-flex">
                 <Link to="/play">My games</Link>
               </Button>

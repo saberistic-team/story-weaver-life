@@ -1,15 +1,24 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { ArrowLeft, ArrowRight, BookOpen, Sparkles, Wand2 } from "lucide-react";
+import { ArrowLeft, ArrowRight, BookOpen, Heart, MessageCircle, Share2, Sparkles, Wand2 } from "lucide-react";
 
 import { PageShell } from "@/components/site-shell";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 import { getChapter, getConfig } from "@/lib/content.functions";
 import { saveReadingProgress } from "@/lib/depth.functions";
 import { useSession } from "@/hooks/use-session";
 import { useServerFn } from "@tanstack/react-start";
+import {
+  commentFn,
+  deleteCommentFn,
+  getComments,
+  getMyLikes,
+  likeFn,
+} from "@/lib/social.functions";
+import { toast } from "sonner";
 
 const chapterQuery = (slug: string) =>
   queryOptions({
@@ -69,9 +78,18 @@ function ChapterPage() {
   const { user } = useSession();
   const [readCount, setReadCount] = useState(0);
   const [showBehind, setShowBehind] = useState(false);
+  const [commentDraft, setCommentDraft] = useState("");
+  const [localComments, setLocalComments] = useState(data.comments);
+  const [liked, setLiked] = useState(false);
+  const [likeCount, setLikeCount] = useState(data.chapter.like_count);
   const saveProgress = useServerFn(saveReadingProgress);
+  const doLike = useServerFn(likeFn);
+  const doComment = useServerFn(commentFn);
+  const doDeleteComment = useServerFn(deleteCommentFn);
+  const fetchComments = useServerFn(getComments);
+  const fetchMyLikes = useServerFn(getMyLikes);
 
-  const { chapter, series, creator, prev, next, contributions, contributors, comments, chapterNumber } = data;
+  const { chapter, series, creator, prev, next, contributions, contributors, chapterNumber } = data;
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -92,7 +110,13 @@ function ChapterPage() {
         },
       });
     }
-  }, [chapter.id, chapter.slug, chapter.series_id, user, saveProgress]);
+
+    if (user) {
+      fetchMyLikes({ data: { targetType: "chapter", targetIds: [chapter.id] } })
+        .then((set) => setLiked(set.has(chapter.id)))
+        .catch(() => {});
+    }
+  }, [chapter.id, chapter.slug, chapter.series_id, user, saveProgress, fetchMyLikes]);
 
   const gated = !user && readCount > config.guestFreeChapters;
   const paragraphs = chapter.published_content.split(/\n\n+/).filter(Boolean);
@@ -155,6 +179,39 @@ function ChapterPage() {
 
         {!gated ? (
           <>
+            <div className="mt-8 flex flex-wrap items-center gap-3">
+              <Button
+                variant={liked ? "default" : "outline"}
+                size="sm"
+                onClick={async () => {
+                  if (!user) return;
+                  setLiked((v) => !v);
+                  setLikeCount((n) => (liked ? n - 1 : n + 1));
+                  try {
+                    const res = await doLike({ data: { targetType: "chapter", targetId: chapter.id } });
+                    setLiked(res.liked);
+                    setLikeCount(res.count);
+                  } catch {
+                    setLiked((v) => !v);
+                    setLikeCount((n) => (liked ? n + 1 : n - 1));
+                  }
+                }}
+              >
+                <Heart className={`mr-1 size-4 ${liked ? "fill-current" : ""}`} /> {likeCount}
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  const url = `${window.location.origin}/chapters/${chapter.slug}`;
+                  void navigator.clipboard.writeText(url);
+                  toast.success("Link copied");
+                }}
+              >
+                <Share2 className="mr-1 size-4" /> Share
+              </Button>
+            </div>
+
             <div className="mt-12 flex flex-wrap items-center justify-between gap-3 border-t border-border pt-6">
               {prev ? (
                 <Button asChild variant="outline" size="sm">
@@ -221,19 +278,61 @@ function ChapterPage() {
               </section>
             ) : null}
 
-            {comments.length > 0 ? (
-              <section className="mt-10">
-                <h2 className="font-display text-xl">Reader reactions</h2>
-                <ul className="mt-4 space-y-3">
-                  {comments.map((c) => (
+            <section className="mt-10">
+              <h2 className="font-display flex items-center gap-2 text-xl">
+                <MessageCircle className="size-5" /> Reader reactions
+              </h2>
+              {user ? (
+                <div className="mt-4 space-y-2">
+                  <Textarea
+                    value={commentDraft}
+                    onChange={(e) => setCommentDraft(e.target.value)}
+                    placeholder="Share what this chapter made you feel..."
+                    rows={3}
+                  />
+                  <Button
+                    size="sm"
+                    disabled={!commentDraft.trim()}
+                    onClick={async () => {
+                      const body = commentDraft.trim();
+                      if (!body) return;
+                      setCommentDraft("");
+                      const c = await doComment({ data: { targetType: "chapter", targetId: chapter.id, body } });
+                      setLocalComments((prev) => [c as (typeof prev)[number], ...prev]);
+                    }}
+                  >
+                    Post comment
+                  </Button>
+                </div>
+              ) : (
+                <p className="mt-2 text-sm text-muted-foreground">Sign in to leave a reaction.</p>
+              )}
+              {localComments.length > 0 ? (
+                <ul className="mt-6 space-y-3">
+                  {localComments.map((c) => (
                     <li key={c.id} className="rounded-xl border border-border bg-card p-4">
-                      <p className="text-sm font-semibold">{c.author?.display_name ?? "Reader"}</p>
+                      <div className="flex items-center justify-between">
+                        <p className="text-sm font-semibold">{c.author?.display_name ?? "Reader"}</p>
+                        {user && c.user_id === user.id ? (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-auto py-0 text-xs text-muted-foreground"
+                            onClick={async () => {
+                              await doDeleteComment({ data: { commentId: c.id } });
+                              setLocalComments((prev) => prev.filter((x) => x.id !== c.id));
+                            }}
+                          >
+                            Delete
+                          </Button>
+                        ) : null}
+                      </div>
                       <p className="mt-1 text-sm text-muted-foreground">{c.body}</p>
                     </li>
                   ))}
                 </ul>
-              </section>
-            ) : null}
+              ) : null}
+            </section>
           </>
         ) : null}
       </div>
