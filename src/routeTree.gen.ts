@@ -24,7 +24,9 @@ import { Route as AuthenticatedPlayIndexRouteImport } from './routes/_authentica
 import { Route as AuthenticatedPlayIdRouteImport } from './routes/_authenticated/play.$id'
 import { Route as AuthenticatedPlayNewRouteImport } from './routes/_authenticated/play.new'
 import { Route as AuthenticatedStudioIndexRouteImport } from './routes/_authenticated.studio.index'
+import { Route as AuthenticatedStudioEarningsRouteImport } from './routes/_authenticated.studio.earnings'
 import { Route as AuthenticatedStudioModerationRouteImport } from './routes/_authenticated.studio.moderation'
+import { Route as AuthenticatedStudioSubscribersRouteImport } from './routes/_authenticated.studio.subscribers'
 import { Route as BooksSlugReadRouteImport } from './routes/books.$slug.read'
 import { Route as CreatorsUsernameIndexRouteImport } from './routes/creators.$username.index'
 import { Route as CreatorsUsernameAchievementsRouteImport } from './routes/creators.$username.achievements'
@@ -32,6 +34,10 @@ import { Route as SeriesSlugIndexRouteImport } from './routes/series.$slug.index
 import { Route as SeriesSlugBibleRouteImport } from './routes/series.$slug.bible'
 import { Route as SeriesSlugBooksRouteImport } from './routes/series.$slug.books'
 import { Route as SeriesSlugLineageRouteImport } from './routes/series.$slug.lineage'
+import { Route as AuthenticatedStudioSeriesNewRouteImport } from './routes/_authenticated.studio.series.new'
+import { Route as AuthenticatedStudioChaptersSlugEditRouteImport } from './routes/_authenticated.studio.chapters.$slug.edit'
+import { Route as AuthenticatedStudioSeriesSlugBibleRouteImport } from './routes/_authenticated.studio.series.$slug.bible'
+import { Route as AuthenticatedStudioSeriesSlugEditRouteImport } from './routes/_authenticated.studio.series.$slug.edit'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -109,10 +115,22 @@ const AuthenticatedStudioIndexRoute =
     path: '/studio/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedStudioEarningsRoute =
+  AuthenticatedStudioEarningsRouteImport.update({
+    id: '/studio/earnings',
+    path: '/studio/earnings',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedStudioModerationRoute =
   AuthenticatedStudioModerationRouteImport.update({
     id: '/studio/moderation',
     path: '/studio/moderation',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedStudioSubscribersRoute =
+  AuthenticatedStudioSubscribersRouteImport.update({
+    id: '/studio/subscribers',
+    path: '/studio/subscribers',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const BooksSlugReadRoute = BooksSlugReadRouteImport.update({
@@ -151,6 +169,30 @@ const SeriesSlugLineageRoute = SeriesSlugLineageRouteImport.update({
   path: '/lineage',
   getParentRoute: () => SeriesSlugRoute,
 } as any)
+const AuthenticatedStudioSeriesNewRoute =
+  AuthenticatedStudioSeriesNewRouteImport.update({
+    id: '/studio/series/new',
+    path: '/studio/series/new',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedStudioChaptersSlugEditRoute =
+  AuthenticatedStudioChaptersSlugEditRouteImport.update({
+    id: '/studio/chapters/$slug/edit',
+    path: '/studio/chapters/$slug/edit',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedStudioSeriesSlugBibleRoute =
+  AuthenticatedStudioSeriesSlugBibleRouteImport.update({
+    id: '/studio/series/$slug/bible',
+    path: '/studio/series/$slug/bible',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedStudioSeriesSlugEditRoute =
+  AuthenticatedStudioSeriesSlugEditRouteImport.update({
+    id: '/studio/series/$slug/edit',
+    path: '/studio/series/$slug/edit',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -165,7 +207,9 @@ export interface FileRoutesByFullPath {
   '/series/$slug': typeof SeriesSlugRouteWithChildren
   '/play/$id': typeof AuthenticatedPlayIdRoute
   '/play/new': typeof AuthenticatedPlayNewRoute
+  '/studio/earnings': typeof AuthenticatedStudioEarningsRoute
   '/studio/moderation': typeof AuthenticatedStudioModerationRoute
+  '/studio/subscribers': typeof AuthenticatedStudioSubscribersRoute
   '/books/$slug/read': typeof BooksSlugReadRoute
   '/creators/$username/achievements': typeof CreatorsUsernameAchievementsRoute
   '/series/$slug/bible': typeof SeriesSlugBibleRoute
@@ -175,6 +219,10 @@ export interface FileRoutesByFullPath {
   '/studio/': typeof AuthenticatedStudioIndexRoute
   '/creators/$username/': typeof CreatorsUsernameIndexRoute
   '/series/$slug/': typeof SeriesSlugIndexRoute
+  '/studio/series/new': typeof AuthenticatedStudioSeriesNewRoute
+  '/studio/chapters/$slug/edit': typeof AuthenticatedStudioChaptersSlugEditRoute
+  '/studio/series/$slug/bible': typeof AuthenticatedStudioSeriesSlugBibleRoute
+  '/studio/series/$slug/edit': typeof AuthenticatedStudioSeriesSlugEditRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -187,7 +235,9 @@ export interface FileRoutesByTo {
   '/chapters/$slug': typeof ChaptersSlugRoute
   '/play/$id': typeof AuthenticatedPlayIdRoute
   '/play/new': typeof AuthenticatedPlayNewRoute
+  '/studio/earnings': typeof AuthenticatedStudioEarningsRoute
   '/studio/moderation': typeof AuthenticatedStudioModerationRoute
+  '/studio/subscribers': typeof AuthenticatedStudioSubscribersRoute
   '/books/$slug/read': typeof BooksSlugReadRoute
   '/creators/$username/achievements': typeof CreatorsUsernameAchievementsRoute
   '/series/$slug/bible': typeof SeriesSlugBibleRoute
@@ -197,6 +247,10 @@ export interface FileRoutesByTo {
   '/studio': typeof AuthenticatedStudioIndexRoute
   '/creators/$username': typeof CreatorsUsernameIndexRoute
   '/series/$slug': typeof SeriesSlugIndexRoute
+  '/studio/series/new': typeof AuthenticatedStudioSeriesNewRoute
+  '/studio/chapters/$slug/edit': typeof AuthenticatedStudioChaptersSlugEditRoute
+  '/studio/series/$slug/bible': typeof AuthenticatedStudioSeriesSlugBibleRoute
+  '/studio/series/$slug/edit': typeof AuthenticatedStudioSeriesSlugEditRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -213,7 +267,9 @@ export interface FileRoutesById {
   '/series/$slug': typeof SeriesSlugRouteWithChildren
   '/_authenticated/play/$id': typeof AuthenticatedPlayIdRoute
   '/_authenticated/play/new': typeof AuthenticatedPlayNewRoute
+  '/_authenticated/studio/earnings': typeof AuthenticatedStudioEarningsRoute
   '/_authenticated/studio/moderation': typeof AuthenticatedStudioModerationRoute
+  '/_authenticated/studio/subscribers': typeof AuthenticatedStudioSubscribersRoute
   '/books/$slug/read': typeof BooksSlugReadRoute
   '/creators/$username/achievements': typeof CreatorsUsernameAchievementsRoute
   '/series/$slug/bible': typeof SeriesSlugBibleRoute
@@ -223,6 +279,10 @@ export interface FileRoutesById {
   '/_authenticated/studio/': typeof AuthenticatedStudioIndexRoute
   '/creators/$username/': typeof CreatorsUsernameIndexRoute
   '/series/$slug/': typeof SeriesSlugIndexRoute
+  '/_authenticated/studio/series/new': typeof AuthenticatedStudioSeriesNewRoute
+  '/_authenticated/studio/chapters/$slug/edit': typeof AuthenticatedStudioChaptersSlugEditRoute
+  '/_authenticated/studio/series/$slug/bible': typeof AuthenticatedStudioSeriesSlugBibleRoute
+  '/_authenticated/studio/series/$slug/edit': typeof AuthenticatedStudioSeriesSlugEditRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -239,7 +299,9 @@ export interface FileRouteTypes {
     | '/series/$slug'
     | '/play/$id'
     | '/play/new'
+    | '/studio/earnings'
     | '/studio/moderation'
+    | '/studio/subscribers'
     | '/books/$slug/read'
     | '/creators/$username/achievements'
     | '/series/$slug/bible'
@@ -249,6 +311,10 @@ export interface FileRouteTypes {
     | '/studio/'
     | '/creators/$username/'
     | '/series/$slug/'
+    | '/studio/series/new'
+    | '/studio/chapters/$slug/edit'
+    | '/studio/series/$slug/bible'
+    | '/studio/series/$slug/edit'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -261,7 +327,9 @@ export interface FileRouteTypes {
     | '/chapters/$slug'
     | '/play/$id'
     | '/play/new'
+    | '/studio/earnings'
     | '/studio/moderation'
+    | '/studio/subscribers'
     | '/books/$slug/read'
     | '/creators/$username/achievements'
     | '/series/$slug/bible'
@@ -271,6 +339,10 @@ export interface FileRouteTypes {
     | '/studio'
     | '/creators/$username'
     | '/series/$slug'
+    | '/studio/series/new'
+    | '/studio/chapters/$slug/edit'
+    | '/studio/series/$slug/bible'
+    | '/studio/series/$slug/edit'
   id:
     | '__root__'
     | '/'
@@ -286,7 +358,9 @@ export interface FileRouteTypes {
     | '/series/$slug'
     | '/_authenticated/play/$id'
     | '/_authenticated/play/new'
+    | '/_authenticated/studio/earnings'
     | '/_authenticated/studio/moderation'
+    | '/_authenticated/studio/subscribers'
     | '/books/$slug/read'
     | '/creators/$username/achievements'
     | '/series/$slug/bible'
@@ -296,6 +370,10 @@ export interface FileRouteTypes {
     | '/_authenticated/studio/'
     | '/creators/$username/'
     | '/series/$slug/'
+    | '/_authenticated/studio/series/new'
+    | '/_authenticated/studio/chapters/$slug/edit'
+    | '/_authenticated/studio/series/$slug/bible'
+    | '/_authenticated/studio/series/$slug/edit'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -416,11 +494,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedStudioIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/studio/earnings': {
+      id: '/_authenticated/studio/earnings'
+      path: '/studio/earnings'
+      fullPath: '/studio/earnings'
+      preLoaderRoute: typeof AuthenticatedStudioEarningsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/studio/moderation': {
       id: '/_authenticated/studio/moderation'
       path: '/studio/moderation'
       fullPath: '/studio/moderation'
       preLoaderRoute: typeof AuthenticatedStudioModerationRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/studio/subscribers': {
+      id: '/_authenticated/studio/subscribers'
+      path: '/studio/subscribers'
+      fullPath: '/studio/subscribers'
+      preLoaderRoute: typeof AuthenticatedStudioSubscribersRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/books/$slug/read': {
@@ -472,6 +564,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SeriesSlugLineageRouteImport
       parentRoute: typeof SeriesSlugRoute
     }
+    '/_authenticated/studio/series/new': {
+      id: '/_authenticated/studio/series/new'
+      path: '/studio/series/new'
+      fullPath: '/studio/series/new'
+      preLoaderRoute: typeof AuthenticatedStudioSeriesNewRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/studio/chapters/$slug/edit': {
+      id: '/_authenticated/studio/chapters/$slug/edit'
+      path: '/studio/chapters/$slug/edit'
+      fullPath: '/studio/chapters/$slug/edit'
+      preLoaderRoute: typeof AuthenticatedStudioChaptersSlugEditRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/studio/series/$slug/bible': {
+      id: '/_authenticated/studio/series/$slug/bible'
+      path: '/studio/series/$slug/bible'
+      fullPath: '/studio/series/$slug/bible'
+      preLoaderRoute: typeof AuthenticatedStudioSeriesSlugBibleRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/studio/series/$slug/edit': {
+      id: '/_authenticated/studio/series/$slug/edit'
+      path: '/studio/series/$slug/edit'
+      fullPath: '/studio/series/$slug/edit'
+      preLoaderRoute: typeof AuthenticatedStudioSeriesSlugEditRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
@@ -481,9 +601,15 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedWalletRoute: typeof AuthenticatedWalletRoute
   AuthenticatedPlayIdRoute: typeof AuthenticatedPlayIdRoute
   AuthenticatedPlayNewRoute: typeof AuthenticatedPlayNewRoute
+  AuthenticatedStudioEarningsRoute: typeof AuthenticatedStudioEarningsRoute
   AuthenticatedStudioModerationRoute: typeof AuthenticatedStudioModerationRoute
+  AuthenticatedStudioSubscribersRoute: typeof AuthenticatedStudioSubscribersRoute
   AuthenticatedPlayIndexRoute: typeof AuthenticatedPlayIndexRoute
   AuthenticatedStudioIndexRoute: typeof AuthenticatedStudioIndexRoute
+  AuthenticatedStudioSeriesNewRoute: typeof AuthenticatedStudioSeriesNewRoute
+  AuthenticatedStudioChaptersSlugEditRoute: typeof AuthenticatedStudioChaptersSlugEditRoute
+  AuthenticatedStudioSeriesSlugBibleRoute: typeof AuthenticatedStudioSeriesSlugBibleRoute
+  AuthenticatedStudioSeriesSlugEditRoute: typeof AuthenticatedStudioSeriesSlugEditRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -492,9 +618,18 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedWalletRoute: AuthenticatedWalletRoute,
   AuthenticatedPlayIdRoute: AuthenticatedPlayIdRoute,
   AuthenticatedPlayNewRoute: AuthenticatedPlayNewRoute,
+  AuthenticatedStudioEarningsRoute: AuthenticatedStudioEarningsRoute,
   AuthenticatedStudioModerationRoute: AuthenticatedStudioModerationRoute,
+  AuthenticatedStudioSubscribersRoute: AuthenticatedStudioSubscribersRoute,
   AuthenticatedPlayIndexRoute: AuthenticatedPlayIndexRoute,
   AuthenticatedStudioIndexRoute: AuthenticatedStudioIndexRoute,
+  AuthenticatedStudioSeriesNewRoute: AuthenticatedStudioSeriesNewRoute,
+  AuthenticatedStudioChaptersSlugEditRoute:
+    AuthenticatedStudioChaptersSlugEditRoute,
+  AuthenticatedStudioSeriesSlugBibleRoute:
+    AuthenticatedStudioSeriesSlugBibleRoute,
+  AuthenticatedStudioSeriesSlugEditRoute:
+    AuthenticatedStudioSeriesSlugEditRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
