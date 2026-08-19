@@ -170,6 +170,7 @@ export function SiteFooter() {
 export function PageShell({ children, className }: { children: ReactNode; className?: string }) {
   return (
     <div className="min-h-screen">
+      <PaymentTestModeBanner />
       <SiteHeader />
       <main className={cn("mx-auto w-full max-w-6xl px-4 py-10", className)}>{children}</main>
       <SiteFooter />
