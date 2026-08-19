@@ -1,7 +1,7 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { ArrowLeft, ArrowRight, BookOpen, Heart, MessageCircle, Share2, Sparkles, Wand2 } from "lucide-react";
+import { ArrowLeft, ArrowRight, BookOpen, Heart, Lock, MessageCircle, Share2, Sparkles, Wand2 } from "lucide-react";
 
 import { PageShell } from "@/components/site-shell";
 import { Badge } from "@/components/ui/badge";
@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { getChapter, getConfig } from "@/lib/content.functions";
 import { saveReadingProgress } from "@/lib/depth.functions";
+import { getCurrentTier, tierMeets, type UserTier } from "@/lib/subscriptions.functions";
 import { useSession } from "@/hooks/use-session";
 import { useServerFn } from "@tanstack/react-start";
 import {
@@ -22,6 +23,7 @@ import {
   reportFn,
 } from "@/lib/social.functions";
 import { toast } from "sonner";
+
 
 const chapterQuery = (slug: string) =>
   queryOptions({
@@ -86,6 +88,8 @@ function ChapterPage() {
   const [blockedIds, setBlockedIds] = useState<Set<string>>(new Set());
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(data.chapter.like_count);
+  const [userTier, setUserTier] = useState<UserTier>("free");
+  const [tierLoading, setTierLoading] = useState(true);
   const saveProgress = useServerFn(saveReadingProgress);
   const doLike = useServerFn(likeFn);
   const doComment = useServerFn(commentFn);
@@ -95,8 +99,10 @@ function ChapterPage() {
   const fetchComments = useServerFn(getComments);
   const fetchMyLikes = useServerFn(getMyLikes);
   const fetchBlockedIds = useServerFn(getBlockedIds);
+  const fetchTier = useServerFn(getCurrentTier);
 
   const { chapter, series, creator, prev, next, contributions, contributors, chapterNumber } = data;
+
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -125,12 +131,23 @@ function ChapterPage() {
       fetchBlockedIds({ data: undefined })
         .then((ids) => setBlockedIds(new Set(ids)))
         .catch(() => {});
+      fetchTier({ data: undefined })
+        .then((res) => setUserTier(res.tier))
+        .catch(() => setUserTier("free"))
+        .finally(() => setTierLoading(false));
+    } else {
+      setTierLoading(false);
     }
-  }, [chapter.id, chapter.slug, chapter.series_id, user, saveProgress, fetchMyLikes, fetchBlockedIds]);
+  }, [chapter.id, chapter.slug, chapter.series_id, user, saveProgress, fetchMyLikes, fetchBlockedIds, fetchTier]);
 
-  const gated = !user && readCount > config.guestFreeChapters;
+
+  const requiredTier = (series.required_tier as UserTier) || "free";
+  const isPremium = requiredTier !== "free";
+  const hasAccess = !isPremium || (user ? tierMeets(requiredTier, userTier) : false);
+  const guestGated = !user && readCount > config.guestFreeChapters;
   const paragraphs = chapter.published_content.split(/\n\n+/).filter(Boolean);
-  const visible = gated ? paragraphs.slice(0, 2) : paragraphs;
+  const visible = !hasAccess ? paragraphs.slice(0, 1) : guestGated ? paragraphs.slice(0, 2) : paragraphs;
+
 
   return (
     <PageShell>
@@ -164,7 +181,7 @@ function ChapterPage() {
           ))}
         </article>
 
-        {gated ? (
+        {guestGated ? (
           <div className="relative -mt-16">
             <div className="h-16 bg-gradient-to-b from-transparent to-background" />
             <div className="rounded-xl border border-primary/40 bg-card p-6 text-center">
@@ -187,7 +204,23 @@ function ChapterPage() {
           </div>
         ) : null}
 
-        {!gated ? (
+        {!guestGated && !hasAccess ? (
+          <div className="relative -mt-16">
+            <div className="h-16 bg-gradient-to-b from-transparent to-background" />
+            <div className="rounded-xl border border-primary/40 bg-card p-6 text-center">
+              <Lock className="mx-auto size-5 text-primary" />
+              <h2 className="font-display mt-3 text-2xl">{series.title} is {requiredTier}</h2>
+              <p className="mx-auto mt-2 max-w-sm text-sm text-muted-foreground">
+                This chapter is part of a premium series. Subscribe to unlock every chapter and support the creator.
+              </p>
+              <Button className="mt-5" asChild>
+                <Link to="/pricing">View plans</Link>
+              </Button>
+            </div>
+          </div>
+        ) : null}
+
+        {!guestGated && hasAccess ? (
           <>
             <div className="mt-8 flex flex-wrap items-center gap-3">
               <Button

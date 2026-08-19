@@ -1,13 +1,15 @@
 import { Link } from "@tanstack/react-router";
-import { Bell, Flame, Menu, Sparkles } from "lucide-react";
+import { Bell, Flame, Menu, Sparkles, Crown } from "lucide-react";
 import { useEffect, useState, type ReactNode } from "react";
 
 import { Button } from "@/components/ui/button";
+import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
 import { useSession } from "@/hooks/use-session";
 import { supabase } from "@/integrations/supabase/client";
 import { getNotifications } from "@/lib/social.functions";
 import { useServerFn } from "@tanstack/react-start";
 import { cn } from "@/lib/utils";
+
 
 const NAV = [
   { to: "/discover", label: "Discover" },
@@ -86,6 +88,11 @@ export function SiteHeader() {
             <>
               <NotificationBell />
               <Button asChild variant="ghost" size="sm" className="hidden sm:inline-flex">
+                <Link to="/pricing">
+                  <Crown className="mr-1 size-3.5" /> Premium
+                </Link>
+              </Button>
+              <Button asChild variant="ghost" size="sm" className="hidden sm:inline-flex">
                 <Link to="/wallet">Wallet</Link>
               </Button>
               <Button asChild variant="ghost" size="sm" className="hidden sm:inline-flex">
@@ -103,6 +110,9 @@ export function SiteHeader() {
             </>
           ) : (
             <>
+              <Button asChild variant="ghost" size="sm" className="hidden sm:inline-flex">
+                <Link to="/pricing">Pricing</Link>
+              </Button>
               <Button asChild variant="ghost" size="sm" className="hidden sm:inline-flex">
                 <Link to="/auth">Sign in</Link>
               </Button>
@@ -163,6 +173,7 @@ export function SiteFooter() {
 export function PageShell({ children, className }: { children: ReactNode; className?: string }) {
   return (
     <div className="min-h-screen">
+      <PaymentTestModeBanner />
       <SiteHeader />
       <main className={cn("mx-auto w-full max-w-6xl px-4 py-10", className)}>{children}</main>
       <SiteFooter />

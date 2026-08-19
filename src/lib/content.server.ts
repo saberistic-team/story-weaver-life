@@ -24,6 +24,8 @@ export type SeriesRow = {
   follower_count: number;
   reader_count: number;
   allow_forks: boolean;
+  is_public: boolean;
+  required_tier: string;
 };
 
 export type ChapterRow = {
@@ -76,7 +78,7 @@ export type GameRow = {
 };
 
 const SERIES_COLS =
-  "id, slug, title, tagline, description, genre, voice, creator_id, canon_mode, follower_count, reader_count, allow_forks";
+  "id, slug, title, tagline, description, genre, voice, creator_id, canon_mode, follower_count, reader_count, allow_forks, is_public, required_tier";
 const CHAPTER_COLS =
   "id, slug, sequence, title, subtitle, summary, published_content, raw_content, read_count, like_count, published_at, book_id, series_id, source_game_id";
 const BOOK_COLS =
