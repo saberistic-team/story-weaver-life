@@ -19,6 +19,7 @@ import { Route as CreatorsUsernameRouteImport } from './routes/creators.$usernam
 import { Route as SeriesSlugRouteImport } from './routes/series.$slug'
 import { Route as AuthenticatedPlayIndexRouteImport } from './routes/_authenticated/play.index'
 import { Route as AuthenticatedPlayIdRouteImport } from './routes/_authenticated/play.$id'
+import { Route as AuthenticatedPlayNewRouteImport } from './routes/_authenticated/play.new'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -69,6 +70,11 @@ const AuthenticatedPlayIdRoute = AuthenticatedPlayIdRouteImport.update({
   path: '/play/$id',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedPlayNewRoute = AuthenticatedPlayNewRouteImport.update({
+  id: '/play/new',
+  path: '/play/new',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -79,6 +85,7 @@ export interface FileRoutesByFullPath {
   '/creators/$username': typeof CreatorsUsernameRoute
   '/series/$slug': typeof SeriesSlugRoute
   '/play/$id': typeof AuthenticatedPlayIdRoute
+  '/play/new': typeof AuthenticatedPlayNewRoute
   '/play/': typeof AuthenticatedPlayIndexRoute
 }
 export interface FileRoutesByTo {
@@ -90,6 +97,7 @@ export interface FileRoutesByTo {
   '/creators/$username': typeof CreatorsUsernameRoute
   '/series/$slug': typeof SeriesSlugRoute
   '/play/$id': typeof AuthenticatedPlayIdRoute
+  '/play/new': typeof AuthenticatedPlayNewRoute
   '/play': typeof AuthenticatedPlayIndexRoute
 }
 export interface FileRoutesById {
@@ -103,6 +111,7 @@ export interface FileRoutesById {
   '/creators/$username': typeof CreatorsUsernameRoute
   '/series/$slug': typeof SeriesSlugRoute
   '/_authenticated/play/$id': typeof AuthenticatedPlayIdRoute
+  '/_authenticated/play/new': typeof AuthenticatedPlayNewRoute
   '/_authenticated/play/': typeof AuthenticatedPlayIndexRoute
 }
 export interface FileRouteTypes {
@@ -116,6 +125,7 @@ export interface FileRouteTypes {
     | '/creators/$username'
     | '/series/$slug'
     | '/play/$id'
+    | '/play/new'
     | '/play/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -127,6 +137,7 @@ export interface FileRouteTypes {
     | '/creators/$username'
     | '/series/$slug'
     | '/play/$id'
+    | '/play/new'
     | '/play'
   id:
     | '__root__'
@@ -139,6 +150,7 @@ export interface FileRouteTypes {
     | '/creators/$username'
     | '/series/$slug'
     | '/_authenticated/play/$id'
+    | '/_authenticated/play/new'
     | '/_authenticated/play/'
   fileRoutesById: FileRoutesById
 }
@@ -225,16 +237,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedPlayIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/play/new': {
+      id: '/_authenticated/play/new'
+      path: '/play/new'
+      fullPath: '/play/new'
+      preLoaderRoute: typeof AuthenticatedPlayNewRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedPlayIdRoute: typeof AuthenticatedPlayIdRoute
+  AuthenticatedPlayNewRoute: typeof AuthenticatedPlayNewRoute
   AuthenticatedPlayIndexRoute: typeof AuthenticatedPlayIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedPlayIdRoute: AuthenticatedPlayIdRoute,
+  AuthenticatedPlayNewRoute: AuthenticatedPlayNewRoute,
   AuthenticatedPlayIndexRoute: AuthenticatedPlayIndexRoute,
 }
 
