@@ -87,7 +87,14 @@ function SeriesLayout() {
       <div className="grid gap-8 md:grid-cols-[220px_1fr]">
         <StoryCover title={series.title} genre={series.genre} />
         <div>
-          <Badge variant="secondary">{series.genre}</Badge>
+          <div className="flex flex-wrap items-center gap-2">
+            <Badge variant="secondary">{series.genre}</Badge>
+            {series.required_tier !== "free" ? (
+              <Badge variant="default" className="gap-1">
+                <Crown className="size-3" /> {series.required_tier}
+              </Badge>
+            ) : null}
+          </div>
           <h1 className="font-display mt-3 text-4xl leading-tight tracking-tight">{series.title}</h1>
           {series.tagline ? <p className="mt-2 text-lg text-primary">{series.tagline}</p> : null}
           <p className="mt-4 max-w-2xl text-muted-foreground">{series.description}</p>
@@ -109,7 +116,7 @@ function SeriesLayout() {
             {chapters[0] ? (
               <Button asChild>
                 <Link to="/chapters/$slug" params={{ slug: chapters[0].slug }}>
-                  Start reading free
+                  {series.required_tier === "free" ? "Start reading free" : "Start reading"}
                 </Link>
               </Button>
             ) : null}
