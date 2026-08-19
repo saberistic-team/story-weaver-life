@@ -1,12 +1,13 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
-import { Radio, Users } from "lucide-react";
+import { Crown, Radio, Users } from "lucide-react";
 
 import { PageShell } from "@/components/site-shell";
 import { StoryCover } from "@/components/story-cover";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { getDiscover } from "@/lib/content.functions";
+
 
 const discoverQuery = queryOptions({
   queryKey: ["discover"],
