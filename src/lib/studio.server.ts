@@ -319,15 +319,37 @@ export async function updateBibleEntry(
   return { ok: true };
 }
 
+function getServerPaddleEnv(): "sandbox" | "live" {
+  const token = process.env["VITE_PAYMENTS_CLIENT_TOKEN"] ?? "";
+  return token.startsWith("test_") ? "sandbox" : "live";
+}
+
 export async function fetchSubscription(userId: string) {
   const db = publicDb();
   const { data, error } = await db
     .from("subscriptions")
-    .select("provider, status, tier, current_period_end, cancel_at_period_end")
+    .select("price_id, status, current_period_end, cancel_at_period_end")
     .eq("user_id", userId)
+    .eq("environment", getServerPaddleEnv())
     .order("created_at", { ascending: false })
     .limit(1)
     .maybeSingle();
   if (error || !data) return null;
-  return data;
+
+  const tier = data.price_id?.startsWith("patron")
+    ? "patron"
+    : data.price_id?.startsWith("supporter")
+      ? "supporter"
+      : "free";
+  const active =
+    ["active", "trialing"].includes(data.status) &&
+    (data.current_period_end === null || new Date(data.current_period_end) > new Date());
+  const grace = data.status === "canceled" && data.current_period_end && new Date(data.current_period_end) > new Date();
+  return {
+    tier,
+    status: data.status,
+    active: active || grace,
+    currentPeriodEnd: data.current_period_end,
+    cancelAtPeriodEnd: data.cancel_at_period_end,
+  };
 }
