@@ -89,6 +89,23 @@ export async function fetchStudioChaptersForSeries(userId: string, seriesId: str
   return data as StudioChapter[];
 }
 
+export async function fetchStudioChapter(userId: string, slug: string): Promise<Database["public"]["Tables"]["chapters"]["Row"] | null> {
+  const db = publicDb();
+  const { data, error } = await db.from("chapters").select("*").eq("slug", slug).maybeSingle();
+  if (error || !data) return null;
+  const chapter = data as Database["public"]["Tables"]["chapters"]["Row"];
+
+  // Must own the series or be the source game's host.
+  const { data: series } = await db.from("series").select("creator_id").eq("id", chapter.series_id).maybeSingle();
+  let canEdit = series?.creator_id === userId;
+  if (!canEdit && chapter.source_game_id) {
+    const { data: game } = await db.from("games").select("host_id").eq("id", chapter.source_game_id).maybeSingle();
+    canEdit = game?.host_id === userId;
+  }
+  if (!canEdit) return null;
+  return chapter;
+}
+
 export async function fetchStudioBible(seriesId: string): Promise<StudioBibleEntry[]> {
   const db = publicDb();
   const { data, error } = await db
