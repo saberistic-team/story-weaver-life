@@ -14,14 +14,13 @@ import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { useServerFn } from "@tanstack/react-start";
 import { queryOptions } from "@tanstack/react-query";
-import { updateChapterFn } from "@/lib/studio.functions";
-import { getChapter } from "@/lib/content.functions";
+import { updateChapterFn, getStudioChapter } from "@/lib/studio.functions";
 import { toast } from "sonner";
 
 const chapterQueryOptions = (slug: string) =>
   queryOptions({
     queryKey: ["chapter", slug, "studio"],
-    queryFn: () => getChapter({ data: { slug } }),
+    queryFn: () => getStudioChapter({ data: { slug } }),
   });
 
 export const Route = createFileRoute("/_authenticated/studio/chapters/$slug/edit")({
