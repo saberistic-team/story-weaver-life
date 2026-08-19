@@ -9,7 +9,7 @@ import { getFollowingFeed } from "@/lib/social.functions";
 const feedQuery = () =>
   queryOptions({
     queryKey: ["following-feed"],
-    queryFn: () => getFollowingFeed({ data: {} }),
+    queryFn: () => getFollowingFeed({ data: undefined }),
   });
 
 export const Route = createFileRoute("/_authenticated/following")({
