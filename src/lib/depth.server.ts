@@ -52,6 +52,19 @@ export type ReadingProgressItem = {
   updated_at: string;
 };
 
+export type ContinueReadingItem = {
+  chapter_id: string;
+  chapter_slug: string;
+  chapter_title: string;
+  chapter_sequence: number;
+  series_id: string;
+  series_slug: string;
+  series_title: string;
+  percent: number;
+  completed: boolean;
+  updated_at: string;
+};
+
 export type UserAchievementWithDef = UserAchievementRow & AchievementDef;
 
 export async function fetchAchievements(): Promise<AchievementDef[]> {
