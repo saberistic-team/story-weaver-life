@@ -1,0 +1,222 @@
+import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
+import { ArrowLeft, ArrowRight, Sparkles, Wand2 } from "lucide-react";
+
+import { PageShell } from "@/components/site-shell";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { getChapter, getConfig } from "@/lib/content.functions";
+import { useSession } from "@/hooks/use-session";
+
+const chapterQuery = (slug: string) =>
+  queryOptions({
+    queryKey: ["chapter", slug],
+    queryFn: async () => {
+      const data = await getChapter({ data: { slug } });
+      if (!data) throw notFound();
+      return data;
+    },
+  });
+
+const configQuery = queryOptions({ queryKey: ["config"], queryFn: () => getConfig() });
+
+export const Route = createFileRoute("/chapters/$slug")({
+  loader: async ({ context, params }) => {
+    await context.queryClient.ensureQueryData(configQuery);
+    return context.queryClient.ensureQueryData(chapterQuery(params.slug));
+  },
+  head: ({ loaderData }) => {
+    if (!loaderData) {
+      return { meta: [{ title: "Chapter unavailable — StoryPass" }, { name: "robots", content: "noindex" }] };
+    }
+    const title = `${loaderData.chapter.title} — ${loaderData.series.title} — StoryPass`;
+    const description = loaderData.chapter.summary.slice(0, 155);
+    return {
+      meta: [
+        { title },
+        { name: "description", content: description },
+        { property: "og:title", content: title },
+        { property: "og:description", content: description },
+        { property: "og:type", content: "article" },
+      ],
+    };
+  },
+  component: ChapterPage,
+  errorComponent: () => (
+    <PageShell>
+      <p className="text-muted-foreground">This chapter didn't load.</p>
+    </PageShell>
+  ),
+  notFoundComponent: () => (
+    <PageShell>
+      <h1 className="font-display text-3xl">Chapter not found</h1>
+      <Button asChild className="mt-4">
+        <Link to="/discover">Browse the library</Link>
+      </Button>
+    </PageShell>
+  ),
+});
+
+const READ_KEY = "storypass:chapters-read";
+
+function ChapterPage() {
+  const { slug } = Route.useParams();
+  const { data } = useSuspenseQuery(chapterQuery(slug));
+  const { data: config } = useSuspenseQuery(configQuery);
+  const { user } = useSession();
+  const [readCount, setReadCount] = useState(0);
+  const [showBehind, setShowBehind] = useState(false);
+
+  const { chapter, series, creator, prev, next, contributions, contributors, comments, chapterNumber } = data;
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const raw = localStorage.getItem(READ_KEY);
+    const list: string[] = raw ? JSON.parse(raw) : [];
+    if (!list.includes(chapter.id)) list.push(chapter.id);
+    localStorage.setItem(READ_KEY, JSON.stringify(list));
+    localStorage.setItem("storypass:resume", `/chapters/${chapter.slug}`);
+    setReadCount(list.length);
+  }, [chapter.id, chapter.slug]);
+
+  const gated = !user && readCount > config.guestFreeChapters;
+  const paragraphs = chapter.published_content.split(/\n\n+/).filter(Boolean);
+  const visible = gated ? paragraphs.slice(0, 2) : paragraphs;
+
+  return (
+    <PageShell>
+      <div className="mx-auto max-w-2xl">
+        <Link
+          to="/series/$slug"
+          params={{ slug: series.slug }}
+          className="text-sm text-primary underline-offset-4 hover:underline"
+        >
+          {series.title}
+        </Link>
+        <p className="mt-4 text-xs tracking-[0.2em] text-muted-foreground uppercase">
+          Chapter {chapterNumber}
+        </p>
+        <h1 className="font-display mt-2 text-4xl leading-tight tracking-tight">{chapter.title}</h1>
+        {chapter.subtitle ? <p className="mt-2 text-lg text-muted-foreground">{chapter.subtitle}</p> : null}
+        <p className="mt-4 text-sm text-muted-foreground">
+          Written live by {contributors.length} players
+          {creator ? ` · curated by ${creator.display_name}` : ""} · polished by AI
+        </p>
+
+        <article className="prose-story mt-10">
+          {visible.map((p, i) => (
+            <p key={i}>{p}</p>
+          ))}
+        </article>
+
+        {gated ? (
+          <div className="relative -mt-16">
+            <div className="h-16 bg-gradient-to-b from-transparent to-background" />
+            <div className="rounded-xl border border-primary/40 bg-card p-6 text-center">
+              <Sparkles className="mx-auto size-5 text-primary" />
+              <h2 className="font-display mt-3 text-2xl">Keep reading, free</h2>
+              <p className="mx-auto mt-2 max-w-sm text-sm text-muted-foreground">
+                You've read your {config.guestFreeChapters} free chapters. Create an account to finish this
+                one — you'll land right back here — and get {config.starterSparks} Sparks to join a game.
+              </p>
+              <Button
+                className="mt-5"
+                onClick={() => {
+                  sessionStorage.setItem("storypass:next", `/chapters/${chapter.slug}`);
+                  window.location.href = "/auth";
+                }}
+              >
+                Create a free account
+              </Button>
+            </div>
+          </div>
+        ) : null}
+
+        {!gated ? (
+          <>
+            <div className="mt-12 flex flex-wrap items-center justify-between gap-3 border-t border-border pt-6">
+              {prev ? (
+                <Button asChild variant="outline" size="sm">
+                  <Link to="/chapters/$slug" params={{ slug: prev.slug }}>
+                    <ArrowLeft className="size-4" /> {prev.title}
+                  </Link>
+                </Button>
+              ) : (
+                <span />
+              )}
+              {next ? (
+                <Button asChild size="sm">
+                  <Link to="/chapters/$slug" params={{ slug: next.slug }}>
+                    {next.title} <ArrowRight className="size-4" />
+                  </Link>
+                </Button>
+              ) : null}
+            </div>
+
+            <div className="mt-8 rounded-xl border border-border bg-card p-6 text-center">
+              <h2 className="font-display text-2xl">Write what happens next</h2>
+              <p className="mt-2 text-sm text-muted-foreground">
+                The next chapter of {series.title} is written in a live game. One sentence at a time, on
+                the clock.
+              </p>
+              <div className="mt-5 flex flex-wrap justify-center gap-3">
+                <Button asChild>
+                  <Link to="/play">Join the next chapter</Link>
+                </Button>
+                <Button asChild variant="outline">
+                  <Link to="/discover">Keep reading</Link>
+                </Button>
+              </div>
+            </div>
+
+            {contributions.length > 0 ? (
+              <section className="mt-10">
+                <button
+                  type="button"
+                  onClick={() => setShowBehind(!showBehind)}
+                  className="flex items-center gap-2 text-sm text-primary"
+                >
+                  <Wand2 className="size-4" />
+                  {showBehind ? "Hide" : "Show"} Behind the Story
+                </button>
+                {showBehind ? (
+                  <div className="mt-4 space-y-4">
+                    {contributions.map((c) => (
+                      <div key={c.id} className="rounded-xl border border-border bg-card p-4">
+                        <div className="flex items-center gap-2">
+                          <Badge variant="secondary">Turn {c.position + 1}</Badge>
+                          <span className="text-xs text-muted-foreground">
+                            {c.author ? c.author.display_name : "A player"}
+                          </span>
+                        </div>
+                        <p className="mt-3 text-sm text-muted-foreground italic">"{c.original_text}"</p>
+                        {c.polished_text ? (
+                          <p className="mt-3 border-l-2 border-primary/60 pl-3 text-sm">{c.polished_text}</p>
+                        ) : null}
+                      </div>
+                    ))}
+                  </div>
+                ) : null}
+              </section>
+            ) : null}
+
+            {comments.length > 0 ? (
+              <section className="mt-10">
+                <h2 className="font-display text-xl">Reader reactions</h2>
+                <ul className="mt-4 space-y-3">
+                  {comments.map((c) => (
+                    <li key={c.id} className="rounded-xl border border-border bg-card p-4">
+                      <p className="text-sm font-semibold">{c.author?.display_name ?? "Reader"}</p>
+                      <p className="mt-1 text-sm text-muted-foreground">{c.body}</p>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            ) : null}
+          </>
+        ) : null}
+      </div>
+    </PageShell>
+  );
+}

@@ -10,33 +10,159 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as DiscoverRouteImport } from './routes/discover'
+import { Route as BooksSlugRouteImport } from './routes/books.$slug'
+import { Route as ChaptersSlugRouteImport } from './routes/chapters.$slug'
+import { Route as CreatorsUsernameRouteImport } from './routes/creators.$username'
+import { Route as SeriesSlugRouteImport } from './routes/series.$slug'
+import { Route as AuthenticatedPlayIndexRouteImport } from './routes/_authenticated/play.index'
+import { Route as AuthenticatedPlayIdRouteImport } from './routes/_authenticated/play.$id'
+import { Route as AuthenticatedPlayNewRouteImport } from './routes/_authenticated/play.new'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DiscoverRoute = DiscoverRouteImport.update({
+  id: '/discover',
+  path: '/discover',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BooksSlugRoute = BooksSlugRouteImport.update({
+  id: '/books/$slug',
+  path: '/books/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ChaptersSlugRoute = ChaptersSlugRouteImport.update({
+  id: '/chapters/$slug',
+  path: '/chapters/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CreatorsUsernameRoute = CreatorsUsernameRouteImport.update({
+  id: '/creators/$username',
+  path: '/creators/$username',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SeriesSlugRoute = SeriesSlugRouteImport.update({
+  id: '/series/$slug',
+  path: '/series/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedPlayIndexRoute = AuthenticatedPlayIndexRouteImport.update({
+  id: '/play/',
+  path: '/play/',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedPlayIdRoute = AuthenticatedPlayIdRouteImport.update({
+  id: '/play/$id',
+  path: '/play/$id',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedPlayNewRoute = AuthenticatedPlayNewRouteImport.update({
+  id: '/play/new',
+  path: '/play/new',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/discover': typeof DiscoverRoute
+  '/books/$slug': typeof BooksSlugRoute
+  '/chapters/$slug': typeof ChaptersSlugRoute
+  '/creators/$username': typeof CreatorsUsernameRoute
+  '/series/$slug': typeof SeriesSlugRoute
+  '/play/$id': typeof AuthenticatedPlayIdRoute
+  '/play/new': typeof AuthenticatedPlayNewRoute
+  '/play/': typeof AuthenticatedPlayIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/discover': typeof DiscoverRoute
+  '/books/$slug': typeof BooksSlugRoute
+  '/chapters/$slug': typeof ChaptersSlugRoute
+  '/creators/$username': typeof CreatorsUsernameRoute
+  '/series/$slug': typeof SeriesSlugRoute
+  '/play/$id': typeof AuthenticatedPlayIdRoute
+  '/play/new': typeof AuthenticatedPlayNewRoute
+  '/play': typeof AuthenticatedPlayIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/auth': typeof AuthRoute
+  '/discover': typeof DiscoverRoute
+  '/books/$slug': typeof BooksSlugRoute
+  '/chapters/$slug': typeof ChaptersSlugRoute
+  '/creators/$username': typeof CreatorsUsernameRoute
+  '/series/$slug': typeof SeriesSlugRoute
+  '/_authenticated/play/$id': typeof AuthenticatedPlayIdRoute
+  '/_authenticated/play/new': typeof AuthenticatedPlayNewRoute
+  '/_authenticated/play/': typeof AuthenticatedPlayIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/discover'
+    | '/books/$slug'
+    | '/chapters/$slug'
+    | '/creators/$username'
+    | '/series/$slug'
+    | '/play/$id'
+    | '/play/new'
+    | '/play/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/auth'
+    | '/discover'
+    | '/books/$slug'
+    | '/chapters/$slug'
+    | '/creators/$username'
+    | '/series/$slug'
+    | '/play/$id'
+    | '/play/new'
+    | '/play'
+  id:
+    | '__root__'
+    | '/'
+    | '/_authenticated'
+    | '/auth'
+    | '/discover'
+    | '/books/$slug'
+    | '/chapters/$slug'
+    | '/creators/$username'
+    | '/series/$slug'
+    | '/_authenticated/play/$id'
+    | '/_authenticated/play/new'
+    | '/_authenticated/play/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AuthRoute: typeof AuthRoute
+  DiscoverRoute: typeof DiscoverRoute
+  BooksSlugRoute: typeof BooksSlugRoute
+  ChaptersSlugRoute: typeof ChaptersSlugRoute
+  CreatorsUsernameRoute: typeof CreatorsUsernameRoute
+  SeriesSlugRoute: typeof SeriesSlugRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +174,103 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/discover': {
+      id: '/discover'
+      path: '/discover'
+      fullPath: '/discover'
+      preLoaderRoute: typeof DiscoverRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/books/$slug': {
+      id: '/books/$slug'
+      path: '/books/$slug'
+      fullPath: '/books/$slug'
+      preLoaderRoute: typeof BooksSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/chapters/$slug': {
+      id: '/chapters/$slug'
+      path: '/chapters/$slug'
+      fullPath: '/chapters/$slug'
+      preLoaderRoute: typeof ChaptersSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/creators/$username': {
+      id: '/creators/$username'
+      path: '/creators/$username'
+      fullPath: '/creators/$username'
+      preLoaderRoute: typeof CreatorsUsernameRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/series/$slug': {
+      id: '/series/$slug'
+      path: '/series/$slug'
+      fullPath: '/series/$slug'
+      preLoaderRoute: typeof SeriesSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/play/': {
+      id: '/_authenticated/play/'
+      path: '/play'
+      fullPath: '/play/'
+      preLoaderRoute: typeof AuthenticatedPlayIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/play/$id': {
+      id: '/_authenticated/play/$id'
+      path: '/play/$id'
+      fullPath: '/play/$id'
+      preLoaderRoute: typeof AuthenticatedPlayIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/play/new': {
+      id: '/_authenticated/play/new'
+      path: '/play/new'
+      fullPath: '/play/new'
+      preLoaderRoute: typeof AuthenticatedPlayNewRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedPlayIdRoute: typeof AuthenticatedPlayIdRoute
+  AuthenticatedPlayNewRoute: typeof AuthenticatedPlayNewRoute
+  AuthenticatedPlayIndexRoute: typeof AuthenticatedPlayIndexRoute
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedPlayIdRoute: AuthenticatedPlayIdRoute,
+  AuthenticatedPlayNewRoute: AuthenticatedPlayNewRoute,
+  AuthenticatedPlayIndexRoute: AuthenticatedPlayIndexRoute,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AuthRoute: AuthRoute,
+  DiscoverRoute: DiscoverRoute,
+  BooksSlugRoute: BooksSlugRoute,
+  ChaptersSlugRoute: ChaptersSlugRoute,
+  CreatorsUsernameRoute: CreatorsUsernameRoute,
+  SeriesSlugRoute: SeriesSlugRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
