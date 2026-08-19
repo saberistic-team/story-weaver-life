@@ -957,7 +957,6 @@ export type Database = {
           onboarded: boolean
           story_points: number
           streak_days: number
-          stripe_customer_id: string | null
           subscription_tier: string
           updated_at: string
           username: string
@@ -976,7 +975,6 @@ export type Database = {
           onboarded?: boolean
           story_points?: number
           streak_days?: number
-          stripe_customer_id?: string | null
           subscription_tier?: string
           updated_at?: string
           username: string
@@ -995,7 +993,6 @@ export type Database = {
           onboarded?: boolean
           story_points?: number
           streak_days?: number
-          stripe_customer_id?: string | null
           subscription_tier?: string
           updated_at?: string
           username?: string

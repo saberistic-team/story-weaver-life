@@ -1,12 +1,13 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
-import { Radio, Users } from "lucide-react";
+import { Crown, Radio, Users } from "lucide-react";
 
 import { PageShell } from "@/components/site-shell";
 import { StoryCover } from "@/components/story-cover";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { getDiscover } from "@/lib/content.functions";
+
 
 const discoverQuery = queryOptions({
   queryKey: ["discover"],
@@ -87,7 +88,12 @@ function DiscoverPage() {
         <h2 className="font-display text-xl">Series</h2>
         <div className="mt-4 grid grid-cols-2 gap-5 md:grid-cols-3 lg:grid-cols-4">
           {data.series.map((s) => (
-            <Link key={s.id} to="/series/$slug" params={{ slug: s.slug }} className="group">
+            <Link key={s.id} to="/series/$slug" params={{ slug: s.slug }} className="group relative">
+              {s.required_tier !== "free" ? (
+                <Badge variant="default" className="absolute right-2 top-2 z-10 gap-1">
+                  <Crown className="size-3" /> {s.required_tier}
+                </Badge>
+              ) : null}
               <StoryCover
                 title={s.title}
                 genre={s.genre}
