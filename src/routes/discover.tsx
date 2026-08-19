@@ -88,7 +88,12 @@ function DiscoverPage() {
         <h2 className="font-display text-xl">Series</h2>
         <div className="mt-4 grid grid-cols-2 gap-5 md:grid-cols-3 lg:grid-cols-4">
           {data.series.map((s) => (
-            <Link key={s.id} to="/series/$slug" params={{ slug: s.slug }} className="group">
+            <Link key={s.id} to="/series/$slug" params={{ slug: s.slug }} className="group relative">
+              {s.required_tier !== "free" ? (
+                <Badge variant="default" className="absolute right-2 top-2 z-10 gap-1">
+                  <Crown className="size-3" /> {s.required_tier}
+                </Badge>
+              ) : null}
               <StoryCover
                 title={s.title}
                 genre={s.genre}
