@@ -141,9 +141,13 @@ function ChapterPage() {
   }, [chapter.id, chapter.slug, chapter.series_id, user, saveProgress, fetchMyLikes, fetchBlockedIds, fetchTier]);
 
 
-  const gated = !user && readCount > config.guestFreeChapters;
+  const requiredTier = (series.required_tier as UserTier) || "free";
+  const isPremium = requiredTier !== "free";
+  const hasAccess = !isPremium || (user ? tierMeets(requiredTier, userTier) : false);
+  const guestGated = !user && readCount > config.guestFreeChapters;
   const paragraphs = chapter.published_content.split(/\n\n+/).filter(Boolean);
-  const visible = gated ? paragraphs.slice(0, 2) : paragraphs;
+  const visible = !hasAccess ? paragraphs.slice(0, 1) : guestGated ? paragraphs.slice(0, 2) : paragraphs;
+
 
   return (
     <PageShell>
