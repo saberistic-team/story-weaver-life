@@ -82,6 +82,7 @@ function ChapterPage() {
   const [showBehind, setShowBehind] = useState(false);
   const [commentDraft, setCommentDraft] = useState("");
   const [localComments, setLocalComments] = useState(data.comments);
+  const [blockedIds, setBlockedIds] = useState<Set<string>>(new Set());
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(data.chapter.like_count);
   const saveProgress = useServerFn(saveReadingProgress);
