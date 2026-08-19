@@ -12,11 +12,13 @@ import { saveReadingProgress } from "@/lib/depth.functions";
 import { useSession } from "@/hooks/use-session";
 import { useServerFn } from "@tanstack/react-start";
 import {
+  blockFn,
   commentFn,
   deleteCommentFn,
   getComments,
   getMyLikes,
   likeFn,
+  reportFn,
 } from "@/lib/social.functions";
 import { toast } from "sonner";
 
