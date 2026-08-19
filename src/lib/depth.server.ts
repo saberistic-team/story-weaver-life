@@ -1,5 +1,7 @@
 import { publicDb } from "./supabase-public.server";
 import type { Database } from "@/integrations/supabase/types";
+import type { SupabaseClient } from "@supabase/supabase-js";
+
 
 type Tables = Database["public"]["Tables"];
 type ProfileRow = Tables["profiles"]["Row"];
