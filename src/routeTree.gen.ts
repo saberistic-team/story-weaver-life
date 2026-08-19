@@ -14,6 +14,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as DiscoverRouteImport } from './routes/discover'
 import { Route as BooksSlugRouteImport } from './routes/books.$slug'
 import { Route as ChaptersSlugRouteImport } from './routes/chapters.$slug'
+import { Route as CreatorsUsernameRouteImport } from './routes/creators.$username'
 import { Route as SeriesSlugRouteImport } from './routes/series.$slug'
 
 const IndexRoute = IndexRouteImport.update({
@@ -41,6 +42,11 @@ const ChaptersSlugRoute = ChaptersSlugRouteImport.update({
   path: '/chapters/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CreatorsUsernameRoute = CreatorsUsernameRouteImport.update({
+  id: '/creators/$username',
+  path: '/creators/$username',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SeriesSlugRoute = SeriesSlugRouteImport.update({
   id: '/series/$slug',
   path: '/series/$slug',
@@ -53,6 +59,7 @@ export interface FileRoutesByFullPath {
   '/discover': typeof DiscoverRoute
   '/books/$slug': typeof BooksSlugRoute
   '/chapters/$slug': typeof ChaptersSlugRoute
+  '/creators/$username': typeof CreatorsUsernameRoute
   '/series/$slug': typeof SeriesSlugRoute
 }
 export interface FileRoutesByTo {
@@ -61,6 +68,7 @@ export interface FileRoutesByTo {
   '/discover': typeof DiscoverRoute
   '/books/$slug': typeof BooksSlugRoute
   '/chapters/$slug': typeof ChaptersSlugRoute
+  '/creators/$username': typeof CreatorsUsernameRoute
   '/series/$slug': typeof SeriesSlugRoute
 }
 export interface FileRoutesById {
@@ -70,6 +78,7 @@ export interface FileRoutesById {
   '/discover': typeof DiscoverRoute
   '/books/$slug': typeof BooksSlugRoute
   '/chapters/$slug': typeof ChaptersSlugRoute
+  '/creators/$username': typeof CreatorsUsernameRoute
   '/series/$slug': typeof SeriesSlugRoute
 }
 export interface FileRouteTypes {
@@ -80,6 +89,7 @@ export interface FileRouteTypes {
     | '/discover'
     | '/books/$slug'
     | '/chapters/$slug'
+    | '/creators/$username'
     | '/series/$slug'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -88,6 +98,7 @@ export interface FileRouteTypes {
     | '/discover'
     | '/books/$slug'
     | '/chapters/$slug'
+    | '/creators/$username'
     | '/series/$slug'
   id:
     | '__root__'
@@ -96,6 +107,7 @@ export interface FileRouteTypes {
     | '/discover'
     | '/books/$slug'
     | '/chapters/$slug'
+    | '/creators/$username'
     | '/series/$slug'
   fileRoutesById: FileRoutesById
 }
@@ -105,6 +117,7 @@ export interface RootRouteChildren {
   DiscoverRoute: typeof DiscoverRoute
   BooksSlugRoute: typeof BooksSlugRoute
   ChaptersSlugRoute: typeof ChaptersSlugRoute
+  CreatorsUsernameRoute: typeof CreatorsUsernameRoute
   SeriesSlugRoute: typeof SeriesSlugRoute
 }
 
@@ -145,6 +158,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ChaptersSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/creators/$username': {
+      id: '/creators/$username'
+      path: '/creators/$username'
+      fullPath: '/creators/$username'
+      preLoaderRoute: typeof CreatorsUsernameRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/series/$slug': {
       id: '/series/$slug'
       path: '/series/$slug'
@@ -161,6 +181,7 @@ const rootRouteChildren: RootRouteChildren = {
   DiscoverRoute: DiscoverRoute,
   BooksSlugRoute: BooksSlugRoute,
   ChaptersSlugRoute: ChaptersSlugRoute,
+  CreatorsUsernameRoute: CreatorsUsernameRoute,
   SeriesSlugRoute: SeriesSlugRoute,
 }
 export const routeTree = rootRouteImport
