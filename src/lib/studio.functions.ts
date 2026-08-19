@@ -4,6 +4,7 @@ import {
   fetchStudioDashboard,
   fetchStudioSeries,
   fetchStudioChaptersForSeries,
+  fetchStudioChapter,
   fetchStudioBible,
   createSeries,
   updateSeries,
