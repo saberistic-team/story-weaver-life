@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as DiscoverRouteImport } from './routes/discover'
+import { Route as SeriesSlugRouteImport } from './routes/series.$slug'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -28,35 +29,44 @@ const DiscoverRoute = DiscoverRouteImport.update({
   path: '/discover',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SeriesSlugRoute = SeriesSlugRouteImport.update({
+  id: '/series/$slug',
+  path: '/series/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/discover': typeof DiscoverRoute
+  '/series/$slug': typeof SeriesSlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/discover': typeof DiscoverRoute
+  '/series/$slug': typeof SeriesSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/discover': typeof DiscoverRoute
+  '/series/$slug': typeof SeriesSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/discover'
+  fullPaths: '/' | '/auth' | '/discover' | '/series/$slug'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/discover'
-  id: '__root__' | '/' | '/auth' | '/discover'
+  to: '/' | '/auth' | '/discover' | '/series/$slug'
+  id: '__root__' | '/' | '/auth' | '/discover' | '/series/$slug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRoute
   DiscoverRoute: typeof DiscoverRoute
+  SeriesSlugRoute: typeof SeriesSlugRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -82,6 +92,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DiscoverRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/series/$slug': {
+      id: '/series/$slug'
+      path: '/series/$slug'
+      fullPath: '/series/$slug'
+      preLoaderRoute: typeof SeriesSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -89,6 +106,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRoute,
   DiscoverRoute: DiscoverRoute,
+  SeriesSlugRoute: SeriesSlugRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
