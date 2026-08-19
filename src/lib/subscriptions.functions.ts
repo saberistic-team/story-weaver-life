@@ -1,6 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import { getPaddleEnvironment } from "@/lib/paddle";
 
 export type UserTier = "free" | "supporter" | "patron";
 
@@ -14,11 +13,16 @@ export function tierMeets(required: UserTier, actual: UserTier): boolean {
   return TIER_RANK[actual] >= TIER_RANK[required];
 }
 
+function getServerPaddleEnv(): "sandbox" | "live" {
+  const token = process.env["VITE_PAYMENTS_CLIENT_TOKEN"] ?? "";
+  return token.startsWith("test_") ? "sandbox" : "live";
+}
+
 export const getCurrentTier = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     const { supabase, userId } = context;
-    const environment = getPaddleEnvironment();
+    const environment = getServerPaddleEnv();
     const { data } = await supabase
       .from("subscriptions")
       .select("price_id, status, current_period_end")
