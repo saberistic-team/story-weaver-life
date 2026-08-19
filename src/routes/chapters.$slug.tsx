@@ -131,8 +131,15 @@ function ChapterPage() {
       fetchBlockedIds({ data: undefined })
         .then((ids) => setBlockedIds(new Set(ids)))
         .catch(() => {});
+      fetchTier({ data: undefined })
+        .then((res) => setUserTier(res.tier))
+        .catch(() => setUserTier("free"))
+        .finally(() => setTierLoading(false));
+    } else {
+      setTierLoading(false);
     }
-  }, [chapter.id, chapter.slug, chapter.series_id, user, saveProgress, fetchMyLikes, fetchBlockedIds]);
+  }, [chapter.id, chapter.slug, chapter.series_id, user, saveProgress, fetchMyLikes, fetchBlockedIds, fetchTier]);
+
 
   const gated = !user && readCount > config.guestFreeChapters;
   const paragraphs = chapter.published_content.split(/\n\n+/).filter(Boolean);
