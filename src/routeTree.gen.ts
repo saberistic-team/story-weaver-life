@@ -35,6 +35,7 @@ import { Route as SeriesSlugBibleRouteImport } from './routes/series.$slug.bible
 import { Route as SeriesSlugBooksRouteImport } from './routes/series.$slug.books'
 import { Route as SeriesSlugLineageRouteImport } from './routes/series.$slug.lineage'
 import { Route as AuthenticatedStudioSeriesNewRouteImport } from './routes/_authenticated.studio.series.new'
+import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 import { Route as AuthenticatedStudioChaptersSlugEditRouteImport } from './routes/_authenticated.studio.chapters.$slug.edit'
 import { Route as AuthenticatedStudioSeriesSlugBibleRouteImport } from './routes/_authenticated.studio.series.$slug.bible'
 import { Route as AuthenticatedStudioSeriesSlugEditRouteImport } from './routes/_authenticated.studio.series.$slug.edit'
@@ -175,6 +176,12 @@ const AuthenticatedStudioSeriesNewRoute =
     path: '/studio/series/new',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const ApiPublicPaymentsWebhookRoute =
+  ApiPublicPaymentsWebhookRouteImport.update({
+    id: '/api/public/payments/webhook',
+    path: '/api/public/payments/webhook',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AuthenticatedStudioChaptersSlugEditRoute =
   AuthenticatedStudioChaptersSlugEditRouteImport.update({
     id: '/studio/chapters/$slug/edit',
@@ -220,6 +227,7 @@ export interface FileRoutesByFullPath {
   '/creators/$username/': typeof CreatorsUsernameIndexRoute
   '/series/$slug/': typeof SeriesSlugIndexRoute
   '/studio/series/new': typeof AuthenticatedStudioSeriesNewRoute
+  '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/studio/chapters/$slug/edit': typeof AuthenticatedStudioChaptersSlugEditRoute
   '/studio/series/$slug/bible': typeof AuthenticatedStudioSeriesSlugBibleRoute
   '/studio/series/$slug/edit': typeof AuthenticatedStudioSeriesSlugEditRoute
@@ -248,6 +256,7 @@ export interface FileRoutesByTo {
   '/creators/$username': typeof CreatorsUsernameIndexRoute
   '/series/$slug': typeof SeriesSlugIndexRoute
   '/studio/series/new': typeof AuthenticatedStudioSeriesNewRoute
+  '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/studio/chapters/$slug/edit': typeof AuthenticatedStudioChaptersSlugEditRoute
   '/studio/series/$slug/bible': typeof AuthenticatedStudioSeriesSlugBibleRoute
   '/studio/series/$slug/edit': typeof AuthenticatedStudioSeriesSlugEditRoute
@@ -280,6 +289,7 @@ export interface FileRoutesById {
   '/creators/$username/': typeof CreatorsUsernameIndexRoute
   '/series/$slug/': typeof SeriesSlugIndexRoute
   '/_authenticated/studio/series/new': typeof AuthenticatedStudioSeriesNewRoute
+  '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/_authenticated/studio/chapters/$slug/edit': typeof AuthenticatedStudioChaptersSlugEditRoute
   '/_authenticated/studio/series/$slug/bible': typeof AuthenticatedStudioSeriesSlugBibleRoute
   '/_authenticated/studio/series/$slug/edit': typeof AuthenticatedStudioSeriesSlugEditRoute
@@ -312,6 +322,7 @@ export interface FileRouteTypes {
     | '/creators/$username/'
     | '/series/$slug/'
     | '/studio/series/new'
+    | '/api/public/payments/webhook'
     | '/studio/chapters/$slug/edit'
     | '/studio/series/$slug/bible'
     | '/studio/series/$slug/edit'
@@ -340,6 +351,7 @@ export interface FileRouteTypes {
     | '/creators/$username'
     | '/series/$slug'
     | '/studio/series/new'
+    | '/api/public/payments/webhook'
     | '/studio/chapters/$slug/edit'
     | '/studio/series/$slug/bible'
     | '/studio/series/$slug/edit'
@@ -371,6 +383,7 @@ export interface FileRouteTypes {
     | '/creators/$username/'
     | '/series/$slug/'
     | '/_authenticated/studio/series/new'
+    | '/api/public/payments/webhook'
     | '/_authenticated/studio/chapters/$slug/edit'
     | '/_authenticated/studio/series/$slug/bible'
     | '/_authenticated/studio/series/$slug/edit'
@@ -385,6 +398,7 @@ export interface RootRouteChildren {
   ChaptersSlugRoute: typeof ChaptersSlugRoute
   CreatorsUsernameRoute: typeof CreatorsUsernameRouteWithChildren
   SeriesSlugRoute: typeof SeriesSlugRouteWithChildren
+  ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -571,6 +585,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedStudioSeriesNewRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/api/public/payments/webhook': {
+      id: '/api/public/payments/webhook'
+      path: '/api/public/payments/webhook'
+      fullPath: '/api/public/payments/webhook'
+      preLoaderRoute: typeof ApiPublicPaymentsWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/studio/chapters/$slug/edit': {
       id: '/_authenticated/studio/chapters/$slug/edit'
       path: '/studio/chapters/$slug/edit'
@@ -687,6 +708,7 @@ const rootRouteChildren: RootRouteChildren = {
   ChaptersSlugRoute: ChaptersSlugRoute,
   CreatorsUsernameRoute: CreatorsUsernameRouteWithChildren,
   SeriesSlugRoute: SeriesSlugRouteWithChildren,
+  ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

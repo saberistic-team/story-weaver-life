@@ -1,4 +1,4 @@
-const clientToken = import.meta.env.VITE_PAYMENTS_CLIENT_TOKEN;
+const clientToken = import.meta.env["VITE_PAYMENTS_CLIENT_TOKEN"];
 
 declare global {
   interface Window {
