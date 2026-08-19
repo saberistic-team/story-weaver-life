@@ -91,7 +91,7 @@ function PricingPage() {
 
         <div className="mt-12 grid gap-6 md:grid-cols-2">
           {PRICES.map((plan) => {
-            const annual = ANNUAL_PRICES[plan.id];
+            const annual = ANNUAL_PRICES[plan.id]!;
             const priceId = yearly ? annual.priceId : plan.id;
             const displayPrice = yearly ? annual.price : plan.price;
             const displayPeriod = yearly ? "/year" : plan.period;
