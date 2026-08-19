@@ -1,5 +1,6 @@
 import { createFileRoute, Link, notFound, Outlet } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 import { BookOpen, Radio, Users } from "lucide-react";
 
 import { PageShell } from "@/components/site-shell";
@@ -7,6 +8,9 @@ import { StoryCover } from "@/components/story-cover";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { getSeries } from "@/lib/content.functions";
+import { followFn, getMyFollows } from "@/lib/social.functions";
+import { useSession } from "@/hooks/use-session";
+import { useServerFn } from "@tanstack/react-start";
 import { cn } from "@/lib/utils";
 
 export const seriesQuery = (slug: string) =>
