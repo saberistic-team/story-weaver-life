@@ -15,6 +15,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as DiscoverRouteImport } from './routes/discover'
 import { Route as AuthenticatedFollowingRouteImport } from './routes/_authenticated.following'
 import { Route as AuthenticatedNotificationsRouteImport } from './routes/_authenticated.notifications'
+import { Route as AuthenticatedWalletRouteImport } from './routes/_authenticated.wallet'
 import { Route as BooksSlugRouteImport } from './routes/books.$slug'
 import { Route as ChaptersSlugRouteImport } from './routes/chapters.$slug'
 import { Route as CreatorsUsernameRouteImport } from './routes/creators.$username'
@@ -62,6 +63,11 @@ const AuthenticatedNotificationsRoute =
     path: '/notifications',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedWalletRoute = AuthenticatedWalletRouteImport.update({
+  id: '/wallet',
+  path: '/wallet',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const BooksSlugRoute = BooksSlugRouteImport.update({
   id: '/books/$slug',
   path: '/books/$slug',
@@ -152,6 +158,7 @@ export interface FileRoutesByFullPath {
   '/discover': typeof DiscoverRoute
   '/following': typeof AuthenticatedFollowingRoute
   '/notifications': typeof AuthenticatedNotificationsRoute
+  '/wallet': typeof AuthenticatedWalletRoute
   '/books/$slug': typeof BooksSlugRouteWithChildren
   '/chapters/$slug': typeof ChaptersSlugRoute
   '/creators/$username': typeof CreatorsUsernameRouteWithChildren
@@ -175,6 +182,7 @@ export interface FileRoutesByTo {
   '/discover': typeof DiscoverRoute
   '/following': typeof AuthenticatedFollowingRoute
   '/notifications': typeof AuthenticatedNotificationsRoute
+  '/wallet': typeof AuthenticatedWalletRoute
   '/books/$slug': typeof BooksSlugRouteWithChildren
   '/chapters/$slug': typeof ChaptersSlugRoute
   '/play/$id': typeof AuthenticatedPlayIdRoute
@@ -198,6 +206,7 @@ export interface FileRoutesById {
   '/discover': typeof DiscoverRoute
   '/_authenticated/following': typeof AuthenticatedFollowingRoute
   '/_authenticated/notifications': typeof AuthenticatedNotificationsRoute
+  '/_authenticated/wallet': typeof AuthenticatedWalletRoute
   '/books/$slug': typeof BooksSlugRouteWithChildren
   '/chapters/$slug': typeof ChaptersSlugRoute
   '/creators/$username': typeof CreatorsUsernameRouteWithChildren
@@ -223,6 +232,7 @@ export interface FileRouteTypes {
     | '/discover'
     | '/following'
     | '/notifications'
+    | '/wallet'
     | '/books/$slug'
     | '/chapters/$slug'
     | '/creators/$username'
@@ -246,6 +256,7 @@ export interface FileRouteTypes {
     | '/discover'
     | '/following'
     | '/notifications'
+    | '/wallet'
     | '/books/$slug'
     | '/chapters/$slug'
     | '/play/$id'
@@ -268,6 +279,7 @@ export interface FileRouteTypes {
     | '/discover'
     | '/_authenticated/following'
     | '/_authenticated/notifications'
+    | '/_authenticated/wallet'
     | '/books/$slug'
     | '/chapters/$slug'
     | '/creators/$username'
@@ -339,6 +351,13 @@ declare module '@tanstack/react-router' {
       path: '/notifications'
       fullPath: '/notifications'
       preLoaderRoute: typeof AuthenticatedNotificationsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/wallet': {
+      id: '/_authenticated/wallet'
+      path: '/wallet'
+      fullPath: '/wallet'
+      preLoaderRoute: typeof AuthenticatedWalletRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/books/$slug': {
@@ -459,6 +478,7 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedFollowingRoute: typeof AuthenticatedFollowingRoute
   AuthenticatedNotificationsRoute: typeof AuthenticatedNotificationsRoute
+  AuthenticatedWalletRoute: typeof AuthenticatedWalletRoute
   AuthenticatedPlayIdRoute: typeof AuthenticatedPlayIdRoute
   AuthenticatedPlayNewRoute: typeof AuthenticatedPlayNewRoute
   AuthenticatedStudioModerationRoute: typeof AuthenticatedStudioModerationRoute
@@ -469,6 +489,7 @@ interface AuthenticatedRouteRouteChildren {
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedFollowingRoute: AuthenticatedFollowingRoute,
   AuthenticatedNotificationsRoute: AuthenticatedNotificationsRoute,
+  AuthenticatedWalletRoute: AuthenticatedWalletRoute,
   AuthenticatedPlayIdRoute: AuthenticatedPlayIdRoute,
   AuthenticatedPlayNewRoute: AuthenticatedPlayNewRoute,
   AuthenticatedStudioModerationRoute: AuthenticatedStudioModerationRoute,
