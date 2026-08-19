@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 const NAV = [
   { to: "/discover", label: "Discover" },
   { to: "/play", label: "Play" },
+  { to: "/studio", label: "Studio" },
 ] as const;
 
 export function SiteHeader() {

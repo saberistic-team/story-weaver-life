@@ -65,7 +65,9 @@ function CreatorPage() {
           <h1 className="font-display text-3xl tracking-tight">{profile.display_name}</h1>
           <p className="text-sm text-muted-foreground">@{profile.username}</p>
           <div className="mt-2 flex flex-wrap gap-4 text-sm text-muted-foreground">
-            <span>Storyteller level {profile.level}</span>
+            <Link to="/creators/$username/achievements" params={{ username }} className="hover:text-foreground">
+              Storyteller level {profile.level}
+            </Link>
             <span>{profile.story_points} story points</span>
             <span>{followers} followers</span>
           </div>

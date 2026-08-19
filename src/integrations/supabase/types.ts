@@ -182,6 +182,8 @@ export type Database = {
           book_id: string | null
           cover_url: string | null
           created_at: string
+          forked_from_chapter_id: string | null
+          forked_from_game_id: string | null
           id: string
           is_canon: boolean
           is_published: boolean
@@ -204,6 +206,8 @@ export type Database = {
           book_id?: string | null
           cover_url?: string | null
           created_at?: string
+          forked_from_chapter_id?: string | null
+          forked_from_game_id?: string | null
           id?: string
           is_canon?: boolean
           is_published?: boolean
@@ -226,6 +230,8 @@ export type Database = {
           book_id?: string | null
           cover_url?: string | null
           created_at?: string
+          forked_from_chapter_id?: string | null
+          forked_from_game_id?: string | null
           id?: string
           is_canon?: boolean
           is_published?: boolean
@@ -250,6 +256,20 @@ export type Database = {
             columns: ["book_id"]
             isOneToOne: false
             referencedRelation: "books"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "chapters_forked_from_chapter_id_fkey"
+            columns: ["forked_from_chapter_id"]
+            isOneToOne: false
+            referencedRelation: "chapters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "chapters_forked_from_game_id_fkey"
+            columns: ["forked_from_game_id"]
+            isOneToOne: false
+            referencedRelation: "games"
             referencedColumns: ["id"]
           },
           {
@@ -339,6 +359,7 @@ export type Database = {
       contributions: {
         Row: {
           author_id: string
+          canon_status: Database["public"]["Enums"]["canon_status"]
           chapter_id: string | null
           char_count: number
           created_at: string
@@ -351,6 +372,7 @@ export type Database = {
         }
         Insert: {
           author_id: string
+          canon_status?: Database["public"]["Enums"]["canon_status"]
           chapter_id?: string | null
           char_count?: number
           created_at?: string
@@ -363,6 +385,7 @@ export type Database = {
         }
         Update: {
           author_id?: string
+          canon_status?: Database["public"]["Enums"]["canon_status"]
           chapter_id?: string | null
           char_count?: number
           created_at?: string
@@ -595,6 +618,7 @@ export type Database = {
           cover_url: string | null
           created_at: string
           current_round: number
+          forked_from_game_id: string | null
           genre: string
           host_id: string
           id: string
@@ -626,6 +650,7 @@ export type Database = {
           cover_url?: string | null
           created_at?: string
           current_round?: number
+          forked_from_game_id?: string | null
           genre: string
           host_id: string
           id?: string
@@ -657,6 +682,7 @@ export type Database = {
           cover_url?: string | null
           created_at?: string
           current_round?: number
+          forked_from_game_id?: string | null
           genre?: string
           host_id?: string
           id?: string
@@ -683,6 +709,13 @@ export type Database = {
             columns: ["book_id"]
             isOneToOne: false
             referencedRelation: "books"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "games_forked_from_game_id_fkey"
+            columns: ["forked_from_game_id"]
+            isOneToOne: false
+            referencedRelation: "games"
             referencedColumns: ["id"]
           },
           {
@@ -880,6 +913,7 @@ export type Database = {
           id: string
           intents: string[]
           is_creator: boolean
+          last_active_at: string | null
           level: number
           onboarded: boolean
           story_points: number
@@ -896,6 +930,7 @@ export type Database = {
           id: string
           intents?: string[]
           is_creator?: boolean
+          last_active_at?: string | null
           level?: number
           onboarded?: boolean
           story_points?: number
@@ -912,6 +947,7 @@ export type Database = {
           id?: string
           intents?: string[]
           is_creator?: boolean
+          last_active_at?: string | null
           level?: number
           onboarded?: boolean
           story_points?: number
@@ -1099,6 +1135,7 @@ export type Database = {
       }
       story_bible_entries: {
         Row: {
+          approved_by: string | null
           body: string
           created_at: string
           id: string
@@ -1108,8 +1145,13 @@ export type Database = {
           name: string
           series_id: string
           sort_order: number
+          spoiler_chapter_id: string | null
+          state: Database["public"]["Enums"]["bible_entry_state"]
+          updated_at: string
+          visibility: Database["public"]["Enums"]["bible_entry_visibility"]
         }
         Insert: {
+          approved_by?: string | null
           body?: string
           created_at?: string
           id?: string
@@ -1119,8 +1161,13 @@ export type Database = {
           name: string
           series_id: string
           sort_order?: number
+          spoiler_chapter_id?: string | null
+          state?: Database["public"]["Enums"]["bible_entry_state"]
+          updated_at?: string
+          visibility?: Database["public"]["Enums"]["bible_entry_visibility"]
         }
         Update: {
+          approved_by?: string | null
           body?: string
           created_at?: string
           id?: string
@@ -1130,13 +1177,31 @@ export type Database = {
           name?: string
           series_id?: string
           sort_order?: number
+          spoiler_chapter_id?: string | null
+          state?: Database["public"]["Enums"]["bible_entry_state"]
+          updated_at?: string
+          visibility?: Database["public"]["Enums"]["bible_entry_visibility"]
         }
         Relationships: [
+          {
+            foreignKeyName: "story_bible_entries_approved_by_fkey"
+            columns: ["approved_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "story_bible_entries_series_id_fkey"
             columns: ["series_id"]
             isOneToOne: false
             referencedRelation: "series"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "story_bible_entries_spoiler_chapter_id_fkey"
+            columns: ["spoiler_chapter_id"]
+            isOneToOne: false
+            referencedRelation: "chapters"
             referencedColumns: ["id"]
           },
         ]
@@ -1277,6 +1342,8 @@ export type Database = {
     Enums: {
       ai_job_status: "queued" | "running" | "succeeded" | "failed"
       app_role: "admin" | "moderator" | "user"
+      bible_entry_state: "draft" | "canon" | "deprecated" | "spoiler"
+      bible_entry_visibility: "public" | "players_only" | "spoiler_gated"
       book_status:
         | "draft"
         | "in_progress"
@@ -1284,6 +1351,7 @@ export type Database = {
         | "published"
         | "archived"
       canon_mode: "creator" | "collaborative" | "chaos"
+      canon_status: "canon" | "alternate" | "apocryphal" | "draft"
       content_status:
         | "published"
         | "reported"
@@ -1437,6 +1505,8 @@ export const Constants = {
     Enums: {
       ai_job_status: ["queued", "running", "succeeded", "failed"],
       app_role: ["admin", "moderator", "user"],
+      bible_entry_state: ["draft", "canon", "deprecated", "spoiler"],
+      bible_entry_visibility: ["public", "players_only", "spoiler_gated"],
       book_status: [
         "draft",
         "in_progress",
@@ -1445,6 +1515,7 @@ export const Constants = {
         "archived",
       ],
       canon_mode: ["creator", "collaborative", "chaos"],
+      canon_status: ["canon", "alternate", "apocryphal", "draft"],
       content_status: [
         "published",
         "reported",

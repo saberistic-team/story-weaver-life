@@ -78,11 +78,18 @@ function BookPage() {
           </div>
           <p className="mt-4 max-w-2xl text-muted-foreground">{book.description}</p>
           {chapters[0] ? (
-            <Button asChild className="mt-6">
-              <Link to="/chapters/$slug" params={{ slug: chapters[0].slug }}>
-                Read chapter {chapters[0].sequence}
-              </Link>
-            </Button>
+            <div className="mt-6 flex flex-wrap gap-3">
+              <Button asChild>
+                <Link to="/chapters/$slug" params={{ slug: chapters[0].slug }}>
+                  Read chapter {chapters[0].sequence}
+                </Link>
+              </Button>
+              <Button asChild variant="outline">
+                <Link to="/books/$slug/read" params={{ slug }}>
+                  Read continuously
+                </Link>
+              </Button>
+            </div>
           ) : null}
         </div>
       </div>
