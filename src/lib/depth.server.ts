@@ -245,6 +245,40 @@ export async function getReadingProgress(userId: string, seriesId?: string): Pro
   return data as ReadingProgressItem[];
 }
 
+export async function fetchContinueReading(userId: string): Promise<ContinueReadingItem[]> {
+  const supabase = publicDb();
+  const { data, error } = await supabase
+    .from("reading_progress")
+    .select(
+      "chapter_id, series_id, percent, completed, updated_at, chapters!inner(slug, title, sequence), series!inner(slug, title)",
+    )
+    .eq("user_id", userId)
+    .order("updated_at", { ascending: false })
+    .limit(6);
+  if (error || !data) return [];
+
+  return (data as unknown as Array<{
+    chapter_id: string;
+    series_id: string;
+    percent: number;
+    completed: boolean;
+    updated_at: string;
+    chapters: { slug: string; title: string; sequence: number };
+    series: { slug: string; title: string };
+  }>).map((r) => ({
+    chapter_id: r.chapter_id,
+    chapter_slug: r.chapters.slug,
+    chapter_title: r.chapters.title,
+    chapter_sequence: r.chapters.sequence,
+    series_id: r.series_id,
+    series_slug: r.series.slug,
+    series_title: r.series.title,
+    percent: r.percent,
+    completed: r.completed,
+    updated_at: r.updated_at,
+  }));
+}
+
 export async function fetchUserAchievements(userId: string): Promise<{
   earned: UserAchievementWithDef[];
   available: (AchievementDef & { progress: number; target: number })[];
