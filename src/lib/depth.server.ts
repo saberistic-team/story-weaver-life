@@ -2,7 +2,6 @@ import { publicDb } from "./supabase-public.server";
 import type { Database } from "@/integrations/supabase/types";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-
 type Tables = Database["public"]["Tables"];
 type ProfileRow = Tables["profiles"]["Row"];
 type SeriesRow = Tables["series"]["Row"];
@@ -24,7 +23,15 @@ export type AchievementDef = {
 
 export type BibleEntry = Pick<
   BibleRow,
-  "id" | "kind" | "name" | "body" | "meta" | "is_approved" | "sort_order" | "created_at" | "updated_at"
+  | "id"
+  | "kind"
+  | "name"
+  | "body"
+  | "meta"
+  | "is_approved"
+  | "sort_order"
+  | "created_at"
+  | "updated_at"
 > & {
   state: Database["public"]["Enums"]["bible_entry_state"];
   visibility: Database["public"]["Enums"]["bible_entry_visibility"];
@@ -71,7 +78,11 @@ export type UserAchievementWithDef = UserAchievementRow & AchievementDef;
 
 export async function fetchAchievements(): Promise<AchievementDef[]> {
   const supabase = publicDb();
-  const { data, error } = await supabase.from("app_config").select("value").eq("key", "achievements").single();
+  const { data, error } = await supabase
+    .from("app_config")
+    .select("value")
+    .eq("key", "achievements")
+    .single();
   if (error || !data) return [];
   const list = data.value as unknown;
   if (!Array.isArray(list)) return [];
@@ -157,7 +168,9 @@ export async function fetchCanonTree(seriesSlug: string): Promise<CanonNode[]> {
 
   const { data: chapters, error } = await supabase
     .from("chapters")
-    .select("id, slug, title, sequence, is_canon, published_at, forked_from_chapter_id, forked_from_game_id")
+    .select(
+      "id, slug, title, sequence, is_canon, published_at, forked_from_chapter_id, forked_from_game_id",
+    )
     .eq("series_id", series.id)
     .eq("is_published", true)
     .order("sequence", { ascending: true });
@@ -196,7 +209,13 @@ export async function fetchCanonTree(seriesSlug: string): Promise<CanonNode[]> {
 export async function fetchBookReadState(
   bookSlug: string,
   userId?: string,
-): Promise<(BookRow & { series: SeriesRow | null; chapters: (ChapterRow & { progress: ReadingProgressItem | null })[] }) | null> {
+): Promise<
+  | (BookRow & {
+      series: SeriesRow | null;
+      chapters: (ChapterRow & { progress: ReadingProgressItem | null })[];
+    })
+  | null
+> {
   const supabase = publicDb();
   const { data: book, error } = await supabase
     .from("books")
@@ -235,7 +254,10 @@ export async function fetchBookReadState(
   };
 }
 
-export async function getReadingProgress(userId: string, seriesId?: string): Promise<ReadingProgressItem[]> {
+export async function getReadingProgress(
+  userId: string,
+  seriesId?: string,
+): Promise<ReadingProgressItem[]> {
   const supabase = publicDb();
   let q = supabase
     .from("reading_progress")
@@ -259,15 +281,17 @@ export async function fetchContinueReading(userId: string): Promise<ContinueRead
     .limit(6);
   if (error || !data) return [];
 
-  return (data as unknown as Array<{
-    chapter_id: string;
-    series_id: string;
-    percent: number;
-    completed: boolean;
-    updated_at: string;
-    chapters: { slug: string; title: string; sequence: number };
-    series: { slug: string; title: string };
-  }>).map((r) => ({
+  return (
+    data as unknown as Array<{
+      chapter_id: string;
+      series_id: string;
+      percent: number;
+      completed: boolean;
+      updated_at: string;
+      chapters: { slug: string; title: string; sequence: number };
+      series: { slug: string; title: string };
+    }>
+  ).map((r) => ({
     chapter_id: r.chapter_id,
     chapter_slug: r.chapters.slug,
     chapter_title: r.chapters.title,
@@ -304,7 +328,11 @@ export async function fetchUserAchievements(userId: string): Promise<{
     .filter(Boolean) as UserAchievementWithDef[];
 
   // Compute progress for available achievements using public aggregates.
-  const { data: profile } = await supabase.from("profiles").select("streak_days").eq("id", userId).single();
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("streak_days")
+    .eq("id", userId)
+    .single();
   const streakDays = profile?.streak_days ?? 0;
 
   const { data: gameCounts } = await supabase
@@ -372,7 +400,11 @@ export async function awardAchievementInternal(
     amount: def.story_points,
     reason: `Achievement: ${def.name}`,
   });
-  const { data: profile } = await db.from("profiles").select("story_points").eq("id", userId).single();
+  const { data: profile } = await db
+    .from("profiles")
+    .select("story_points")
+    .eq("id", userId)
+    .single();
   if (profile) {
     const total = profile.story_points + def.story_points;
     await db

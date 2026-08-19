@@ -48,7 +48,10 @@ const getModerationQueue = createServerFn({ method: "GET" })
 
 const resolveReport = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((data: { reportId: string; targetType: string; targetId: string; hideTarget?: boolean }) => data)
+  .inputValidator(
+    (data: { reportId: string; targetType: string; targetId: string; hideTarget?: boolean }) =>
+      data,
+  )
   .handler(async ({ data, context }) => {
     const { data: isMod } = await context.supabase.rpc("has_role", {
       _user_id: context.userId,
@@ -62,11 +65,20 @@ const resolveReport = createServerFn({ method: "POST" })
     await context.supabase.from("reports").update({ resolved: true }).eq("id", data.reportId);
     if (data.hideTarget) {
       if (data.targetType === "chapter") {
-        await context.supabase.from("chapters").update({ status: "hidden" }).eq("id", data.targetId);
+        await context.supabase
+          .from("chapters")
+          .update({ status: "hidden" })
+          .eq("id", data.targetId);
       } else if (data.targetType === "comment") {
-        await context.supabase.from("comments").update({ status: "hidden" }).eq("id", data.targetId);
+        await context.supabase
+          .from("comments")
+          .update({ status: "hidden" })
+          .eq("id", data.targetId);
       } else if (data.targetType === "contribution") {
-        await context.supabase.from("contributions").update({ status: "hidden" }).eq("id", data.targetId);
+        await context.supabase
+          .from("contributions")
+          .update({ status: "hidden" })
+          .eq("id", data.targetId);
       }
     }
     return { ok: true };
@@ -76,7 +88,10 @@ export const Route = createFileRoute("/_authenticated/studio/moderation")({
   loader: ({ context }) => context.queryClient.ensureQueryData(moderationQuery()),
   component: ModerationPage,
   head: () => ({
-    meta: [{ title: "Moderation — StoryWeaver" }, { name: "description", content: "Moderation queue for StoryWeaver." }],
+    meta: [
+      { title: "Moderation — StoryWeaver" },
+      { name: "description", content: "Moderation queue for StoryWeaver." },
+    ],
   }),
 });
 
@@ -100,7 +115,9 @@ function ModerationPage() {
               <li key={r.id} className="rounded-xl border border-border bg-card p-4">
                 <div className="flex flex-wrap items-center gap-2">
                   <Badge variant="secondary">{r.target_type}</Badge>
-                  <span className="text-xs text-muted-foreground">{new Date(r.created_at).toLocaleString()}</span>
+                  <span className="text-xs text-muted-foreground">
+                    {new Date(r.created_at).toLocaleString()}
+                  </span>
                 </div>
                 <p className="mt-2 text-sm">{r.reason}</p>
                 <div className="mt-4 flex flex-wrap gap-2">
@@ -108,7 +125,9 @@ function ModerationPage() {
                     size="sm"
                     variant="outline"
                     onClick={async () => {
-                      await resolve({ data: { reportId: r.id, targetType: r.target_type, targetId: r.target_id } });
+                      await resolve({
+                        data: { reportId: r.id, targetType: r.target_type, targetId: r.target_id },
+                      });
                     }}
                   >
                     <Check className="mr-1 size-4" /> Resolve
@@ -118,7 +137,12 @@ function ModerationPage() {
                     variant="destructive"
                     onClick={async () => {
                       await resolve({
-                        data: { reportId: r.id, targetType: r.target_type, targetId: r.target_id, hideTarget: true },
+                        data: {
+                          reportId: r.id,
+                          targetType: r.target_type,
+                          targetId: r.target_id,
+                          hideTarget: true,
+                        },
                       });
                     }}
                   >

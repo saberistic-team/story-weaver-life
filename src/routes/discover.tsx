@@ -1,13 +1,13 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
-import { Crown, Radio, Users } from "lucide-react";
+import { Crown, PenLine, Radio, Users } from "lucide-react";
 
 import { PageShell } from "@/components/site-shell";
 import { StoryCover } from "@/components/story-cover";
+import { EmptyState } from "@/components/empty-state";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { getDiscover } from "@/lib/content.functions";
-
 
 const discoverQuery = queryOptions({
   queryKey: ["discover"],
@@ -86,66 +86,101 @@ function DiscoverPage() {
 
       <section className="mt-14">
         <h2 className="font-display text-xl">Series</h2>
-        <div className="mt-4 grid grid-cols-2 gap-5 md:grid-cols-3 lg:grid-cols-4">
-          {data.series.map((s) => (
-            <Link key={s.id} to="/series/$slug" params={{ slug: s.slug }} className="group relative">
-              {s.required_tier !== "free" ? (
-                <Badge variant="default" className="absolute right-2 top-2 z-10 gap-1">
-                  <Crown className="size-3" /> {s.required_tier}
-                </Badge>
-              ) : null}
-              <StoryCover
-                title={s.title}
-                genre={s.genre}
-                className="transition-transform group-hover:-translate-y-1"
-              />
-              <h3 className="mt-3 text-sm font-semibold">{s.title}</h3>
-              <p className="text-xs text-muted-foreground">
-                {s.creator ? `by ${s.creator.display_name}` : s.genre} · {s.reader_count} readers
-              </p>
-            </Link>
-          ))}
-        </div>
+        {data.series.length > 0 ? (
+          <div className="mt-4 grid grid-cols-2 gap-5 md:grid-cols-3 lg:grid-cols-4">
+            {data.series.map((s) => (
+              <Link
+                key={s.id}
+                to="/series/$slug"
+                params={{ slug: s.slug }}
+                className="group relative"
+              >
+                {s.required_tier !== "free" ? (
+                  <Badge variant="default" className="absolute right-2 top-2 z-10 gap-1">
+                    <Crown className="size-3" /> {s.required_tier}
+                  </Badge>
+                ) : null}
+                <StoryCover
+                  title={s.title}
+                  genre={s.genre}
+                  className="transition-transform group-hover:-translate-y-1"
+                />
+                <h3 className="mt-3 text-sm font-semibold">{s.title}</h3>
+                <p className="text-xs text-muted-foreground">
+                  {s.creator ? `by ${s.creator.display_name}` : s.genre} · {s.reader_count} readers
+                </p>
+              </Link>
+            ))}
+          </div>
+        ) : (
+          <EmptyState
+            className="mt-4"
+            title="No series yet"
+            description="Be the first creator to start a public series and invite players to weave it with you."
+          >
+            <Button asChild size="sm" variant="outline">
+              <Link to="/studio/series/new">
+                <PenLine className="mr-1 size-4" /> Start a series
+              </Link>
+            </Button>
+          </EmptyState>
+        )}
       </section>
 
       <section className="mt-14">
         <h2 className="font-display text-xl">Fresh chapters</h2>
-        <div className="mt-4 grid gap-4 sm:grid-cols-2">
-          {data.newChapters.map((c) => (
-            <Link
-              key={c.id}
-              to="/chapters/$slug"
-              params={{ slug: c.slug }}
-              className="rounded-xl border border-border bg-card p-4 transition-colors hover:border-primary/50"
-            >
-              <span className="text-xs tracking-widest text-primary uppercase">
-                Chapter {c.sequence}
-              </span>
-              <h3 className="font-display mt-1 text-lg leading-tight">{c.title}</h3>
-              <p className="mt-2 line-clamp-3 text-sm text-muted-foreground">{c.summary}</p>
-            </Link>
-          ))}
-        </div>
+        {data.newChapters.length > 0 ? (
+          <div className="mt-4 grid gap-4 sm:grid-cols-2">
+            {data.newChapters.map((c) => (
+              <Link
+                key={c.id}
+                to="/chapters/$slug"
+                params={{ slug: c.slug }}
+                className="rounded-xl border border-border bg-card p-4 transition-colors hover:border-primary/50"
+              >
+                <span className="text-xs tracking-widest text-primary uppercase">
+                  Chapter {c.sequence}
+                </span>
+                <h3 className="font-display mt-1 text-lg leading-tight">{c.title}</h3>
+                <p className="mt-2 line-clamp-3 text-sm text-muted-foreground">{c.summary}</p>
+              </Link>
+            ))}
+          </div>
+        ) : (
+          <EmptyState
+            className="mt-4"
+            title="No chapters yet"
+            description="New chapters appear here once games finish and creators publish them."
+          />
+        )}
       </section>
 
       <section className="mt-14">
         <h2 className="font-display text-xl">Creators to follow</h2>
-        <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {data.creators.map((c) => (
-            <Link
-              key={c.id}
-              to="/creators/$username"
-              params={{ username: c.username }}
-              className="flex gap-3 rounded-xl border border-border bg-card p-4 transition-colors hover:border-primary/50"
-            >
-              <div className="surface-ember size-11 shrink-0 rounded-full" />
-              <div>
-                <p className="font-semibold">{c.display_name}</p>
-                <p className="line-clamp-2 text-xs text-muted-foreground">{c.bio}</p>
-              </div>
-            </Link>
-          ))}
-        </div>
+        {data.creators.length > 0 ? (
+          <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {data.creators.map((c) => (
+              <Link
+                key={c.id}
+                to="/creators/$username"
+                params={{ username: c.username }}
+                className="flex gap-3 rounded-xl border border-border bg-card p-4 transition-colors hover:border-primary/50"
+              >
+                <div className="surface-ember size-11 shrink-0 rounded-full" />
+                <div>
+                  <p className="font-semibold">{c.display_name}</p>
+                  <p className="line-clamp-2 text-xs text-muted-foreground">{c.bio}</p>
+                </div>
+              </Link>
+            ))}
+          </div>
+        ) : (
+          <EmptyState
+            className="mt-4"
+            title="No creators yet"
+            description="Follow writers to get notified when they publish new chapters or start live games."
+          />
+        )}
       </section>
     </PageShell>
   );

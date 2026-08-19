@@ -9,7 +9,13 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { useServerFn } from "@tanstack/react-start";
@@ -34,7 +40,8 @@ export const Route = createFileRoute("/_authenticated/studio/chapters/$slug/edit
       { name: "twitter:card", content: "summary" },
     ],
   }),
-  loader: ({ context, params }) => context.queryClient.ensureQueryData(chapterQueryOptions(params.slug)),
+  loader: ({ context, params }) =>
+    context.queryClient.ensureQueryData(chapterQueryOptions(params.slug)),
   component: EditChapterPage,
 });
 
@@ -123,20 +130,43 @@ function EditChapterPage() {
             <CardContent className="space-y-4 pt-6">
               <div className="space-y-2">
                 <Label htmlFor="title">Title</Label>
-                <Input id="title" value={title} onChange={(e) => setTitle(e.target.value)} required />
+                <Input
+                  id="title"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  required
+                />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="subtitle">Subtitle</Label>
-                <Input id="subtitle" value={subtitle} onChange={(e) => setSubtitle(e.target.value)} />
+                <Input
+                  id="subtitle"
+                  value={subtitle}
+                  onChange={(e) => setSubtitle(e.target.value)}
+                />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="summary">Summary</Label>
-                <Textarea id="summary" value={summary} onChange={(e) => setSummary(e.target.value)} rows={3} required />
+                <Textarea
+                  id="summary"
+                  value={summary}
+                  onChange={(e) => setSummary(e.target.value)}
+                  rows={3}
+                  required
+                />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="content">Published content</Label>
-                <Textarea id="content" value={content} onChange={(e) => setContent(e.target.value)} rows={16} required />
-                <p className="text-xs text-muted-foreground">{content.length.toLocaleString()} characters</p>
+                <Textarea
+                  id="content"
+                  value={content}
+                  onChange={(e) => setContent(e.target.value)}
+                  rows={16}
+                  required
+                />
+                <p className="text-xs text-muted-foreground">
+                  {content.length.toLocaleString()} characters
+                </p>
               </div>
             </CardContent>
           </Card>

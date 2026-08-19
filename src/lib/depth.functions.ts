@@ -20,7 +20,9 @@ import {
   type ContinueReadingItem,
 } from "./depth.server";
 
-export const getAchievements = createServerFn({ method: "GET" }).handler(async () => fetchAchievements());
+export const getAchievements = createServerFn({ method: "GET" }).handler(async () =>
+  fetchAchievements(),
+);
 
 export const getBible = createServerFn({ method: "GET" })
   .inputValidator((data: { seriesSlug: string }) => data)
@@ -49,15 +51,16 @@ export const getContinueReading = createServerFn({ method: "GET" })
 
 export const saveReadingProgress = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((data: { chapterId: string; seriesId: string; percent: number; completed?: boolean }) =>
-    z
-      .object({
-        chapterId: z.string().uuid(),
-        seriesId: z.string().uuid(),
-        percent: z.number().min(0).max(100),
-        completed: z.boolean().optional(),
-      })
-      .parse(data),
+  .inputValidator(
+    (data: { chapterId: string; seriesId: string; percent: number; completed?: boolean }) =>
+      z
+        .object({
+          chapterId: z.string().uuid(),
+          seriesId: z.string().uuid(),
+          percent: z.number().min(0).max(100),
+          completed: z.boolean().optional(),
+        })
+        .parse(data),
   )
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
@@ -90,12 +93,11 @@ export const getMyAchievements = createServerFn({ method: "GET" })
 export const awardAchievement = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((data: { code: string }) => z.object({ code: z.string() }).parse(data))
-  .handler(async ({ data, context }) => awardAchievementInternal(context.supabase, context.userId, data.code));
+  .handler(async ({ data, context }) =>
+    awardAchievementInternal(context.supabase, context.userId, data.code),
+  );
 
-async function recordActivityInternal(
-  supabase: SupabaseClient<Database>,
-  userId: string,
-) {
+async function recordActivityInternal(supabase: SupabaseClient<Database>, userId: string) {
   const now = new Date().toISOString();
   const today = now.slice(0, 10);
 
@@ -121,5 +123,8 @@ async function recordActivityInternal(
     streak = 1;
   }
 
-  await supabase.from("profiles").update({ last_active_at: now, streak_days: streak }).eq("id", userId);
+  await supabase
+    .from("profiles")
+    .update({ last_active_at: now, streak_days: streak })
+    .eq("id", userId);
 }

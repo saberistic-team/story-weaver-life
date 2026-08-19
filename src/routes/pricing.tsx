@@ -9,15 +9,20 @@ import { useSession } from "@/hooks/use-session";
 import { usePaddleCheckout } from "@/hooks/usePaddleCheckout";
 import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
 
-
 const PRICES = [
   {
     id: "supporter_monthly",
     name: "Supporter",
     price: "$4.99",
     period: "/month",
-    description: "Unlock every premium chapter, join patron-only games, and support your favorite creators.",
-    features: ["All premium series access", "Join patron-only games", "Supporter badge", "Early chapter releases"],
+    description:
+      "Unlock every premium chapter, join patron-only games, and support your favorite creators.",
+    features: [
+      "All premium series access",
+      "Join patron-only games",
+      "Supporter badge",
+      "Early chapter releases",
+    ],
     cta: "Become a Supporter",
   },
   {
@@ -25,7 +30,8 @@ const PRICES = [
     name: "Patron",
     price: "$9.99",
     period: "/month",
-    description: "Everything in Supporter, plus cinematic AI polish, creator tipping, and studio beta features.",
+    description:
+      "Everything in Supporter, plus cinematic AI polish, creator tipping, and studio beta features.",
     features: [
       "Everything in Supporter",
       "Cinematic AI polish style",
@@ -44,13 +50,22 @@ const ANNUAL_PRICES: Record<string, { price: string; priceId: string }> = {
 };
 
 export const Route = createFileRoute("/pricing")({
-  loader: ({ context }) => context.queryClient.ensureQueryData(queryOptions({ queryKey: ["pricing-empty"], queryFn: () => ({}) })),
+  loader: ({ context }) =>
+    context.queryClient.ensureQueryData(
+      queryOptions({ queryKey: ["pricing-empty"], queryFn: () => ({}) }),
+    ),
   head: () => ({
     meta: [
       { title: "Pricing — StoryWeaver" },
-      { name: "description", content: "Support creators and unlock premium series with StoryWeaver subscriptions." },
+      {
+        name: "description",
+        content: "Support creators and unlock premium series with StoryWeaver subscriptions.",
+      },
       { property: "og:title", content: "Pricing — StoryWeaver" },
-      { property: "og:description", content: "Support creators and unlock premium series with StoryWeaver subscriptions." },
+      {
+        property: "og:description",
+        content: "Support creators and unlock premium series with StoryWeaver subscriptions.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
@@ -69,11 +84,14 @@ function PricingPage() {
       <div className="mx-auto max-w-4xl text-center">
         <h1 className="font-display text-4xl tracking-tight">Support the story</h1>
         <p className="mx-auto mt-4 max-w-xl text-muted-foreground">
-          Premium subscriptions unlock every chapter, exclusive games, and advanced AI polish. Choose the plan that fits your reading life.
+          Premium subscriptions unlock every chapter, exclusive games, and advanced AI polish.
+          Choose the plan that fits your reading life.
         </p>
 
         <div className="mt-8 flex items-center justify-center gap-3">
-          <span className={`text-sm ${!yearly ? "text-foreground" : "text-muted-foreground"}`}>Monthly</span>
+          <span className={`text-sm ${!yearly ? "text-foreground" : "text-muted-foreground"}`}>
+            Monthly
+          </span>
           <button
             type="button"
             onClick={() => setYearly((v) => !v)}

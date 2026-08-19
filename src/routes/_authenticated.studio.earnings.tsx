@@ -44,7 +44,9 @@ function EarningsPage() {
         </Button>
 
         <h1 className="mt-6 font-display text-3xl tracking-tight">Earnings</h1>
-        <p className="mt-1 text-muted-foreground">Estimated revenue from subscriptions and unlocks.</p>
+        <p className="mt-1 text-muted-foreground">
+          Estimated revenue from subscriptions and unlocks.
+        </p>
 
         <Card className="mt-8">
           <CardHeader>
@@ -71,7 +73,10 @@ function EarningsPage() {
             ) : (
               <div className="divide-y divide-border">
                 {data.earnings.map((e) => (
-                  <div key={e.period} className="flex items-center justify-between py-4 first:pt-0 last:pb-0">
+                  <div
+                    key={e.period}
+                    className="flex items-center justify-between py-4 first:pt-0 last:pb-0"
+                  >
                     <span className="text-muted-foreground">{e.period}</span>
                     <div className="text-right">
                       <p className="font-medium">${(e.amount_cents / 100).toFixed(2)}</p>

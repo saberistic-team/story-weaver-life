@@ -12,31 +12,49 @@ export type Comment = {
   target_type: string;
   target_id: string;
   created_at: string;
-  author: { username: string; display_name: string; avatar_url: string | null; level: number } | null;
+  author: {
+    username: string;
+    display_name: string;
+    avatar_url: string | null;
+    level: number;
+  } | null;
 };
 
 export async function fetchComments(targetType: string, targetId: string): Promise<Comment[]> {
   const db = publicDb();
   const { data, error } = await db
     .from("comments")
-    .select("id, body, user_id, target_type, target_id, created_at, profiles(username, display_name, avatar_url, level)")
+    .select(
+      "id, body, user_id, target_type, target_id, created_at, profiles(username, display_name, avatar_url, level)",
+    )
     .eq("target_type", targetType)
     .eq("target_id", targetId)
     .order("created_at", { ascending: false })
     .limit(50);
   if (error || !data) return [];
-  return (data as unknown as Array<{
-    id: string;
-    body: string;
-    user_id: string;
-    target_type: string;
-    target_id: string;
-    created_at: string;
-    profiles: { username: string; display_name: string; avatar_url: string | null; level: number } | null;
-  }>).map((r) => ({ ...r, author: r.profiles }));
+  return (
+    data as unknown as Array<{
+      id: string;
+      body: string;
+      user_id: string;
+      target_type: string;
+      target_id: string;
+      created_at: string;
+      profiles: {
+        username: string;
+        display_name: string;
+        avatar_url: string | null;
+        level: number;
+      } | null;
+    }>
+  ).map((r) => ({ ...r, author: r.profiles }));
 }
 
-export async function fetchMyLikes(userId: string, targetType: string, targetIds: string[]): Promise<Set<string>> {
+export async function fetchMyLikes(
+  userId: string,
+  targetType: string,
+  targetIds: string[],
+): Promise<Set<string>> {
   if (targetIds.length === 0) return new Set();
   const db = publicDb();
   const { data, error } = await db
@@ -49,7 +67,11 @@ export async function fetchMyLikes(userId: string, targetType: string, targetIds
   return new Set((data as { target_id: string }[]).map((r) => r.target_id));
 }
 
-export async function fetchMyFollows(userId: string, targetType: string, targetIds: string[]): Promise<Set<string>> {
+export async function fetchMyFollows(
+  userId: string,
+  targetType: string,
+  targetIds: string[],
+): Promise<Set<string>> {
   if (targetIds.length === 0) return new Set();
   const db = publicDb();
   const { data, error } = await db
@@ -64,12 +86,19 @@ export async function fetchMyFollows(userId: string, targetType: string, targetI
 
 export async function fetchBlockedIds(userId: string): Promise<Set<string>> {
   const db = publicDb();
-  const { data, error } = await db.from("user_blocks").select("blocked_id").eq("blocker_id", userId);
+  const { data, error } = await db
+    .from("user_blocks")
+    .select("blocked_id")
+    .eq("blocker_id", userId);
   if (error || !data) return new Set();
   return new Set((data as { blocked_id: string }[]).map((r) => r.blocked_id));
 }
 
-export async function toggleLike(userId: string, targetType: "chapter" | "contribution" | "series", targetId: string) {
+export async function toggleLike(
+  userId: string,
+  targetType: "chapter" | "contribution" | "series",
+  targetId: string,
+) {
   const db = await admin();
   const { data: existing } = await db
     .from("likes")
@@ -82,7 +111,9 @@ export async function toggleLike(userId: string, targetType: "chapter" | "contri
   if (existing) {
     await db.from("likes").delete().eq("id", existing.id);
   } else {
-    await db.from("likes").insert({ user_id: userId, target_type: targetType, target_id: targetId });
+    await db
+      .from("likes")
+      .insert({ user_id: userId, target_type: targetType, target_id: targetId });
   }
 
   // Update denormalized count
@@ -95,9 +126,17 @@ export async function toggleLike(userId: string, targetType: "chapter" | "contri
 
   if (targetType === "chapter") {
     await db.from("chapters").update({ like_count: total }).eq("id", targetId);
-    const { data: chapter } = await db.from("chapters").select("series_id, title").eq("id", targetId).maybeSingle();
+    const { data: chapter } = await db
+      .from("chapters")
+      .select("series_id, title")
+      .eq("id", targetId)
+      .maybeSingle();
     if (chapter && !existing) {
-      const { data: series } = await db.from("series").select("title").eq("id", chapter.series_id).maybeSingle();
+      const { data: series } = await db
+        .from("series")
+        .select("title")
+        .eq("id", chapter.series_id)
+        .maybeSingle();
       await db.rpc("create_notification", {
         _user_id: userId,
         _kind: "like",
@@ -135,9 +174,17 @@ export async function postComment(
 
   // Notify target owner lightly
   if (targetType === "chapter") {
-    const { data: chapter } = await db.from("chapters").select("series_id, title").eq("id", targetId).maybeSingle();
+    const { data: chapter } = await db
+      .from("chapters")
+      .select("series_id, title")
+      .eq("id", targetId)
+      .maybeSingle();
     if (chapter) {
-      const { data: series } = await db.from("series").select("creator_id, title").eq("id", chapter.series_id).maybeSingle();
+      const { data: series } = await db
+        .from("series")
+        .select("creator_id, title")
+        .eq("id", chapter.series_id)
+        .maybeSingle();
       if (series && series.creator_id !== userId) {
         await db.rpc("create_notification", {
           _user_id: series.creator_id,
@@ -177,7 +224,9 @@ export async function toggleFollow(
   if (existing) {
     await db.from("follows").delete().eq("id", existing.id);
   } else {
-    await db.from("follows").insert({ follower_id: userId, target_type: targetType, target_id: targetId });
+    await db
+      .from("follows")
+      .insert({ follower_id: userId, target_type: targetType, target_id: targetId });
   }
 
   // Update denormalized counts
@@ -237,7 +286,11 @@ export async function unblockUser(userId: string, blockedId: string) {
 
 export async function votePoll(userId: string, pollId: string, optionId: string) {
   const db = await admin();
-  const { data: poll } = await db.from("polls").select("id, closes_at, is_open").eq("id", pollId).maybeSingle();
+  const { data: poll } = await db
+    .from("polls")
+    .select("id, closes_at, is_open")
+    .eq("id", pollId)
+    .maybeSingle();
   if (!poll) throw new Error("Poll not found");
   if (!poll.is_open || (poll.closes_at && new Date(poll.closes_at) < new Date())) {
     throw new Error("Poll is closed");
@@ -251,8 +304,16 @@ export async function votePoll(userId: string, pollId: string, optionId: string)
     .maybeSingle();
 
   const adjust = async (id: string, delta: number) => {
-    const { data: opt } = await db.from("poll_options").select("vote_count").eq("id", id).maybeSingle();
-    if (opt) await db.from("poll_options").update({ vote_count: Math.max(0, opt.vote_count + delta) }).eq("id", id);
+    const { data: opt } = await db
+      .from("poll_options")
+      .select("vote_count")
+      .eq("id", id)
+      .maybeSingle();
+    if (opt)
+      await db
+        .from("poll_options")
+        .update({ vote_count: Math.max(0, opt.vote_count + delta) })
+        .eq("id", id);
   };
 
   if (existing) {
@@ -282,9 +343,15 @@ export type NotificationItem = {
   created_at: string;
 };
 
-export async function fetchNotifications(userId: string, unreadOnly = false): Promise<NotificationItem[]> {
+export async function fetchNotifications(
+  userId: string,
+  unreadOnly = false,
+): Promise<NotificationItem[]> {
   const db = publicDb();
-  let q = db.from("notifications").select("id, kind, title, body, link, read_at, created_at").eq("user_id", userId);
+  let q = db
+    .from("notifications")
+    .select("id, kind, title, body, link, read_at, created_at")
+    .eq("user_id", userId);
   if (unreadOnly) q = q.is("read_at", null);
   const { data, error } = await q.order("created_at", { ascending: false }).limit(50);
   if (error || !data) return [];
@@ -293,7 +360,10 @@ export async function fetchNotifications(userId: string, unreadOnly = false): Pr
 
 export async function markNotificationRead(userId: string, notificationId?: string) {
   const db = await admin();
-  let q = db.from("notifications").update({ read_at: new Date().toISOString() }).eq("user_id", userId);
+  let q = db
+    .from("notifications")
+    .update({ read_at: new Date().toISOString() })
+    .eq("user_id", userId);
   if (notificationId) q = q.eq("id", notificationId);
   const { error } = await q;
   if (error) throw new Error("Could not mark read");
@@ -301,9 +371,37 @@ export async function markNotificationRead(userId: string, notificationId?: stri
 }
 
 export type FeedItem =
-  | { type: "chapter"; id: string; slug: string; title: string; subtitle: string | null; series_id: string; series_slug: string; series_title: string; published_at: string }
-  | { type: "game"; id: string; title: string; status: string; series_id: string | null; series_slug: string | null; series_title: string | null; created_at: string }
-  | { type: "bible"; id: string; kind: string; name: string; series_id: string; series_slug: string; series_title: string; created_at: string };
+  | {
+      type: "chapter";
+      id: string;
+      slug: string;
+      title: string;
+      subtitle: string | null;
+      series_id: string;
+      series_slug: string;
+      series_title: string;
+      published_at: string;
+    }
+  | {
+      type: "game";
+      id: string;
+      title: string;
+      status: string;
+      series_id: string | null;
+      series_slug: string | null;
+      series_title: string | null;
+      created_at: string;
+    }
+  | {
+      type: "bible";
+      id: string;
+      kind: string;
+      name: string;
+      series_id: string;
+      series_slug: string;
+      series_title: string;
+      created_at: string;
+    };
 
 export async function fetchFollowingFeed(userId: string): Promise<FeedItem[]> {
   const db = publicDb();
@@ -323,7 +421,10 @@ export async function fetchFollowingFeed(userId: string): Promise<FeedItem[]> {
 
   // Resolve creator-owned series
   if (creatorIds.size > 0) {
-    const { data: creatorSeries } = await db.from("series").select("id").in("creator_id", [...creatorIds]);
+    const { data: creatorSeries } = await db
+      .from("series")
+      .select("id")
+      .in("creator_id", [...creatorIds]);
     for (const s of (creatorSeries ?? []) as { id: string }[]) seriesIds.add(s.id);
   }
 
@@ -355,19 +456,45 @@ export async function fetchFollowingFeed(userId: string): Promise<FeedItem[]> {
   ]);
 
   const seriesInfo = await db.from("series").select("id, slug, title").in("id", ids);
-  const seriesMap = new Map((seriesInfo.data ?? []).map((s: { id: string; slug: string; title: string }) => [s.id, s]));
+  const seriesMap = new Map(
+    (seriesInfo.data ?? []).map((s: { id: string; slug: string; title: string }) => [s.id, s]),
+  );
 
   const items: FeedItem[] = [];
-  for (const c of (chapters ?? []) as { id: string; slug: string; title: string; subtitle: string | null; series_id: string; published_at: string }[]) {
+  for (const c of (chapters ?? []) as {
+    id: string;
+    slug: string;
+    title: string;
+    subtitle: string | null;
+    series_id: string;
+    published_at: string;
+  }[]) {
     const s = seriesMap.get(c.series_id);
     if (!s) continue;
     items.push({ type: "chapter", ...c, series_slug: s.slug, series_title: s.title });
   }
-  for (const g of (games ?? []) as { id: string; title: string; status: string; series_id: string | null; created_at: string }[]) {
+  for (const g of (games ?? []) as {
+    id: string;
+    title: string;
+    status: string;
+    series_id: string | null;
+    created_at: string;
+  }[]) {
     const s = g.series_id ? seriesMap.get(g.series_id) : undefined;
-    items.push({ type: "game", ...g, series_slug: s?.slug ?? null, series_title: s?.title ?? null });
+    items.push({
+      type: "game",
+      ...g,
+      series_slug: s?.slug ?? null,
+      series_title: s?.title ?? null,
+    });
   }
-  for (const b of (bibles ?? []) as { id: string; kind: string; name: string; series_id: string; created_at: string }[]) {
+  for (const b of (bibles ?? []) as {
+    id: string;
+    kind: string;
+    name: string;
+    series_id: string;
+    created_at: string;
+  }[]) {
     const s = seriesMap.get(b.series_id);
     if (!s) continue;
     items.push({ type: "bible", ...b, series_slug: s.slug, series_title: s.title });
@@ -377,5 +504,7 @@ export async function fetchFollowingFeed(userId: string): Promise<FeedItem[]> {
     if (item.type === "chapter") return item.published_at;
     return item.created_at;
   };
-  return items.sort((a, b) => new Date(sortDate(b)).getTime() - new Date(sortDate(a)).getTime()).slice(0, 30);
+  return items
+    .sort((a, b) => new Date(sortDate(b)).getTime() - new Date(sortDate(a)).getTime())
+    .slice(0, 30);
 }

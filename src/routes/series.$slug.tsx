@@ -13,7 +13,6 @@ import { useSession } from "@/hooks/use-session";
 import { useServerFn } from "@tanstack/react-start";
 import { cn } from "@/lib/utils";
 
-
 export const seriesQuery = (slug: string) =>
   queryOptions({
     queryKey: ["series", slug],
@@ -28,7 +27,12 @@ export const Route = createFileRoute("/series/$slug")({
   loader: ({ context, params }) => context.queryClient.ensureQueryData(seriesQuery(params.slug)),
   head: ({ loaderData }) => {
     if (!loaderData) {
-      return { meta: [{ title: "Series unavailable — StoryWeaver" }, { name: "robots", content: "noindex" }] };
+      return {
+        meta: [
+          { title: "Series unavailable — StoryWeaver" },
+          { name: "robots", content: "noindex" },
+        ],
+      };
     }
     const title = `${loaderData.series.title} — StoryWeaver`;
     const description = loaderData.series.tagline ?? loaderData.series.description.slice(0, 155);
@@ -95,12 +99,18 @@ function SeriesLayout() {
               </Badge>
             ) : null}
           </div>
-          <h1 className="font-display mt-3 text-4xl leading-tight tracking-tight">{series.title}</h1>
+          <h1 className="font-display mt-3 text-4xl leading-tight tracking-tight">
+            {series.title}
+          </h1>
           {series.tagline ? <p className="mt-2 text-lg text-primary">{series.tagline}</p> : null}
           <p className="mt-4 max-w-2xl text-muted-foreground">{series.description}</p>
           <div className="mt-5 flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted-foreground">
             {creator ? (
-              <Link to="/creators/$username" params={{ username: creator.username }} className="hover:text-foreground">
+              <Link
+                to="/creators/$username"
+                params={{ username: creator.username }}
+                className="hover:text-foreground"
+              >
                 Curated by {creator.display_name}
               </Link>
             ) : null}
@@ -130,7 +140,9 @@ function SeriesLayout() {
                   setFollowing((v) => !v);
                   setFollowerCount((n) => (following ? n - 1 : n + 1));
                   try {
-                    const res = await toggleFollow({ data: { targetType: "series", targetId: series.id } });
+                    const res = await toggleFollow({
+                      data: { targetType: "series", targetId: series.id },
+                    });
                     setFollowing(res.following);
                     setFollowerCount(res.count);
                   } catch {
@@ -154,7 +166,10 @@ function SeriesLayout() {
           </div>
           <div className="mt-4 grid gap-3 sm:grid-cols-2">
             {liveGames.map((g) => (
-              <div key={g.id} className="flex items-center justify-between gap-3 rounded-lg bg-secondary/60 p-3">
+              <div
+                key={g.id}
+                className="flex items-center justify-between gap-3 rounded-lg bg-secondary/60 p-3"
+              >
                 <div>
                   <p className="text-sm font-semibold">{g.title}</p>
                   <p className="text-xs text-muted-foreground">

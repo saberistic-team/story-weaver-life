@@ -17,7 +17,8 @@ export const Route = createFileRoute("/auth")({
       { title: "Sign in to StoryWeaver" },
       {
         name: "description",
-        content: "Create a free StoryWeaver account to keep reading, join live games, and earn Sparks.",
+        content:
+          "Create a free StoryWeaver account to keep reading, join live games, and earn Sparks.",
       },
       { property: "og:title", content: "Sign in to StoryWeaver" },
       { property: "og:description", content: "Free account. Keep reading and take your turn." },
@@ -36,10 +37,17 @@ function AuthPage() {
 
   useEffect(() => {
     if (loading || !user) return;
-    void bootstrapAccount().finally(() => {
-      const next = typeof window !== "undefined" ? sessionStorage.getItem("storyweaver:next") : null;
+    void bootstrapAccount().then(({ created }) => {
+      const next =
+        typeof window !== "undefined" ? sessionStorage.getItem("storyweaver:next") : null;
       sessionStorage.removeItem("storyweaver:next");
-      void navigate({ to: next && next.startsWith("/") ? next : "/play" });
+      const onboarded =
+        typeof window !== "undefined" && localStorage.getItem("storyweaver:onboarded") === "true";
+      if (created && !onboarded) {
+        void navigate({ to: "/onboarding" });
+      } else {
+        void navigate({ to: next && next.startsWith("/") ? next : "/play" });
+      }
     });
   }, [user, loading, navigate]);
 

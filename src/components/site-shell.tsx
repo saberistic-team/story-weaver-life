@@ -10,7 +10,6 @@ import { getNotifications } from "@/lib/social.functions";
 import { useServerFn } from "@tanstack/react-start";
 import { cn } from "@/lib/utils";
 
-
 const NAV = [
   { to: "/discover", label: "Discover" },
   { to: "/following", label: "Following" },
@@ -35,7 +34,12 @@ function NotificationBell() {
       .channel("notifications")
       .on(
         "postgres_changes",
-        { event: "INSERT", schema: "public", table: "notifications", filter: `user_id=eq.${user.id}` },
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "notifications",
+          filter: `user_id=eq.${user.id}`,
+        },
         () => setUnread((n) => n + 1),
       )
       .subscribe();
@@ -45,7 +49,10 @@ function NotificationBell() {
   }, [user, fetchNotifications]);
 
   return (
-    <Link to="/notifications" className="relative rounded-md p-2 text-muted-foreground hover:bg-secondary">
+    <Link
+      to="/notifications"
+      className="relative rounded-md p-2 text-muted-foreground hover:bg-secondary"
+    >
       <Bell className="size-5" />
       {unread > 0 ? (
         <span className="absolute right-1 top-1 flex size-4 items-center justify-center rounded-full bg-primary text-[10px] font-medium text-primary-foreground">
@@ -164,6 +171,9 @@ export function SiteFooter() {
           <Link to="/play" className="hover:text-foreground">
             Play
           </Link>
+          <a href="/sitemap.xml" className="hover:text-foreground">
+            Sitemap
+          </a>
         </div>
       </div>
     </footer>

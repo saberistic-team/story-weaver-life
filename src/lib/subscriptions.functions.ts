@@ -37,7 +37,10 @@ export const getCurrentTier = createServerFn({ method: "GET" })
     const isActive =
       ["active", "trialing"].includes(data.status) &&
       (data.current_period_end === null || new Date(data.current_period_end) > new Date());
-    const isGrace = data.status === "canceled" && data.current_period_end && new Date(data.current_period_end) > new Date();
+    const isGrace =
+      data.status === "canceled" &&
+      data.current_period_end &&
+      new Date(data.current_period_end) > new Date();
 
     if (!isActive && !isGrace) return { tier: "free" as UserTier };
 

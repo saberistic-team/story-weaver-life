@@ -9,11 +9,13 @@ Milestone 1 below delivers that loop end to end with real data and real multipla
 ## Milestone 1 — The core loop (this build)
 
 **Foundation**
+
 - Enable Lovable Cloud (database, auth, realtime, storage, server-side AI).
 - Design system: dark cinematic app surface, warm paper reading surface, one magical accent, serif display + sans UI. All tokens semantic; no hardcoded colors.
 - Auth: email/password + Google. Onboarding: welcome → genres → "read / play / create" → personalized picks. Starter reward (Sparks + Storyteller 1) driven by config, not hardcoded in UI.
 
 **Public storefront (guest-first, SEO-ready)**
+
 - `/` landing with the game visualized, not a generic SaaS page.
 - `/discover`, `/series/:slug`, `/books/:slug`, `/stories/:slug`, `/chapters/:id`, `/creators/:username`.
 - Real reading experience: editorial typography, chapter nav, progress, contributor attribution.
@@ -21,12 +23,14 @@ Milestone 1 below delivers that loop end to end with real data and real multipla
 - Per-route metadata, canonical URLs, social images, server-rendered content.
 
 **Multiplayer: Pass the Story**
+
 - Game creation + lobby (cover, host, players, rules, invite, live player count).
 - Turn engine where the database is authoritative: turn order, start/end times, timeouts, state machine (`draft/waiting/active/paused/processing/completed/published/cancelled`, turns `pending/active/submitted/timed_out/skipped/cancelled`).
 - Realtime lobby and turn updates; a stalled player can never block a game.
 - Mobile-first game screen: title, round, timer, context per visibility mode (blind/contextual/open), latest contribution, AI challenge, input + counter, submit & pass, reward preview.
 
 **AI layer (server-side, provider-abstracted, job-backed)**
+
 - Services: GameMaster (challenges/twists), ContributionPolisher, StoryArchitect, ContinuityManager, chapter synthesis.
 - Three preserved layers: original contribution → polished version(s) → published chapter. Originals are never mutated or deleted.
 - Polishing runs asynchronously after submit; gameplay never waits on AI. AI failure marks the job retryable and the game continues.
@@ -34,22 +38,28 @@ Milestone 1 below delivers that loop end to end with real data and real multipla
 - "Behind the Story" reader view showing original → polished → published with attribution.
 
 **Reveal + continuation**
+
 - Cinematic story reveal after a game completes.
 - End-of-chapter: "JOIN THE NEXT CHAPTER" / "KEEP READING" / "GET NOTIFIED", plus community vote on what happens next (creator canon by default).
 
 **Seed data**
+
 - Realistic fictional content: 6 creators, 8 series, 15 books, 40 chapters, 30 stories, 10 live/pending games, 50+ contributors, plus comments, likes, follows, votes, Sparks, achievements, notifications. Written as literal migration inserts. No lorem ipsum.
 
 ## Milestone 2 — Depth
+
 Story Bible (characters, locations, rules, timeline, mysteries, canon, themes, voice), canon modes, forks with lineage, book assembly, series pages, reading progression, streaks, achievements.
 
 ## Milestone 3 — Social, gamification, notifications
+
 Follow/like/comment/vote/share/report/block, Story Points vs Sparks ledgers, Storyteller levels and badges, in-app notification center.
 
 ## Milestone 4 — Monetization
+
 Stripe checkout/portal, Free / Creator / Pro Creator / Business plans, centralized entitlement + AI usage limits (config-driven, never hardcoded in components).
 
 ## Milestone 5 — Creator Studio & Admin
+
 Studio overview/analytics/revenue/AI tools; admin users, reports, moderation queue, content states, payments, AI usage, featured content.
 
 ## Technical notes

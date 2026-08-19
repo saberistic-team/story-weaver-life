@@ -7,7 +7,9 @@ export type LedgerEntry = {
   created_at: string;
 };
 
-export async function fetchWallet(userId: string): Promise<{ sparks: number; storyPoints: number }> {
+export async function fetchWallet(
+  userId: string,
+): Promise<{ sparks: number; storyPoints: number }> {
   const db = publicDb();
   const [{ data: wallet }, { data: profile }] = await Promise.all([
     db.from("wallets").select("sparks").eq("user_id", userId).maybeSingle(),

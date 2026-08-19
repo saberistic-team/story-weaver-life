@@ -29,7 +29,11 @@ export function getPaddleClient(env: PaddleEnv): Paddle {
   });
 }
 
-export async function gatewayFetch(env: PaddleEnv, path: string, init?: RequestInit): Promise<Response> {
+export async function gatewayFetch(
+  env: PaddleEnv,
+  path: string,
+  init?: RequestInit,
+): Promise<Response> {
   const connectionApiKey = getConnectionApiKey(env);
   const lovableApiKey = getEnv("LOVABLE_API_KEY");
   return fetch(`${GATEWAY_BASE_URL}${path}`, {
@@ -44,7 +48,9 @@ export async function gatewayFetch(env: PaddleEnv, path: string, init?: RequestI
 }
 
 export function getWebhookSecret(env: PaddleEnv): string {
-  return env === "sandbox" ? getEnv("PAYMENTS_SANDBOX_WEBHOOK_SECRET") : getEnv("PAYMENTS_LIVE_WEBHOOK_SECRET");
+  return env === "sandbox"
+    ? getEnv("PAYMENTS_SANDBOX_WEBHOOK_SECRET")
+    : getEnv("PAYMENTS_LIVE_WEBHOOK_SECRET");
 }
 
 export async function verifyWebhook(req: Request, env: PaddleEnv) {

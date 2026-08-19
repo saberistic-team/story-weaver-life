@@ -21,7 +21,9 @@ export const Route = createFileRoute("/books/$slug")({
   loader: ({ context, params }) => context.queryClient.ensureQueryData(bookQuery(params.slug)),
   head: ({ loaderData }) => {
     if (!loaderData) {
-      return { meta: [{ title: "Book unavailable — StoryWeaver" }, { name: "robots", content: "noindex" }] };
+      return {
+        meta: [{ title: "Book unavailable — StoryWeaver" }, { name: "robots", content: "noindex" }],
+      };
     }
     const title = `${loaderData.book.title} — ${loaderData.series.title} — StoryWeaver`;
     const description = loaderData.book.description.slice(0, 155);
@@ -68,7 +70,9 @@ function BookPage() {
             {series.title}
           </Link>
           <h1 className="font-display mt-2 text-4xl leading-tight tracking-tight">{book.title}</h1>
-          {book.subtitle ? <p className="mt-2 text-lg text-muted-foreground">{book.subtitle}</p> : null}
+          {book.subtitle ? (
+            <p className="mt-2 text-lg text-muted-foreground">{book.subtitle}</p>
+          ) : null}
           <div className="mt-3 flex flex-wrap items-center gap-3">
             <Badge variant="secondary">{book.status}</Badge>
             <span className="text-sm text-muted-foreground">
@@ -107,7 +111,9 @@ function BookPage() {
                 <span className="font-display w-8 shrink-0 text-lg text-primary">{c.sequence}</span>
                 <span className="min-w-0">
                   <span className="block font-semibold">{c.title}</span>
-                  <span className="mt-1 line-clamp-2 block text-sm text-muted-foreground">{c.summary}</span>
+                  <span className="mt-1 line-clamp-2 block text-sm text-muted-foreground">
+                    {c.summary}
+                  </span>
                 </span>
               </Link>
             </li>

@@ -41,7 +41,8 @@ function SeriesLineageTab() {
     <section>
       <h2 className="font-display text-2xl">Canon & forks</h2>
       <p className="mt-2 text-sm text-muted-foreground">
-        Canon chapters are the official thread. Forks branch from a chapter or a game and become alternate timelines.
+        Canon chapters are the official thread. Forks branch from a chapter or a game and become
+        alternate timelines.
       </p>
       <div className="mt-6 space-y-4">
         {roots.map((node) => (
@@ -52,7 +53,13 @@ function SeriesLineageTab() {
   );
 }
 
-function CanonNode({ node, depth }: { node: Awaited<ReturnType<typeof getCanonTree>>[number]; depth: number }) {
+function CanonNode({
+  node,
+  depth,
+}: {
+  node: Awaited<ReturnType<typeof getCanonTree>>[number];
+  depth: number;
+}) {
   return (
     <div className="relative" style={{ marginLeft: depth > 0 ? 24 : 0 }}>
       <div className="rounded-xl border border-border bg-card p-4 transition-colors hover:border-primary/40">

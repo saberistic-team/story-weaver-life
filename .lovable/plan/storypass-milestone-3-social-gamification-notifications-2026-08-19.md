@@ -3,6 +3,7 @@
 Milestones 1 and 2 shipped the core loop and the depth layer. Milestone 3 makes the platform feel alive: readers react to chapters, players follow each other, the economy runs on Sparks and Story Points, and the notification center keeps everyone in the loop.
 
 ## Goals
+
 - Turn finished chapters into conversation hubs.
 - Build a lightweight, safe social graph (follow, like, comment, share, report, block).
 - Make the dual-currency economy visible and meaningful.
@@ -12,28 +13,33 @@ Milestones 1 and 2 shipped the core loop and the depth layer. Milestone 3 makes 
 ## Scope
 
 ### 1. Social reactions on chapters
+
 - Like chapters and individual contributions.
 - Comment threads on chapters with nested replies.
 - Reaction counts update optimistically and sync via Realtime.
 - Public "most loved" and "most discussed" sorting on series/chapter lists.
 
 ### 2. Follows and creator subscriptions (social layer)
+
 - Follow/unfollow a series, creator, or universe.
 - Follower counts on profiles and series cards.
 - A "Following" feed showing new chapters, live games, and canon updates from followed series/creators.
 - Email-style digest option (stored as preference; actual email in a later milestone).
 
 ### 3. Share and invite
+
 - Copy link to chapter, book, series, or game with OG metadata.
 - Invite links to live games with a short code/URL.
 - Share cards generated from existing cover + title components.
 
 ### 4. Reporting and blocking
+
 - Report chapters, comments, contributions, or users.
 - Block user: hides their comments, contributions, and profile content from the blocker.
 - Reports feed into a lightweight moderation queue visible to moderators and admins.
 
 ### 5. Sparks and Story Points ledgers
+
 - `wallets` (Sparks) and `story_point_transactions` (Story Points) already exist.
 - Ledger view on profile: every earn/spend with reason and link to source.
 - Sparks spent to: create premium games, unlock extra polish styles, boost a chapter, tip a creator.
@@ -41,6 +47,7 @@ Milestones 1 and 2 shipped the core loop and the depth layer. Milestone 3 makes 
 - Storyteller level computed from total Story Points; public badge on profile and comments.
 
 ### 6. Achievements, streaks, and badges
+
 - Achievement definitions already seeded in `app_config`.
 - Award achievements server-side on qualifying actions.
 - Daily streak tracking for reading and writing (`last_active_at` already on profiles).
@@ -48,6 +55,7 @@ Milestones 1 and 2 shipped the core loop and the depth layer. Milestone 3 makes 
 - Achievement unlock toast + notification.
 
 ### 7. Notification center
+
 - In-app notification feed using the existing `notifications` table.
 - Notification types: your turn, turn submitted, game completed, chapter published, like, comment, follow, achievement unlocked, canon update, report resolution.
 - Realtime badge count on the bell icon in the site header.
@@ -55,6 +63,7 @@ Milestones 1 and 2 shipped the core loop and the depth layer. Milestone 3 makes 
 - Deep link each notification to the relevant chapter, game, comment, or profile.
 
 ### 8. Community polls and votes
+
 - Existing polls table; wire voting UI into series pages and chapter end-of-chapter CTAs.
 - Poll results visible after voting or when poll closes.
 - Creator can optionally canonize the winning option into the next chapter premise.
@@ -75,10 +84,12 @@ Milestones 1 and 2 shipped the core loop and the depth layer. Milestone 3 makes 
 - Add migrations only for columns/views needed (e.g., block list table, notification read status, user preferences).
 
 ## Out of scope for Milestone 3
+
 - Email/push delivery (Milestone 4/5).
 - Advanced feed algorithms / recommendation engine.
 - Direct messaging.
 - Stripe and paid plans.
 
 ## Deliverable
+
 A social, reward-rich layer: readers react and discuss chapters, players follow creators and each other, Sparks and Story Points drive visible progression, and the notification center ties every event together.

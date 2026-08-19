@@ -29,7 +29,12 @@ export const Route = createFileRoute("/creators/$username")({
     context.queryClient.ensureQueryData(creatorQuery(params.username)),
   head: ({ loaderData }) => {
     if (!loaderData) {
-      return { meta: [{ title: "Creator unavailable — StoryWeaver" }, { name: "robots", content: "noindex" }] };
+      return {
+        meta: [
+          { title: "Creator unavailable — StoryWeaver" },
+          { name: "robots", content: "noindex" },
+        ],
+      };
     }
     const title = `${loaderData.profile.display_name} on StoryWeaver`;
     const description = (loaderData.profile.bio ?? "A StoryWeaver storyteller.").slice(0, 155);
@@ -97,7 +102,9 @@ function CreatorLayout() {
               setFollowing((v) => !v);
               setFollowerCount((n) => (following ? n - 1 : n + 1));
               try {
-                const res = await toggleFollow({ data: { targetType: "creator", targetId: profile.id } });
+                const res = await toggleFollow({
+                  data: { targetType: "creator", targetId: profile.id },
+                });
                 setFollowing(res.following);
                 setFollowerCount(res.count);
               } catch {

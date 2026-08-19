@@ -8,11 +8,22 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useServerFn } from "@tanstack/react-start";
 import { queryOptions } from "@tanstack/react-query";
-import { getStudioSeries, getStudioBible, createBibleEntryFn, updateBibleEntryFn } from "@/lib/studio.functions";
+import {
+  getStudioSeries,
+  getStudioBible,
+  createBibleEntryFn,
+  updateBibleEntryFn,
+} from "@/lib/studio.functions";
 import { toast } from "sonner";
 
 const seriesQueryOptions = (slug: string) =>
@@ -40,7 +51,8 @@ export const Route = createFileRoute("/_authenticated/studio/series/$slug/bible"
       { name: "twitter:card", content: "summary" },
     ],
   }),
-  loader: ({ context, params }) => context.queryClient.ensureQueryData(seriesQueryOptions(params.slug)),
+  loader: ({ context, params }) =>
+    context.queryClient.ensureQueryData(seriesQueryOptions(params.slug)),
   component: BiblePage,
 });
 
@@ -88,7 +100,10 @@ function BiblePage() {
     }
   };
 
-  const onUpdate = async (entryId: string, patch: { name?: string; body?: string; state?: "draft" | "canon" | "deprecated" | "spoiler" }) => {
+  const onUpdate = async (
+    entryId: string,
+    patch: { name?: string; body?: string; state?: "draft" | "canon" | "deprecated" | "spoiler" },
+  ) => {
     try {
       await updateEntry({ data: { entryId, ...patch } });
       toast.success("Entry updated");
@@ -119,7 +134,8 @@ function BiblePage() {
           <div>
             <h1 className="font-display text-3xl tracking-tight">Story Bible</h1>
             <p className="mt-1 text-muted-foreground">
-              Manage characters, locations, and lore for <span className="text-foreground">{series.title}</span>.
+              Manage characters, locations, and lore for{" "}
+              <span className="text-foreground">{series.title}</span>.
             </p>
           </div>
           <Button asChild variant="outline" size="sm">
@@ -156,12 +172,23 @@ function BiblePage() {
                 </div>
                 <div className="space-y-2">
                   <Label>Name</Label>
-                  <Input value={newName} onChange={(e) => setNewName(e.target.value)} placeholder="Elara Voss" required />
+                  <Input
+                    value={newName}
+                    onChange={(e) => setNewName(e.target.value)}
+                    placeholder="Elara Voss"
+                    required
+                  />
                 </div>
               </div>
               <div className="space-y-2">
                 <Label>Description</Label>
-                <Textarea value={newBody} onChange={(e) => setNewBody(e.target.value)} rows={4} placeholder="Who or what is this?" required />
+                <Textarea
+                  value={newBody}
+                  onChange={(e) => setNewBody(e.target.value)}
+                  rows={4}
+                  placeholder="Who or what is this?"
+                  required
+                />
               </div>
               <Button type="submit" disabled={loading || !newName.trim() || !newBody.trim()}>
                 Add entry
@@ -194,8 +221,16 @@ function EditableEntry({
   entry,
   onUpdate,
 }: {
-  entry: { id: string; name: string; body: string; state: "draft" | "canon" | "deprecated" | "spoiler" };
-  onUpdate: (id: string, patch: { name?: string; body?: string; state?: "draft" | "canon" | "deprecated" | "spoiler" }) => void;
+  entry: {
+    id: string;
+    name: string;
+    body: string;
+    state: "draft" | "canon" | "deprecated" | "spoiler";
+  };
+  onUpdate: (
+    id: string,
+    patch: { name?: string; body?: string; state?: "draft" | "canon" | "deprecated" | "spoiler" },
+  ) => void;
 }) {
   const [name, setName] = useState(entry.name);
   const [body, setBody] = useState(entry.body);

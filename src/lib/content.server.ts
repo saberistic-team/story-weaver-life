@@ -85,8 +85,7 @@ const BOOK_COLS =
   "id, slug, series_id, title, subtitle, description, sequence, status, published_at";
 const GAME_COLS =
   "id, series_id, title, premise, genre, status, visibility_mode, rounds, turn_seconds, max_chars, min_players, max_players, current_round, reward_sparks, ai_gm_enabled, host_id, started_at";
-const PROFILE_COLS =
-  "id, username, display_name, avatar_url, bio, story_points, level, is_creator";
+const PROFILE_COLS = "id, username, display_name, avatar_url, bio, story_points, level, is_creator";
 
 async function profilesByIds(ids: string[]): Promise<Record<string, Profile>> {
   const unique = [...new Set(ids.filter(Boolean))];
@@ -109,7 +108,11 @@ async function playerCounts(gameIds: string[]): Promise<Record<string, number>> 
   return counts;
 }
 
-export type LiveGame = GameRow & { player_count: number; series_slug: string | null; host: Profile | null };
+export type LiveGame = GameRow & {
+  player_count: number;
+  series_slug: string | null;
+  host: Profile | null;
+};
 
 async function decorateGames(games: GameRow[]): Promise<LiveGame[]> {
   const db = publicDb();
@@ -133,7 +136,14 @@ export type AppConfig = {
   guestFreeChapters: number;
   starterSparks: number;
   rewards: Record<string, number>;
-  plans: { code: string; name: string; price: number; ai_actions: number; max_series: number; max_players: number }[];
+  plans: {
+    code: string;
+    name: string;
+    price: number;
+    ai_actions: number;
+    max_series: number;
+    max_players: number;
+  }[];
 };
 
 export async function fetchConfig(): Promise<AppConfig> {
@@ -167,11 +177,7 @@ export async function fetchDiscover(genre?: string, sort?: string) {
         .in("status", ["active", "waiting"])
         .order("status", { ascending: true })
         .limit(12),
-      db
-        .from("chapters")
-        .select(CHAPTER_COLS)
-        .order("published_at", { ascending: false })
-        .limit(8),
+      db.from("chapters").select(CHAPTER_COLS).order("published_at", { ascending: false }).limit(8),
       db
         .from("profiles")
         .select(PROFILE_COLS)
@@ -209,7 +215,11 @@ export async function fetchLanding() {
 
 export async function fetchSeries(slug: string) {
   const db = publicDb();
-  const { data: series } = await db.from("series").select(SERIES_COLS).eq("slug", slug).maybeSingle();
+  const { data: series } = await db
+    .from("series")
+    .select(SERIES_COLS)
+    .eq("slug", slug)
+    .maybeSingle();
   if (!series) return null;
   const s = series as unknown as SeriesRow;
 
@@ -218,7 +228,9 @@ export async function fetchSeries(slug: string) {
       db.from("books").select(BOOK_COLS).eq("series_id", s.id).order("sequence"),
       db
         .from("chapters")
-        .select("id, slug, sequence, title, subtitle, summary, book_id, read_count, like_count, published_at")
+        .select(
+          "id, slug, sequence, title, subtitle, summary, book_id, read_count, like_count, published_at",
+        )
         .eq("series_id", s.id)
         .order("sequence"),
       db
@@ -227,7 +239,11 @@ export async function fetchSeries(slug: string) {
         .eq("series_id", s.id)
         .order("sort_order"),
       db.from("games").select(GAME_COLS).eq("series_id", s.id).in("status", ["active", "waiting"]),
-      db.from("polls").select("id, question, closes_at, is_open, chapter_id").eq("series_id", s.id).limit(1),
+      db
+        .from("polls")
+        .select("id, question, closes_at, is_open, chapter_id")
+        .eq("series_id", s.id)
+        .limit(1),
     ]);
 
   const creator = (await profilesByIds([s.creator_id]))[s.creator_id] ?? null;
@@ -245,13 +261,19 @@ export async function fetchSeries(slug: string) {
   const { count: contributorCount } = await db
     .from("chapter_contributors")
     .select("user_id", { count: "exact", head: true })
-    .in("chapter_id", ((chapters ?? []) as { id: string }[]).map((c) => c.id));
+    .in(
+      "chapter_id",
+      ((chapters ?? []) as { id: string }[]).map((c) => c.id),
+    );
 
   return {
     series: s,
     creator,
     books: (books ?? []) as unknown as BookRow[],
-    chapters: (chapters ?? []) as unknown as Omit<ChapterRow, "published_content" | "raw_content" | "series_id" | "source_game_id">[],
+    chapters: (chapters ?? []) as unknown as Omit<
+      ChapterRow,
+      "published_content" | "raw_content" | "series_id" | "source_game_id"
+    >[],
     bible: (bible ?? []) as { id: string; kind: string; name: string; body: string }[],
     liveGames: await decorateGames((gamesRaw ?? []) as unknown as GameRow[]),
     poll: polls[0] ? { ...polls[0], options: pollOptions } : null,
@@ -274,37 +296,65 @@ export async function fetchBook(slug: string) {
   ]);
   const s = series as unknown as SeriesRow;
   const creator = (await profilesByIds([s.creator_id]))[s.creator_id] ?? null;
-  return { book: b, series: s, creator, chapters: (chapters ?? []) as { id: string; slug: string; sequence: number; title: string; subtitle: string | null; summary: string; read_count: number; like_count: number; published_at: string | null }[] };
+  return {
+    book: b,
+    series: s,
+    creator,
+    chapters: (chapters ?? []) as {
+      id: string;
+      slug: string;
+      sequence: number;
+      title: string;
+      subtitle: string | null;
+      summary: string;
+      read_count: number;
+      like_count: number;
+      published_at: string | null;
+    }[],
+  };
 }
 
 export async function fetchChapter(slug: string) {
   const db = publicDb();
-  const { data: chapter } = await db.from("chapters").select(CHAPTER_COLS).eq("slug", slug).maybeSingle();
+  const { data: chapter } = await db
+    .from("chapters")
+    .select(CHAPTER_COLS)
+    .eq("slug", slug)
+    .maybeSingle();
   if (!chapter) return null;
   const c = chapter as unknown as ChapterRow;
 
-  const [{ data: series }, { data: book }, { data: siblings }, { data: contribs }, { data: comments }] =
-    await Promise.all([
-      db.from("series").select(SERIES_COLS).eq("id", c.series_id).maybeSingle(),
-      c.book_id ? db.from("books").select(BOOK_COLS).eq("id", c.book_id).maybeSingle() : Promise.resolve({ data: null }),
-      db
-        .from("chapters")
-        .select("id, slug, sequence, title")
-        .eq("series_id", c.series_id)
-        .order("sequence"),
-      db
-        .from("contributions")
-        .select("id, position, original_text, author_id, contribution_polish_versions(polished_text, style)")
-        .eq("chapter_id", c.id)
-        .order("position"),
-      db
-        .from("comments")
-        .select("id, body, user_id, created_at")
-        .eq("target_type", "chapter")
-        .eq("target_id", c.id)
-        .order("created_at", { ascending: false })
-        .limit(20),
-    ]);
+  const [
+    { data: series },
+    { data: book },
+    { data: siblings },
+    { data: contribs },
+    { data: comments },
+  ] = await Promise.all([
+    db.from("series").select(SERIES_COLS).eq("id", c.series_id).maybeSingle(),
+    c.book_id
+      ? db.from("books").select(BOOK_COLS).eq("id", c.book_id).maybeSingle()
+      : Promise.resolve({ data: null }),
+    db
+      .from("chapters")
+      .select("id, slug, sequence, title")
+      .eq("series_id", c.series_id)
+      .order("sequence"),
+    db
+      .from("contributions")
+      .select(
+        "id, position, original_text, author_id, contribution_polish_versions(polished_text, style)",
+      )
+      .eq("chapter_id", c.id)
+      .order("position"),
+    db
+      .from("comments")
+      .select("id, body, user_id, created_at")
+      .eq("target_type", "chapter")
+      .eq("target_id", c.id)
+      .order("created_at", { ascending: false })
+      .limit(20),
+  ]);
 
   const s = series as unknown as SeriesRow;
   type Contribution = {
@@ -366,7 +416,11 @@ export async function fetchCreator(username: string) {
 
   const [{ data: series }, { data: contributions }, { data: achievements }, { count: followers }] =
     await Promise.all([
-      db.from("series").select(SERIES_COLS).eq("creator_id", p.id).order("follower_count", { ascending: false }),
+      db
+        .from("series")
+        .select(SERIES_COLS)
+        .eq("creator_id", p.id)
+        .order("follower_count", { ascending: false }),
       db
         .from("contributions")
         .select("id, original_text, created_at, chapter_id, chapters(slug, title, series_id)")
@@ -418,22 +472,37 @@ export async function fetchGame(id: string) {
   if (!game) return null;
   const g = game as unknown as GameRow;
 
-  const [{ data: players }, { data: turns }, { data: challenge }, { data: contribs }, { data: series }] =
-    await Promise.all([
-      db.from("game_players").select("id, user_id, seat_order, is_host").eq("game_id", g.id).order("seat_order"),
-      db
-        .from("game_turns")
-        .select("id, round, turn_index, player_id, status, starts_at, ends_at")
-        .eq("game_id", g.id)
-        .order("turn_index"),
-      db.from("game_challenges").select("id, kind, text, reward_sparks, round").eq("game_id", g.id).order("round"),
-      db
-        .from("contributions")
-        .select("id, position, original_text, author_id, created_at")
-        .eq("game_id", g.id)
-        .order("position"),
-      g.series_id ? db.from("series").select(SERIES_COLS).eq("id", g.series_id).maybeSingle() : Promise.resolve({ data: null }),
-    ]);
+  const [
+    { data: players },
+    { data: turns },
+    { data: challenge },
+    { data: contribs },
+    { data: series },
+  ] = await Promise.all([
+    db
+      .from("game_players")
+      .select("id, user_id, seat_order, is_host")
+      .eq("game_id", g.id)
+      .order("seat_order"),
+    db
+      .from("game_turns")
+      .select("id, round, turn_index, player_id, status, starts_at, ends_at")
+      .eq("game_id", g.id)
+      .order("turn_index"),
+    db
+      .from("game_challenges")
+      .select("id, kind, text, reward_sparks, round")
+      .eq("game_id", g.id)
+      .order("round"),
+    db
+      .from("contributions")
+      .select("id, position, original_text, author_id, created_at")
+      .eq("game_id", g.id)
+      .order("position"),
+    g.series_id
+      ? db.from("series").select(SERIES_COLS).eq("id", g.series_id).maybeSingle()
+      : Promise.resolve({ data: null }),
+  ]);
 
   type PlayerRow = { id: string; user_id: string; seat_order: number; is_host: boolean };
   type TurnRow = {
@@ -468,13 +537,16 @@ export async function fetchGame(id: string) {
     players: playerRows.map((p) => ({ ...p, profile: people[p.user_id] ?? null })),
     turns: turnRows,
     activeTurn,
-    challenge: ((challenge ?? []) as unknown as {
-      id: string;
-      kind: string;
-      text: string;
-      reward_sparks: number;
-      round: number;
-    }[])[0] ?? null,
+    challenge:
+      (
+        (challenge ?? []) as unknown as {
+          id: string;
+          kind: string;
+          text: string;
+          reward_sparks: number;
+          round: number;
+        }[]
+      )[0] ?? null,
     contributions: contributionRows.map((c) => ({ ...c, author: people[c.author_id] ?? null })),
   };
 }
@@ -483,8 +555,16 @@ export async function searchLibrary(q: string) {
   const db = publicDb();
   const term = `%${q}%`;
   const [{ data: series }, { data: chapters }, { data: creators }] = await Promise.all([
-    db.from("series").select(SERIES_COLS).or(`title.ilike.${term},description.ilike.${term}`).limit(12),
-    db.from("chapters").select("id, slug, title, summary, series_id").ilike("title", term).limit(12),
+    db
+      .from("series")
+      .select(SERIES_COLS)
+      .or(`title.ilike.${term},description.ilike.${term}`)
+      .limit(12),
+    db
+      .from("chapters")
+      .select("id, slug, title, summary, series_id")
+      .ilike("title", term)
+      .limit(12),
     db
       .from("profiles")
       .select(PROFILE_COLS)
@@ -494,7 +574,12 @@ export async function searchLibrary(q: string) {
   ]);
   return {
     series: (series ?? []) as unknown as SeriesRow[],
-    chapters: (chapters ?? []) as unknown as { id: string; slug: string; title: string; summary: string }[],
+    chapters: (chapters ?? []) as unknown as {
+      id: string;
+      slug: string;
+      title: string;
+      summary: string;
+    }[],
     creators: (creators ?? []) as unknown as Profile[],
   };
 }

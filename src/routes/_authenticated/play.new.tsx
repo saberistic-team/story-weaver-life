@@ -17,13 +17,24 @@ import {
 } from "@/components/ui/select";
 import { architectStoryFn, createGameFn } from "@/lib/play.functions";
 
-const GENRES = ["Science Fiction", "Fantasy", "Mystery", "Horror", "Literary", "Romance", "Adventure"];
+const GENRES = [
+  "Science Fiction",
+  "Fantasy",
+  "Mystery",
+  "Horror",
+  "Literary",
+  "Romance",
+  "Adventure",
+];
 
 export const Route = createFileRoute("/_authenticated/play/new")({
   head: () => ({
     meta: [
       { title: "Start a story game — StoryWeaver" },
-      { name: "description", content: "Set a premise, pick the rules, and invite players to write with you." },
+      {
+        name: "description",
+        content: "Set a premise, pick the rules, and invite players to write with you.",
+      },
       { property: "og:title", content: "Start a story game — StoryWeaver" },
       { property: "og:description", content: "Set the premise. The table writes the rest." },
       { name: "robots", content: "noindex" },
@@ -42,7 +53,9 @@ function NewGame() {
   const [maxChars, setMaxChars] = useState(400);
   const [maxPlayers, setMaxPlayers] = useState(6);
   const [visibility, setVisibility] = useState<"blind" | "contextual" | "open">("contextual");
-  const [polishStyle, setPolishStyle] = useState<"light" | "balanced" | "cinematic" | "disabled">("balanced");
+  const [polishStyle, setPolishStyle] = useState<"light" | "balanced" | "cinematic" | "disabled">(
+    "balanced",
+  );
   const [aiGm, setAiGm] = useState(true);
   const [busy, setBusy] = useState(false);
   const [idea, setIdea] = useState("");
@@ -97,7 +110,8 @@ function NewGame() {
       <div className="mx-auto max-w-2xl">
         <h1 className="font-display text-4xl tracking-tight">Start a story</h1>
         <p className="mt-2 text-muted-foreground">
-          Set the premise and the rules. Players take timed turns; AI polishes and stitches the chapter.
+          Set the premise and the rules. Players take timed turns; AI polishes and stitches the
+          chapter.
         </p>
 
         <div className="mt-8 rounded-xl border border-primary/40 bg-card p-4">
@@ -111,7 +125,13 @@ function NewGame() {
             value={idea}
             onChange={(e) => setIdea(e.target.value)}
           />
-          <Button variant="outline" size="sm" className="mt-3" disabled={thinking} onClick={() => void architect()}>
+          <Button
+            variant="outline"
+            size="sm"
+            className="mt-3"
+            disabled={thinking}
+            onClick={() => void architect()}
+          >
             {thinking ? "Drafting…" : "Draft a premise"}
           </Button>
         </div>
@@ -156,7 +176,10 @@ function NewGame() {
             </div>
             <div>
               <Label>Context players see</Label>
-              <Select value={visibility} onValueChange={(v) => setVisibility(v as typeof visibility)}>
+              <Select
+                value={visibility}
+                onValueChange={(v) => setVisibility(v as typeof visibility)}
+              >
                 <SelectTrigger className="mt-1.5">
                   <SelectValue />
                 </SelectTrigger>
@@ -219,7 +242,10 @@ function NewGame() {
             </div>
             <div>
               <Label>AI polish</Label>
-              <Select value={polishStyle} onValueChange={(v) => setPolishStyle(v as typeof polishStyle)}>
+              <Select
+                value={polishStyle}
+                onValueChange={(v) => setPolishStyle(v as typeof polishStyle)}
+              >
                 <SelectTrigger className="mt-1.5">
                   <SelectValue />
                 </SelectTrigger>

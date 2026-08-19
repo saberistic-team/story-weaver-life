@@ -1,6 +1,13 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
-import { AIUnavailableError, generateChallenge, polishText, synthesizeChapter } from "./ai.server";
+import {
+  AIUnavailableError,
+  checkContinuity,
+  generateChallenge,
+  polishText,
+  synthesizeChapter,
+} from "./ai.server";
+import { auditLog } from "./audit.server";
 import { awardAchievementInternal } from "./depth.server";
 
 type Admin = SupabaseClient<Database>;
@@ -20,9 +27,16 @@ const slugify = (s: string) =>
 async function awardSparks(db: Admin, userId: string, amount: number, reason: string) {
   if (amount <= 0) return;
   await db.from("spark_transactions").insert({ user_id: userId, amount, reason });
-  const { data: wallet } = await db.from("wallets").select("sparks").eq("user_id", userId).maybeSingle();
+  const { data: wallet } = await db
+    .from("wallets")
+    .select("sparks")
+    .eq("user_id", userId)
+    .maybeSingle();
   if (wallet) {
-    await db.from("wallets").update({ sparks: wallet.sparks + amount }).eq("user_id", userId);
+    await db
+      .from("wallets")
+      .update({ sparks: wallet.sparks + amount })
+      .eq("user_id", userId);
   } else {
     await db.from("wallets").insert({ user_id: userId, sparks: amount });
   }
@@ -31,7 +45,11 @@ async function awardSparks(db: Admin, userId: string, amount: number, reason: st
 async function awardStoryPoints(db: Admin, userId: string, amount: number, reason: string) {
   if (amount <= 0) return;
   await db.from("story_point_transactions").insert({ user_id: userId, amount, reason });
-  const { data: p } = await db.from("profiles").select("story_points").eq("id", userId).maybeSingle();
+  const { data: p } = await db
+    .from("profiles")
+    .select("story_points")
+    .eq("id", userId)
+    .maybeSingle();
   if (p) {
     const total = p.story_points + amount;
     await db
@@ -41,8 +59,23 @@ async function awardStoryPoints(db: Admin, userId: string, amount: number, reaso
   }
 }
 
-async function logEvent(db: Admin, gameId: string, kind: string, payload: Record<string, string | number | boolean | null | undefined>) {
+async function logEvent(
+  db: Admin,
+  gameId: string,
+  kind: string,
+  payload: Record<string, string | number | boolean | null | undefined>,
+) {
   await db.from("game_events").insert({ game_id: gameId, kind, payload: payload as never });
+}
+
+async function fetchSeriesBible(db: Admin, seriesId: string) {
+  const { data } = await db
+    .from("story_bible_entries")
+    .select("kind, name, body")
+    .eq("series_id", seriesId)
+    .eq("state", "canon")
+    .eq("visibility", "public");
+  return data ?? [];
 }
 
 /** Creates the profile/wallet rows for a freshly signed-up account. Idempotent. */
@@ -52,13 +85,21 @@ export async function ensureProfile(
   displayName: string | null,
 ): Promise<{ created: boolean; username: string }> {
   const db = await admin();
-  const { data: existing } = await db.from("profiles").select("username").eq("id", userId).maybeSingle();
+  const { data: existing } = await db
+    .from("profiles")
+    .select("username")
+    .eq("id", userId)
+    .maybeSingle();
   if (existing) return { created: false, username: existing.username };
 
   const base = slugify(displayName || email?.split("@")[0] || "storyteller") || "storyteller";
   let username = base;
   for (let i = 0; i < 6; i++) {
-    const { data: taken } = await db.from("profiles").select("id").eq("username", username).maybeSingle();
+    const { data: taken } = await db
+      .from("profiles")
+      .select("id")
+      .eq("username", username)
+      .maybeSingle();
     if (!taken) break;
     username = `${base}-${Math.floor(Math.random() * 9000 + 1000)}`;
   }
@@ -71,7 +112,9 @@ export async function ensureProfile(
   });
   await db.from("wallets").insert({ user_id: userId, sparks: 100 });
   await db.from("user_roles").insert({ user_id: userId, role: "user" });
-  await db.from("spark_transactions").insert({ user_id: userId, amount: 100, reason: "welcome_bonus" });
+  await db
+    .from("spark_transactions")
+    .insert({ user_id: userId, amount: 100, reason: "welcome_bonus" });
   return { created: true, username };
 }
 
@@ -109,13 +152,18 @@ export async function joinGame(userId: string, gameId: string) {
  * Authoritative turn engine. Expires stale turns, starts the next one, completes
  * the game when all rounds are used. Safe to call from any client at any time.
  */
-export async function advanceGame(gameId: string): Promise<{ status: string; activeTurnId: string | null }> {
+export async function advanceGame(
+  gameId: string,
+): Promise<{ status: string; activeTurnId: string | null }> {
   const db = await admin();
   const { data: game } = await db
     .from("games")
-    .select("id, status, rounds, turn_seconds, min_players, current_round, ai_gm_enabled, premise, genre, challenge_frequency")
+    .select(
+      "id, status, rounds, turn_seconds, min_players, current_round, ai_gm_enabled, premise, genre, challenge_frequency, series_id",
+    )
     .eq("id", gameId)
     .maybeSingle();
+
   if (!game) throw new Error("Game not found");
   if (game.status === "completed" || game.status === "published" || game.status === "cancelled") {
     return { status: game.status, activeTurnId: null };
@@ -123,7 +171,11 @@ export async function advanceGame(gameId: string): Promise<{ status: string; act
 
   const [{ data: players }, { data: turns }] = await Promise.all([
     db.from("game_players").select("user_id, seat_order").eq("game_id", gameId).order("seat_order"),
-    db.from("game_turns").select("id, turn_index, player_id, status, ends_at").eq("game_id", gameId).order("turn_index"),
+    db
+      .from("game_turns")
+      .select("id, turn_index, player_id, status, ends_at")
+      .eq("game_id", gameId)
+      .order("turn_index"),
   ]);
   const seats = players ?? [];
   const turnRows = turns ?? [];
@@ -133,14 +185,18 @@ export async function advanceGame(gameId: string): Promise<{ status: string; act
     const expired = active.ends_at ? new Date(active.ends_at).getTime() < Date.now() : false;
     if (!expired) return { status: game.status, activeTurnId: active.id };
     await db.from("game_turns").update({ status: "timed_out" }).eq("id", active.id);
-    await logEvent(db, gameId, "turn_timed_out", { turn_id: active.id, player_id: active.player_id });
+    await logEvent(db, gameId, "turn_timed_out", {
+      turn_id: active.id,
+      player_id: active.player_id,
+    });
   }
 
   const used = turnRows.filter((t) => t.id !== active?.id || true).length;
   const nextIndex = turnRows.length === 0 ? 0 : Math.max(...turnRows.map((t) => t.turn_index)) + 1;
 
   if (seats.length < Math.max(2, game.min_players)) {
-    if (game.status !== "waiting") await db.from("games").update({ status: "waiting" }).eq("id", gameId);
+    if (game.status !== "waiting")
+      await db.from("games").update({ status: "waiting" }).eq("id", gameId);
     return { status: "waiting", activeTurnId: null };
   }
 
@@ -155,26 +211,41 @@ export async function advanceGame(gameId: string): Promise<{ status: string; act
   const round = Math.floor(nextIndex / seats.length) + 1;
 
   let challengeId: string | null = null;
-  if (game.ai_gm_enabled && round > 1 && (round - 1) % Math.max(1, game.challenge_frequency) === 0) {
+  if (
+    game.ai_gm_enabled &&
+    round > 1 &&
+    (round - 1) % Math.max(1, game.challenge_frequency) === 0
+  ) {
     try {
-      const { data: recent } = await db
-        .from("contributions")
-        .select("original_text")
-        .eq("game_id", gameId)
-        .order("position", { ascending: false })
-        .limit(3);
+      const [{ data: recent }, bible] = await Promise.all([
+        db
+          .from("contributions")
+          .select("original_text")
+          .eq("game_id", gameId)
+          .order("position", { ascending: false })
+          .limit(3),
+        game.series_id ? fetchSeriesBible(db, game.series_id) : Promise.resolve([]),
+      ]);
       const challenge = await generateChallenge(
-        game.premise,
+        [game.premise, ...bible.map((b) => `${b.name}: ${b.body}`)].join("\n"),
         (recent ?? []).map((r) => r.original_text).reverse(),
         game.genre,
       );
       const { data: inserted } = await db
         .from("game_challenges")
-        .insert({ game_id: gameId, round, kind: challenge.kind, text: challenge.text, reward_sparks: 15 })
+        .insert({
+          game_id: gameId,
+          round,
+          kind: challenge.kind,
+          text: challenge.text,
+          reward_sparks: 15,
+        })
         .select("id")
         .maybeSingle();
       challengeId = inserted?.id ?? null;
-      if (challengeId) await logEvent(db, gameId, "challenge_issued", { text: challenge.text, round });
+      if (challengeId)
+        await logEvent(db, gameId, "challenge_issued", { text: challenge.text, round });
+      await auditLog(db, "ai_challenge", null, "game", gameId, { round, model: challenge.model });
     } catch (error) {
       if (!(error instanceof AIUnavailableError)) console.error("challenge failed", error);
     }
@@ -261,11 +332,19 @@ export async function submitTurn(userId: string, gameId: string, text: string) {
   let polished: string | null = null;
   if (contribution && game.polish_style !== "disabled") {
     let voice: string | null = null;
+    let bible: { kind: string; name: string; body: string }[] = [];
     if (game.series_id) {
-      const { data: series } = await db.from("series").select("voice").eq("id", game.series_id).maybeSingle();
+      const { data: series } = await db
+        .from("series")
+        .select("voice")
+        .eq("id", game.series_id)
+        .maybeSingle();
       voice = series?.voice ?? null;
+      bible = await fetchSeriesBible(db, game.series_id);
     }
     try {
+      const continuity =
+        bible.length > 0 ? await checkContinuity(body, bible) : { ok: true, note: null };
       const result = await polishText(body, game.polish_style, voice);
       await db.from("contribution_polish_versions").insert({
         contribution_id: contribution.id,
@@ -275,6 +354,12 @@ export async function submitTurn(userId: string, gameId: string, text: string) {
         is_current: true,
       });
       polished = result.text;
+      await auditLog(db, "ai_polish", userId, "contribution", contribution.id, {
+        model: result.model,
+        style: game.polish_style,
+        continuity_ok: continuity.ok,
+        continuity_note: continuity.note,
+      });
     } catch (err) {
       if (!(err instanceof AIUnavailableError)) console.error("polish failed", err);
     }
@@ -282,6 +367,11 @@ export async function submitTurn(userId: string, gameId: string, text: string) {
 
   const next = await advanceGame(gameId);
   if (next.status === "processing") await finalizeGame(gameId);
+
+  await auditLog(db, "turn_submit", userId, "game", gameId, {
+    turn_id: turn.id,
+    contribution_id: contribution?.id,
+  });
 
   return { ok: true, contributionId: contribution?.id ?? null, polished, gameStatus: next.status };
 }
@@ -315,19 +405,32 @@ export async function finalizeGame(gameId: string) {
     author_id: string;
     contribution_polish_versions: { polished_text: string }[];
   }[];
-  const passages = rows.map((r) => r.contribution_polish_versions?.[0]?.polished_text ?? r.original_text);
+  const passages = rows.map(
+    (r) => r.contribution_polish_versions?.[0]?.polished_text ?? r.original_text,
+  );
 
   let voice: string | null = null;
+  let bible: { kind: string; name: string; body: string }[] = [];
   if (game.series_id) {
-    const { data: series } = await db.from("series").select("voice").eq("id", game.series_id).maybeSingle();
+    const { data: series } = await db
+      .from("series")
+      .select("voice")
+      .eq("id", game.series_id)
+      .maybeSingle();
     voice = series?.voice ?? null;
+    bible = await fetchSeriesBible(db, game.series_id);
   }
 
   let published = passages.join("\n\n");
+  let synthesisModel: string | null = null;
   try {
     if (passages.length > 0) {
-      const result = await synthesizeChapter(game.title, game.premise, passages, voice);
+      const premise = [game.premise, ...bible.map((b) => `${b.name} (${b.kind}): ${b.body}`)].join(
+        "\n",
+      );
+      const result = await synthesizeChapter(game.title, premise, passages, voice);
       published = result.text;
+      synthesisModel = result.model;
     }
   } catch (err) {
     if (!(err instanceof AIUnavailableError)) console.error("synthesis failed", err);
@@ -335,7 +438,10 @@ export async function finalizeGame(gameId: string) {
 
   const seriesId = game.series_id;
   if (!seriesId) {
-    await db.from("games").update({ status: "completed", completed_at: new Date().toISOString() }).eq("id", gameId);
+    await db
+      .from("games")
+      .update({ status: "completed", completed_at: new Date().toISOString() })
+      .eq("id", gameId);
     return { chapterSlug: null };
   }
 
@@ -386,6 +492,10 @@ export async function finalizeGame(gameId: string) {
     .update({ status: "published", completed_at: new Date().toISOString() })
     .eq("id", gameId);
   await logEvent(db, gameId, "chapter_published", { chapter_id: chapter?.id });
+  await auditLog(db, "chapter_publish", game.host_id, "chapter", chapter?.id ?? gameId, {
+    game_id: gameId,
+    model: synthesisModel,
+  });
 
   return { chapterSlug: chapter?.slug ?? null };
 }
@@ -428,7 +538,9 @@ export async function createGame(userId: string, input: CreateGameInput) {
     .maybeSingle();
   if (error || !game) throw new Error(error?.message ?? "Could not create the game");
 
-  await db.from("game_players").insert({ game_id: game.id, user_id: userId, seat_order: 0, is_host: true });
+  await db
+    .from("game_players")
+    .insert({ game_id: game.id, user_id: userId, seat_order: 0, is_host: true });
   await logEvent(db, game.id, "game_created", { host_id: userId });
   return { id: game.id };
 }
@@ -436,16 +548,33 @@ export async function createGame(userId: string, input: CreateGameInput) {
 export async function fetchMyState(userId: string) {
   const db = await admin();
   const [{ data: profile }, { data: wallet }, { data: memberships }] = await Promise.all([
-    db.from("profiles").select("id, username, display_name, avatar_url, story_points, level, is_creator, onboarded").eq("id", userId).maybeSingle(),
+    db
+      .from("profiles")
+      .select("id, username, display_name, avatar_url, story_points, level, is_creator, onboarded")
+      .eq("id", userId)
+      .maybeSingle(),
     db.from("wallets").select("sparks").eq("user_id", userId).maybeSingle(),
-    db.from("game_players").select("game_id, games(id, title, status, genre, current_round, rounds)").eq("user_id", userId).limit(20),
+    db
+      .from("game_players")
+      .select("game_id, games(id, title, status, genre, current_round, rounds)")
+      .eq("user_id", userId)
+      .limit(20),
   ]);
   return {
     profile: profile ?? null,
     sparks: wallet?.sparks ?? 0,
-    games: ((memberships ?? []) as unknown as {
-      games: { id: string; title: string; status: string; genre: string; current_round: number; rounds: number } | null;
-    }[])
+    games: (
+      (memberships ?? []) as unknown as {
+        games: {
+          id: string;
+          title: string;
+          status: string;
+          genre: string;
+          current_round: number;
+          rounds: number;
+        } | null;
+      }[]
+    )
       .map((m) => m.games)
       .filter(Boolean),
   };
