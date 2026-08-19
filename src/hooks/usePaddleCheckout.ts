@@ -30,8 +30,6 @@ export function usePaddleCheckout() {
       if (options.customerEmail) checkoutOptions.customer = { email: options.customerEmail };
       if (options.customData) checkoutOptions.customData = options.customData;
       paddle.Checkout.open(checkoutOptions);
-
-
     } finally {
       setLoading(false);
     }

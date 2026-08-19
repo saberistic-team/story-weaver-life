@@ -24,8 +24,6 @@ declare global {
   }
 }
 
-
-
 export function getPaddleEnvironment(): "sandbox" | "live" {
   return clientToken?.startsWith("test_") ? "sandbox" : "live";
 }
