@@ -88,6 +88,11 @@ export function SiteHeader() {
             <>
               <NotificationBell />
               <Button asChild variant="ghost" size="sm" className="hidden sm:inline-flex">
+                <Link to="/pricing">
+                  <Crown className="mr-1 size-3.5" /> Premium
+                </Link>
+              </Button>
+              <Button asChild variant="ghost" size="sm" className="hidden sm:inline-flex">
                 <Link to="/wallet">Wallet</Link>
               </Button>
               <Button asChild variant="ghost" size="sm" className="hidden sm:inline-flex">
