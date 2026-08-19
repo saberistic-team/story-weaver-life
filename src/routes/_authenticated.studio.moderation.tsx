@@ -108,7 +108,7 @@ function ModerationPage() {
                     size="sm"
                     variant="outline"
                     onClick={async () => {
-                      await resolve({ data: { reportId: r.id } });
+                      await resolve({ data: { reportId: r.id, targetType: r.target_type, targetId: r.target_id } });
                     }}
                   >
                     <Check className="mr-1 size-4" /> Resolve
@@ -117,7 +117,9 @@ function ModerationPage() {
                     size="sm"
                     variant="destructive"
                     onClick={async () => {
-                      await resolve({ data: { reportId: r.id, hideTarget: true } });
+                      await resolve({
+                        data: { reportId: r.id, targetType: r.target_type, targetId: r.target_id, hideTarget: true },
+                      });
                     }}
                   >
                     <X className="mr-1 size-4" /> Hide target
