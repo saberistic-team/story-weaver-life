@@ -29,6 +29,11 @@ export const getStudioChapters = createServerFn({ method: "GET" })
   .inputValidator((data: { seriesId: string }) => data)
   .handler(async ({ data, context }) => fetchStudioChaptersForSeries(context.userId, data.seriesId));
 
+export const getStudioChapter = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: { slug: string }) => data)
+  .handler(async ({ data, context }) => fetchStudioChapter(context.userId, data.slug));
+
 export const getStudioBible = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .inputValidator((data: { seriesId: string }) => data)
