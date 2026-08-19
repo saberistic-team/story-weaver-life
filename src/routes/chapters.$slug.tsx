@@ -1,13 +1,15 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { ArrowLeft, ArrowRight, Sparkles, Wand2 } from "lucide-react";
+import { ArrowLeft, ArrowRight, BookOpen, Sparkles, Wand2 } from "lucide-react";
 
 import { PageShell } from "@/components/site-shell";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { getChapter, getConfig } from "@/lib/content.functions";
+import { saveReadingProgress } from "@/lib/depth.functions";
 import { useSession } from "@/hooks/use-session";
+import { useServerFn } from "@tanstack/react-start";
 
 const chapterQuery = (slug: string) =>
   queryOptions({
@@ -67,6 +69,7 @@ function ChapterPage() {
   const { user } = useSession();
   const [readCount, setReadCount] = useState(0);
   const [showBehind, setShowBehind] = useState(false);
+  const saveProgress = useServerFn(saveReadingProgress);
 
   const { chapter, series, creator, prev, next, contributions, contributors, comments, chapterNumber } = data;
 
@@ -78,7 +81,18 @@ function ChapterPage() {
     localStorage.setItem(READ_KEY, JSON.stringify(list));
     localStorage.setItem("storypass:resume", `/chapters/${chapter.slug}`);
     setReadCount(list.length);
-  }, [chapter.id, chapter.slug]);
+
+    if (user) {
+      void saveProgress({
+        data: {
+          chapterId: chapter.id,
+          seriesId: chapter.series_id,
+          percent: 100,
+          completed: true,
+        },
+      });
+    }
+  }, [chapter.id, chapter.slug, chapter.series_id, user, saveProgress]);
 
   const gated = !user && readCount > config.guestFreeChapters;
   const paragraphs = chapter.published_content.split(/\n\n+/).filter(Boolean);
@@ -87,13 +101,19 @@ function ChapterPage() {
   return (
     <PageShell>
       <div className="mx-auto max-w-2xl">
-        <Link
-          to="/series/$slug"
-          params={{ slug: series.slug }}
-          className="text-sm text-primary underline-offset-4 hover:underline"
-        >
-          {series.title}
-        </Link>
+        <div className="flex flex-wrap items-center gap-2 text-sm text-primary">
+          <Link to="/series/$slug" params={{ slug: series.slug }} className="underline-offset-4 hover:underline">
+            {series.title}
+          </Link>
+          <span className="text-muted-foreground">·</span>
+          <Link
+            to="/series/$slug/bible"
+            params={{ slug: series.slug }}
+            className="inline-flex items-center gap-1 underline-offset-4 hover:underline"
+          >
+            <BookOpen className="size-3.5" /> Story Bible
+          </Link>
+        </div>
         <p className="mt-4 text-xs tracking-[0.2em] text-muted-foreground uppercase">
           Chapter {chapterNumber}
         </p>
