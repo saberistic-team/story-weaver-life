@@ -127,7 +127,7 @@ function PricingPage() {
                     void openCheckout({
                       priceId,
                       quantity: 1,
-                      customerEmail: user.email ?? undefined,
+                      ...(user.email ? { customerEmail: user.email } : {}),
                       customData: { userId: user.id },
                       successUrl: `${window.location.origin}/checkout/success`,
                     });
