@@ -28,6 +28,10 @@ export const Route = createFileRoute("/_authenticated/play/")({
 function PlayHub() {
   const games = useQuery({ queryKey: ["playable-games"], queryFn: () => getPlayableGames() });
   const me = useQuery({ queryKey: ["my-state"], queryFn: () => getMyState() });
+  const continueReading = useQuery({
+    queryKey: ["continue-reading"],
+    queryFn: () => getContinueReading(),
+  });
 
   return (
     <PageShell>
@@ -49,6 +53,32 @@ function PlayHub() {
           </Button>
         </div>
       </div>
+
+      {continueReading.data && continueReading.data.length > 0 ? (
+        <section className="mt-10">
+          <div className="flex items-center gap-2">
+            <BookOpen className="size-4 text-primary" />
+            <h2 className="font-display text-xl">Continue reading</h2>
+          </div>
+          <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {continueReading.data.map((item) => (
+              <Link
+                key={item.chapter_id}
+                to="/chapters/$slug"
+                params={{ slug: item.chapter_slug }}
+                className="rounded-xl border border-border bg-card p-4 transition-colors hover:border-primary/50"
+              >
+                <p className="text-xs text-muted-foreground">{item.series_title}</p>
+                <h3 className="font-display mt-1 text-lg leading-tight">{item.chapter_title}</h3>
+                <div className="mt-3 flex items-center gap-2">
+                  <Progress value={item.percent} className="h-1.5 flex-1" />
+                  <span className="text-xs text-muted-foreground">{item.percent}%</span>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
+      ) : null}
 
       {me.data?.games && me.data.games.length > 0 ? (
         <section className="mt-10">
