@@ -12,6 +12,7 @@ import {
   getReadingProgress,
   fetchContinueReading,
   fetchUserAchievements,
+  awardAchievementInternal,
   type AchievementDef,
   type BibleEntry,
   type CanonNode,
