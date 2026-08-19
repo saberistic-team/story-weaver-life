@@ -15,6 +15,7 @@ import {
   blockFn,
   commentFn,
   deleteCommentFn,
+  getBlockedIds,
   getComments,
   getMyLikes,
   likeFn,
