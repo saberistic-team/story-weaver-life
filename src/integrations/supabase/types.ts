@@ -14,16 +14,1299 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      achievements: {
+        Row: {
+          code: string
+          description: string
+          icon: string
+          name: string
+          story_points: number
+        }
+        Insert: {
+          code: string
+          description: string
+          icon?: string
+          name: string
+          story_points?: number
+        }
+        Update: {
+          code?: string
+          description?: string
+          icon?: string
+          name?: string
+          story_points?: number
+        }
+        Relationships: []
+      }
+      ai_jobs: {
+        Row: {
+          created_at: string
+          error: string | null
+          feature: string
+          id: string
+          model: string | null
+          provider: string
+          result_meta: Json
+          status: Database["public"]["Enums"]["ai_job_status"]
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          error?: string | null
+          feature: string
+          id?: string
+          model?: string | null
+          provider?: string
+          result_meta?: Json
+          status?: Database["public"]["Enums"]["ai_job_status"]
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          error?: string | null
+          feature?: string
+          id?: string
+          model?: string | null
+          provider?: string
+          result_meta?: Json
+          status?: Database["public"]["Enums"]["ai_job_status"]
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      app_config: {
+        Row: {
+          key: string
+          updated_at: string
+          value: Json
+        }
+        Insert: {
+          key: string
+          updated_at?: string
+          value: Json
+        }
+        Update: {
+          key?: string
+          updated_at?: string
+          value?: Json
+        }
+        Relationships: []
+      }
+      books: {
+        Row: {
+          cover_url: string | null
+          created_at: string
+          description: string
+          id: string
+          published_at: string | null
+          sequence: number
+          series_id: string
+          slug: string
+          status: Database["public"]["Enums"]["book_status"]
+          subtitle: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          cover_url?: string | null
+          created_at?: string
+          description?: string
+          id?: string
+          published_at?: string | null
+          sequence?: number
+          series_id: string
+          slug: string
+          status?: Database["public"]["Enums"]["book_status"]
+          subtitle?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          cover_url?: string | null
+          created_at?: string
+          description?: string
+          id?: string
+          published_at?: string | null
+          sequence?: number
+          series_id?: string
+          slug?: string
+          status?: Database["public"]["Enums"]["book_status"]
+          subtitle?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "books_series_id_fkey"
+            columns: ["series_id"]
+            isOneToOne: false
+            referencedRelation: "series"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      chapter_contributors: {
+        Row: {
+          chapter_id: string
+          contribution_count: number
+          id: string
+          user_id: string
+        }
+        Insert: {
+          chapter_id: string
+          contribution_count?: number
+          id?: string
+          user_id: string
+        }
+        Update: {
+          chapter_id?: string
+          contribution_count?: number
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chapter_contributors_chapter_id_fkey"
+            columns: ["chapter_id"]
+            isOneToOne: false
+            referencedRelation: "chapters"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      chapters: {
+        Row: {
+          book_id: string | null
+          cover_url: string | null
+          created_at: string
+          id: string
+          is_canon: boolean
+          is_published: boolean
+          like_count: number
+          published_at: string | null
+          published_content: string
+          raw_content: string
+          read_count: number
+          sequence: number
+          series_id: string
+          slug: string
+          source_game_id: string | null
+          status: Database["public"]["Enums"]["content_status"]
+          subtitle: string | null
+          summary: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          book_id?: string | null
+          cover_url?: string | null
+          created_at?: string
+          id?: string
+          is_canon?: boolean
+          is_published?: boolean
+          like_count?: number
+          published_at?: string | null
+          published_content?: string
+          raw_content?: string
+          read_count?: number
+          sequence?: number
+          series_id: string
+          slug: string
+          source_game_id?: string | null
+          status?: Database["public"]["Enums"]["content_status"]
+          subtitle?: string | null
+          summary?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          book_id?: string | null
+          cover_url?: string | null
+          created_at?: string
+          id?: string
+          is_canon?: boolean
+          is_published?: boolean
+          like_count?: number
+          published_at?: string | null
+          published_content?: string
+          raw_content?: string
+          read_count?: number
+          sequence?: number
+          series_id?: string
+          slug?: string
+          source_game_id?: string | null
+          status?: Database["public"]["Enums"]["content_status"]
+          subtitle?: string | null
+          summary?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chapters_book_id_fkey"
+            columns: ["book_id"]
+            isOneToOne: false
+            referencedRelation: "books"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "chapters_series_id_fkey"
+            columns: ["series_id"]
+            isOneToOne: false
+            referencedRelation: "series"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "chapters_source_game_id_fkey"
+            columns: ["source_game_id"]
+            isOneToOne: false
+            referencedRelation: "games"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      comments: {
+        Row: {
+          body: string
+          created_at: string
+          id: string
+          status: Database["public"]["Enums"]["content_status"]
+          target_id: string
+          target_type: string
+          user_id: string
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          id?: string
+          status?: Database["public"]["Enums"]["content_status"]
+          target_id: string
+          target_type: string
+          user_id: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          id?: string
+          status?: Database["public"]["Enums"]["content_status"]
+          target_id?: string
+          target_type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      contribution_polish_versions: {
+        Row: {
+          contribution_id: string
+          created_at: string
+          id: string
+          is_current: boolean
+          model: string | null
+          polished_text: string
+          style: Database["public"]["Enums"]["polish_style"]
+        }
+        Insert: {
+          contribution_id: string
+          created_at?: string
+          id?: string
+          is_current?: boolean
+          model?: string | null
+          polished_text: string
+          style?: Database["public"]["Enums"]["polish_style"]
+        }
+        Update: {
+          contribution_id?: string
+          created_at?: string
+          id?: string
+          is_current?: boolean
+          model?: string | null
+          polished_text?: string
+          style?: Database["public"]["Enums"]["polish_style"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contribution_polish_versions_contribution_id_fkey"
+            columns: ["contribution_id"]
+            isOneToOne: false
+            referencedRelation: "contributions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      contributions: {
+        Row: {
+          author_id: string
+          chapter_id: string | null
+          char_count: number
+          created_at: string
+          game_id: string
+          id: string
+          original_text: string
+          position: number
+          status: Database["public"]["Enums"]["content_status"]
+          turn_id: string | null
+        }
+        Insert: {
+          author_id: string
+          chapter_id?: string | null
+          char_count?: number
+          created_at?: string
+          game_id: string
+          id?: string
+          original_text: string
+          position?: number
+          status?: Database["public"]["Enums"]["content_status"]
+          turn_id?: string | null
+        }
+        Update: {
+          author_id?: string
+          chapter_id?: string | null
+          char_count?: number
+          created_at?: string
+          game_id?: string
+          id?: string
+          original_text?: string
+          position?: number
+          status?: Database["public"]["Enums"]["content_status"]
+          turn_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contributions_chapter_id_fkey"
+            columns: ["chapter_id"]
+            isOneToOne: false
+            referencedRelation: "chapters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contributions_game_id_fkey"
+            columns: ["game_id"]
+            isOneToOne: false
+            referencedRelation: "games"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contributions_turn_id_fkey"
+            columns: ["turn_id"]
+            isOneToOne: false
+            referencedRelation: "game_turns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      follows: {
+        Row: {
+          created_at: string
+          follower_id: string
+          id: string
+          target_id: string
+          target_type: string
+        }
+        Insert: {
+          created_at?: string
+          follower_id: string
+          id?: string
+          target_id: string
+          target_type: string
+        }
+        Update: {
+          created_at?: string
+          follower_id?: string
+          id?: string
+          target_id?: string
+          target_type?: string
+        }
+        Relationships: []
+      }
+      game_challenges: {
+        Row: {
+          created_at: string
+          game_id: string
+          id: string
+          kind: string
+          reward_sparks: number
+          round: number
+          text: string
+        }
+        Insert: {
+          created_at?: string
+          game_id: string
+          id?: string
+          kind?: string
+          reward_sparks?: number
+          round?: number
+          text: string
+        }
+        Update: {
+          created_at?: string
+          game_id?: string
+          id?: string
+          kind?: string
+          reward_sparks?: number
+          round?: number
+          text?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "game_challenges_game_id_fkey"
+            columns: ["game_id"]
+            isOneToOne: false
+            referencedRelation: "games"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      game_events: {
+        Row: {
+          created_at: string
+          game_id: string
+          id: string
+          kind: string
+          payload: Json
+        }
+        Insert: {
+          created_at?: string
+          game_id: string
+          id?: string
+          kind: string
+          payload?: Json
+        }
+        Update: {
+          created_at?: string
+          game_id?: string
+          id?: string
+          kind?: string
+          payload?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "game_events_game_id_fkey"
+            columns: ["game_id"]
+            isOneToOne: false
+            referencedRelation: "games"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      game_players: {
+        Row: {
+          game_id: string
+          id: string
+          is_host: boolean
+          joined_at: string
+          seat_order: number
+          user_id: string
+        }
+        Insert: {
+          game_id: string
+          id?: string
+          is_host?: boolean
+          joined_at?: string
+          seat_order: number
+          user_id: string
+        }
+        Update: {
+          game_id?: string
+          id?: string
+          is_host?: boolean
+          joined_at?: string
+          seat_order?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "game_players_game_id_fkey"
+            columns: ["game_id"]
+            isOneToOne: false
+            referencedRelation: "games"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      game_turns: {
+        Row: {
+          challenge_id: string | null
+          created_at: string
+          ends_at: string | null
+          game_id: string
+          id: string
+          player_id: string | null
+          round: number
+          starts_at: string | null
+          status: Database["public"]["Enums"]["turn_status"]
+          submitted_at: string | null
+          turn_index: number
+        }
+        Insert: {
+          challenge_id?: string | null
+          created_at?: string
+          ends_at?: string | null
+          game_id: string
+          id?: string
+          player_id?: string | null
+          round: number
+          starts_at?: string | null
+          status?: Database["public"]["Enums"]["turn_status"]
+          submitted_at?: string | null
+          turn_index: number
+        }
+        Update: {
+          challenge_id?: string | null
+          created_at?: string
+          ends_at?: string | null
+          game_id?: string
+          id?: string
+          player_id?: string | null
+          round?: number
+          starts_at?: string | null
+          status?: Database["public"]["Enums"]["turn_status"]
+          submitted_at?: string | null
+          turn_index?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "game_turns_challenge_id_fkey"
+            columns: ["challenge_id"]
+            isOneToOne: false
+            referencedRelation: "game_challenges"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "game_turns_game_id_fkey"
+            columns: ["game_id"]
+            isOneToOne: false
+            referencedRelation: "games"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      games: {
+        Row: {
+          ai_gm_enabled: boolean
+          audience_voting: boolean
+          book_id: string | null
+          canon_mode: Database["public"]["Enums"]["canon_mode"]
+          challenge_frequency: number
+          chapter_sequence: number | null
+          completed_at: string | null
+          cover_url: string | null
+          created_at: string
+          current_round: number
+          genre: string
+          host_id: string
+          id: string
+          invite_only: boolean
+          is_public: boolean
+          max_chars: number
+          max_players: number
+          min_players: number
+          polish_style: Database["public"]["Enums"]["polish_style"]
+          premise: string
+          reward_sparks: number
+          rounds: number
+          series_id: string | null
+          started_at: string | null
+          status: Database["public"]["Enums"]["game_status"]
+          title: string
+          turn_seconds: number
+          updated_at: string
+          visibility_mode: Database["public"]["Enums"]["visibility_mode"]
+        }
+        Insert: {
+          ai_gm_enabled?: boolean
+          audience_voting?: boolean
+          book_id?: string | null
+          canon_mode?: Database["public"]["Enums"]["canon_mode"]
+          challenge_frequency?: number
+          chapter_sequence?: number | null
+          completed_at?: string | null
+          cover_url?: string | null
+          created_at?: string
+          current_round?: number
+          genre: string
+          host_id: string
+          id?: string
+          invite_only?: boolean
+          is_public?: boolean
+          max_chars?: number
+          max_players?: number
+          min_players?: number
+          polish_style?: Database["public"]["Enums"]["polish_style"]
+          premise: string
+          reward_sparks?: number
+          rounds?: number
+          series_id?: string | null
+          started_at?: string | null
+          status?: Database["public"]["Enums"]["game_status"]
+          title: string
+          turn_seconds?: number
+          updated_at?: string
+          visibility_mode?: Database["public"]["Enums"]["visibility_mode"]
+        }
+        Update: {
+          ai_gm_enabled?: boolean
+          audience_voting?: boolean
+          book_id?: string | null
+          canon_mode?: Database["public"]["Enums"]["canon_mode"]
+          challenge_frequency?: number
+          chapter_sequence?: number | null
+          completed_at?: string | null
+          cover_url?: string | null
+          created_at?: string
+          current_round?: number
+          genre?: string
+          host_id?: string
+          id?: string
+          invite_only?: boolean
+          is_public?: boolean
+          max_chars?: number
+          max_players?: number
+          min_players?: number
+          polish_style?: Database["public"]["Enums"]["polish_style"]
+          premise?: string
+          reward_sparks?: number
+          rounds?: number
+          series_id?: string | null
+          started_at?: string | null
+          status?: Database["public"]["Enums"]["game_status"]
+          title?: string
+          turn_seconds?: number
+          updated_at?: string
+          visibility_mode?: Database["public"]["Enums"]["visibility_mode"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "games_book_id_fkey"
+            columns: ["book_id"]
+            isOneToOne: false
+            referencedRelation: "books"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "games_series_id_fkey"
+            columns: ["series_id"]
+            isOneToOne: false
+            referencedRelation: "series"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      likes: {
+        Row: {
+          created_at: string
+          id: string
+          target_id: string
+          target_type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          target_id: string
+          target_type: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          target_id?: string
+          target_type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      notifications: {
+        Row: {
+          body: string | null
+          created_at: string
+          id: string
+          kind: string
+          link: string | null
+          read_at: string | null
+          title: string
+          user_id: string
+        }
+        Insert: {
+          body?: string | null
+          created_at?: string
+          id?: string
+          kind: string
+          link?: string | null
+          read_at?: string | null
+          title: string
+          user_id: string
+        }
+        Update: {
+          body?: string | null
+          created_at?: string
+          id?: string
+          kind?: string
+          link?: string | null
+          read_at?: string | null
+          title?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      poll_options: {
+        Row: {
+          id: string
+          is_chosen: boolean
+          poll_id: string
+          sort_order: number
+          text: string
+          vote_count: number
+        }
+        Insert: {
+          id?: string
+          is_chosen?: boolean
+          poll_id: string
+          sort_order?: number
+          text: string
+          vote_count?: number
+        }
+        Update: {
+          id?: string
+          is_chosen?: boolean
+          poll_id?: string
+          sort_order?: number
+          text?: string
+          vote_count?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "poll_options_poll_id_fkey"
+            columns: ["poll_id"]
+            isOneToOne: false
+            referencedRelation: "polls"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      poll_votes: {
+        Row: {
+          created_at: string
+          id: string
+          option_id: string
+          poll_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          option_id: string
+          poll_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          option_id?: string
+          poll_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "poll_votes_option_id_fkey"
+            columns: ["option_id"]
+            isOneToOne: false
+            referencedRelation: "poll_options"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "poll_votes_poll_id_fkey"
+            columns: ["poll_id"]
+            isOneToOne: false
+            referencedRelation: "polls"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      polls: {
+        Row: {
+          chapter_id: string | null
+          closes_at: string | null
+          created_at: string
+          id: string
+          is_open: boolean
+          question: string
+          series_id: string
+        }
+        Insert: {
+          chapter_id?: string | null
+          closes_at?: string | null
+          created_at?: string
+          id?: string
+          is_open?: boolean
+          question?: string
+          series_id: string
+        }
+        Update: {
+          chapter_id?: string | null
+          closes_at?: string | null
+          created_at?: string
+          id?: string
+          is_open?: boolean
+          question?: string
+          series_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "polls_chapter_id_fkey"
+            columns: ["chapter_id"]
+            isOneToOne: false
+            referencedRelation: "chapters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "polls_series_id_fkey"
+            columns: ["series_id"]
+            isOneToOne: false
+            referencedRelation: "series"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          bio: string | null
+          created_at: string
+          display_name: string
+          favorite_genres: string[]
+          id: string
+          intents: string[]
+          is_creator: boolean
+          level: number
+          onboarded: boolean
+          story_points: number
+          streak_days: number
+          updated_at: string
+          username: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string
+          display_name: string
+          favorite_genres?: string[]
+          id: string
+          intents?: string[]
+          is_creator?: boolean
+          level?: number
+          onboarded?: boolean
+          story_points?: number
+          streak_days?: number
+          updated_at?: string
+          username: string
+        }
+        Update: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string
+          display_name?: string
+          favorite_genres?: string[]
+          id?: string
+          intents?: string[]
+          is_creator?: boolean
+          level?: number
+          onboarded?: boolean
+          story_points?: number
+          streak_days?: number
+          updated_at?: string
+          username?: string
+        }
+        Relationships: []
+      }
+      reading_progress: {
+        Row: {
+          chapter_id: string
+          completed: boolean
+          id: string
+          percent: number
+          series_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          chapter_id: string
+          completed?: boolean
+          id?: string
+          percent?: number
+          series_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          chapter_id?: string
+          completed?: boolean
+          id?: string
+          percent?: number
+          series_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reading_progress_chapter_id_fkey"
+            columns: ["chapter_id"]
+            isOneToOne: false
+            referencedRelation: "chapters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reading_progress_series_id_fkey"
+            columns: ["series_id"]
+            isOneToOne: false
+            referencedRelation: "series"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      reports: {
+        Row: {
+          created_at: string
+          id: string
+          reason: string
+          reporter_id: string
+          resolved: boolean
+          target_id: string
+          target_type: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          reason: string
+          reporter_id: string
+          resolved?: boolean
+          target_id: string
+          target_type: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          reason?: string
+          reporter_id?: string
+          resolved?: boolean
+          target_id?: string
+          target_type?: string
+        }
+        Relationships: []
+      }
+      series: {
+        Row: {
+          allow_forks: boolean
+          canon_mode: Database["public"]["Enums"]["canon_mode"]
+          cover_url: string | null
+          created_at: string
+          creator_id: string
+          description: string
+          follower_count: number
+          genre: string
+          id: string
+          is_public: boolean
+          polish_style: Database["public"]["Enums"]["polish_style"]
+          reader_count: number
+          slug: string
+          status: Database["public"]["Enums"]["content_status"]
+          tagline: string | null
+          title: string
+          universe_id: string | null
+          updated_at: string
+          voice: string | null
+        }
+        Insert: {
+          allow_forks?: boolean
+          canon_mode?: Database["public"]["Enums"]["canon_mode"]
+          cover_url?: string | null
+          created_at?: string
+          creator_id: string
+          description?: string
+          follower_count?: number
+          genre: string
+          id?: string
+          is_public?: boolean
+          polish_style?: Database["public"]["Enums"]["polish_style"]
+          reader_count?: number
+          slug: string
+          status?: Database["public"]["Enums"]["content_status"]
+          tagline?: string | null
+          title: string
+          universe_id?: string | null
+          updated_at?: string
+          voice?: string | null
+        }
+        Update: {
+          allow_forks?: boolean
+          canon_mode?: Database["public"]["Enums"]["canon_mode"]
+          cover_url?: string | null
+          created_at?: string
+          creator_id?: string
+          description?: string
+          follower_count?: number
+          genre?: string
+          id?: string
+          is_public?: boolean
+          polish_style?: Database["public"]["Enums"]["polish_style"]
+          reader_count?: number
+          slug?: string
+          status?: Database["public"]["Enums"]["content_status"]
+          tagline?: string | null
+          title?: string
+          universe_id?: string | null
+          updated_at?: string
+          voice?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "series_universe_id_fkey"
+            columns: ["universe_id"]
+            isOneToOne: false
+            referencedRelation: "universes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      spark_transactions: {
+        Row: {
+          amount: number
+          created_at: string
+          id: string
+          meta: Json
+          reason: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          id?: string
+          meta?: Json
+          reason: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          id?: string
+          meta?: Json
+          reason?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      story_bible_entries: {
+        Row: {
+          body: string
+          created_at: string
+          id: string
+          is_approved: boolean
+          kind: string
+          meta: Json
+          name: string
+          series_id: string
+          sort_order: number
+        }
+        Insert: {
+          body?: string
+          created_at?: string
+          id?: string
+          is_approved?: boolean
+          kind: string
+          meta?: Json
+          name: string
+          series_id: string
+          sort_order?: number
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          id?: string
+          is_approved?: boolean
+          kind?: string
+          meta?: Json
+          name?: string
+          series_id?: string
+          sort_order?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "story_bible_entries_series_id_fkey"
+            columns: ["series_id"]
+            isOneToOne: false
+            referencedRelation: "series"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      story_point_transactions: {
+        Row: {
+          amount: number
+          created_at: string
+          id: string
+          reason: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          id?: string
+          reason: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          id?: string
+          reason?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      universes: {
+        Row: {
+          created_at: string
+          creator_id: string
+          description: string | null
+          id: string
+          slug: string
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          creator_id: string
+          description?: string | null
+          id?: string
+          slug: string
+          title: string
+        }
+        Update: {
+          created_at?: string
+          creator_id?: string
+          description?: string | null
+          id?: string
+          slug?: string
+          title?: string
+        }
+        Relationships: []
+      }
+      user_achievements: {
+        Row: {
+          achievement_code: string
+          earned_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          achievement_code: string
+          earned_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          achievement_code?: string
+          earned_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_achievements_achievement_code_fkey"
+            columns: ["achievement_code"]
+            isOneToOne: false
+            referencedRelation: "achievements"
+            referencedColumns: ["code"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      wallets: {
+        Row: {
+          sparks: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          sparks?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          sparks?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      ai_job_status: "queued" | "running" | "succeeded" | "failed"
+      app_role: "admin" | "moderator" | "user"
+      book_status:
+        | "draft"
+        | "in_progress"
+        | "complete"
+        | "published"
+        | "archived"
+      canon_mode: "creator" | "collaborative" | "chaos"
+      content_status:
+        | "published"
+        | "reported"
+        | "under_review"
+        | "hidden"
+        | "removed"
+      game_status:
+        | "draft"
+        | "waiting"
+        | "active"
+        | "paused"
+        | "processing"
+        | "completed"
+        | "published"
+        | "cancelled"
+      polish_style: "light" | "balanced" | "cinematic" | "disabled"
+      turn_status:
+        | "pending"
+        | "active"
+        | "submitted"
+        | "timed_out"
+        | "skipped"
+        | "cancelled"
+      visibility_mode: "blind" | "contextual" | "open"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +1433,44 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      ai_job_status: ["queued", "running", "succeeded", "failed"],
+      app_role: ["admin", "moderator", "user"],
+      book_status: [
+        "draft",
+        "in_progress",
+        "complete",
+        "published",
+        "archived",
+      ],
+      canon_mode: ["creator", "collaborative", "chaos"],
+      content_status: [
+        "published",
+        "reported",
+        "under_review",
+        "hidden",
+        "removed",
+      ],
+      game_status: [
+        "draft",
+        "waiting",
+        "active",
+        "paused",
+        "processing",
+        "completed",
+        "published",
+        "cancelled",
+      ],
+      polish_style: ["light", "balanced", "cinematic", "disabled"],
+      turn_status: [
+        "pending",
+        "active",
+        "submitted",
+        "timed_out",
+        "skipped",
+        "cancelled",
+      ],
+      visibility_mode: ["blind", "contextual", "open"],
+    },
   },
 } as const
