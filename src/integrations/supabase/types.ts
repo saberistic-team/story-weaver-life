@@ -420,6 +420,36 @@ export type Database = {
           },
         ]
       }
+      creator_earnings: {
+        Row: {
+          amount_cents: number
+          created_at: string
+          creator_id: string
+          id: string
+          period: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          amount_cents?: number
+          created_at?: string
+          creator_id: string
+          id?: string
+          period: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          amount_cents?: number
+          created_at?: string
+          creator_id?: string
+          id?: string
+          period?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       follows: {
         Row: {
           created_at: string
@@ -918,6 +948,8 @@ export type Database = {
           onboarded: boolean
           story_points: number
           streak_days: number
+          stripe_customer_id: string | null
+          subscription_tier: string
           updated_at: string
           username: string
         }
@@ -935,6 +967,8 @@ export type Database = {
           onboarded?: boolean
           story_points?: number
           streak_days?: number
+          stripe_customer_id?: string | null
+          subscription_tier?: string
           updated_at?: string
           username: string
         }
@@ -952,6 +986,8 @@ export type Database = {
           onboarded?: boolean
           story_points?: number
           streak_days?: number
+          stripe_customer_id?: string | null
+          subscription_tier?: string
           updated_at?: string
           username?: string
         }
@@ -1046,6 +1082,7 @@ export type Database = {
           is_public: boolean
           polish_style: Database["public"]["Enums"]["polish_style"]
           reader_count: number
+          required_tier: string
           slug: string
           status: Database["public"]["Enums"]["content_status"]
           tagline: string | null
@@ -1067,6 +1104,7 @@ export type Database = {
           is_public?: boolean
           polish_style?: Database["public"]["Enums"]["polish_style"]
           reader_count?: number
+          required_tier?: string
           slug: string
           status?: Database["public"]["Enums"]["content_status"]
           tagline?: string | null
@@ -1088,6 +1126,7 @@ export type Database = {
           is_public?: boolean
           polish_style?: Database["public"]["Enums"]["polish_style"]
           reader_count?: number
+          required_tier?: string
           slug?: string
           status?: Database["public"]["Enums"]["content_status"]
           tagline?: string | null
@@ -1226,6 +1265,48 @@ export type Database = {
           created_at?: string
           id?: string
           reason?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      subscriptions: {
+        Row: {
+          cancel_at_period_end: boolean
+          created_at: string
+          current_period_end: string | null
+          id: string
+          provider: string
+          provider_customer_id: string | null
+          provider_subscription_id: string | null
+          status: string
+          tier: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          cancel_at_period_end?: boolean
+          created_at?: string
+          current_period_end?: string | null
+          id?: string
+          provider?: string
+          provider_customer_id?: string | null
+          provider_subscription_id?: string | null
+          status?: string
+          tier?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          cancel_at_period_end?: boolean
+          created_at?: string
+          current_period_end?: string | null
+          id?: string
+          provider?: string
+          provider_customer_id?: string | null
+          provider_subscription_id?: string | null
+          status?: string
+          tier?: string
+          updated_at?: string
           user_id?: string
         }
         Relationships: []
