@@ -61,7 +61,7 @@ export function SiteHeader() {
                 <Link to="/auth">Sign in</Link>
               </Button>
               <Button asChild size="sm">
-                <Link to="/auth" search={{ mode: "signup" }}>
+                <Link to="/auth">
                   <Sparkles className="size-4" /> Start free
                 </Link>
               </Button>
