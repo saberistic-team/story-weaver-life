@@ -94,6 +94,7 @@ function ChapterPage() {
   const doBlock = useServerFn(blockFn);
   const fetchComments = useServerFn(getComments);
   const fetchMyLikes = useServerFn(getMyLikes);
+  const fetchBlockedIds = useServerFn(getBlockedIds);
 
   const { chapter, series, creator, prev, next, contributions, contributors, chapterNumber } = data;
 
