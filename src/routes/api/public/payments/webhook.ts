@@ -43,8 +43,8 @@ async function handleSubscriptionCreated(data: any, env: PaddleEnv) {
         product_id: productId,
         price_id: priceId,
         status: status as string,
-        current_period_start: currentBillingPeriod?.startsAt as string | undefined,
-        current_period_end: currentBillingPeriod?.endsAt as string | undefined,
+        current_period_start: (currentBillingPeriod?.startsAt as string | undefined) ?? null,
+        current_period_end: (currentBillingPeriod?.endsAt as string | undefined) ?? null,
         environment: env,
         updated_at: new Date().toISOString(),
       },
@@ -59,8 +59,8 @@ async function handleSubscriptionUpdated(data: any, env: PaddleEnv) {
     .from("subscriptions")
     .update({
       status: status as string,
-      current_period_start: currentBillingPeriod?.startsAt as string | undefined,
-      current_period_end: currentBillingPeriod?.endsAt as string | undefined,
+      current_period_start: (currentBillingPeriod?.startsAt as string | undefined) ?? null,
+      current_period_end: (currentBillingPeriod?.endsAt as string | undefined) ?? null,
       cancel_at_period_end: scheduledChange?.action === "cancel",
       updated_at: new Date().toISOString(),
     })
