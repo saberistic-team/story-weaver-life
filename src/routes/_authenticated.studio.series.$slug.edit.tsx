@@ -9,7 +9,13 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { useServerFn } from "@tanstack/react-start";
@@ -138,20 +144,40 @@ function EditSeriesPage() {
               <CardContent className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="title">Title</Label>
-                  <Input id="title" value={title} onChange={(e) => setTitle(e.target.value)} required />
+                  <Input
+                    id="title"
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    required
+                  />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="tagline">Tagline</Label>
-                  <Input id="tagline" value={tagline} onChange={(e) => setTagline(e.target.value)} />
+                  <Input
+                    id="tagline"
+                    value={tagline}
+                    onChange={(e) => setTagline(e.target.value)}
+                  />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="description">Description</Label>
-                  <Textarea id="description" value={description} onChange={(e) => setDescription(e.target.value)} rows={5} required />
+                  <Textarea
+                    id="description"
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    rows={5}
+                    required
+                  />
                 </div>
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div className="space-y-2">
                     <Label htmlFor="genre">Genre</Label>
-                    <Input id="genre" value={genre} onChange={(e) => setGenre(e.target.value)} required />
+                    <Input
+                      id="genre"
+                      value={genre}
+                      onChange={(e) => setGenre(e.target.value)}
+                      required
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="voice">Voice</Label>
@@ -169,7 +195,10 @@ function EditSeriesPage() {
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div className="space-y-2">
                     <Label>Canon mode</Label>
-                    <Select value={canonMode} onValueChange={(v) => setCanonMode(v as typeof canonMode)}>
+                    <Select
+                      value={canonMode}
+                      onValueChange={(v) => setCanonMode(v as typeof canonMode)}
+                    >
                       <SelectTrigger>
                         <SelectValue />
                       </SelectTrigger>
@@ -182,7 +211,10 @@ function EditSeriesPage() {
                   </div>
                   <div className="space-y-2">
                     <Label>Polish style</Label>
-                    <Select value={polishStyle} onValueChange={(v) => setPolishStyle(v as typeof polishStyle)}>
+                    <Select
+                      value={polishStyle}
+                      onValueChange={(v) => setPolishStyle(v as typeof polishStyle)}
+                    >
                       <SelectTrigger>
                         <SelectValue />
                       </SelectTrigger>
@@ -247,7 +279,10 @@ function EditSeriesPage() {
               ) : (
                 <div className="divide-y divide-border">
                   {chapters.map((c) => (
-                    <div key={c.id} className="flex items-center justify-between py-3 first:pt-0 last:pb-0">
+                    <div
+                      key={c.id}
+                      className="flex items-center justify-between py-3 first:pt-0 last:pb-0"
+                    >
                       <div className="min-w-0">
                         <p className="truncate text-sm font-medium">{c.title}</p>
                         <div className="mt-1 flex gap-2">
@@ -260,12 +295,15 @@ function EditSeriesPage() {
                               Draft
                             </Badge>
                           )}
-                          {c.is_canon ? (
-                            <Badge className="text-[10px]">Canon</Badge>
-                          ) : null}
+                          {c.is_canon ? <Badge className="text-[10px]">Canon</Badge> : null}
                         </div>
                       </div>
-                      <Button asChild variant="ghost" size="sm" className="h-auto px-2 py-0 text-xs">
+                      <Button
+                        asChild
+                        variant="ghost"
+                        size="sm"
+                        className="h-auto px-2 py-0 text-xs"
+                      >
                         <Link to="/studio/chapters/$slug/edit" params={{ slug: c.slug }}>
                           Edit
                         </Link>

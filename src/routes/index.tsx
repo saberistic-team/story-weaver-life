@@ -20,7 +20,10 @@ export const Route = createFileRoute("/")({
         content:
           "Join a timed storytelling game, write a few sentences, and watch AI polish the table's turns into a published chapter. Read hundreds of chapters free.",
       },
-      { property: "og:title", content: "StoryWeaver — stories written together, one turn at a time" },
+      {
+        property: "og:title",
+        content: "StoryWeaver — stories written together, one turn at a time",
+      },
       {
         property: "og:description",
         content: "Humans make it unpredictable. AI makes it a book. Read free, then take a turn.",
@@ -41,7 +44,11 @@ const STEPS = [
   { icon: Users, title: "Join a table", body: "Two to twelve players, a premise, and a clock." },
   { icon: PenLine, title: "Write your turn", body: "A few sentences. Then you pass." },
   { icon: Wand2, title: "AI polishes", body: "Your words stay yours — the seams disappear." },
-  { icon: Sparkles, title: "Read the chapter", body: "The table's turns become a published chapter." },
+  {
+    icon: Sparkles,
+    title: "Read the chapter",
+    body: "The table's turns become a published chapter.",
+  },
 ];
 
 function Landing() {
@@ -60,9 +67,9 @@ function Landing() {
               <span className="text-primary"> one turn at a time.</span>
             </h1>
             <p className="mt-5 max-w-xl text-lg text-muted-foreground">
-              StoryWeaver is a storytelling game. Players take timed turns writing a few sentences each.
-              AI plays Game Master, polishes the prose, and weaves every turn into a real chapter —
-              with everyone's original words preserved.
+              StoryWeaver is a storytelling game. Players take timed turns writing a few sentences
+              each. AI plays Game Master, polishes the prose, and weaves every turn into a real
+              chapter — with everyone's original words preserved.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Button asChild size="lg">
@@ -89,8 +96,8 @@ function Landing() {
             <p className="font-display mt-4 text-xl leading-tight">The Lighthouse at Vela</p>
             <div className="prose-story mt-4 rounded-xl p-4 text-sm">
               <p>
-                The letter was postmarked eleven months from now, and the handwriting was unmistakably
-                her own.
+                The letter was postmarked eleven months from now, and the handwriting was
+                unmistakably her own.
               </p>
             </div>
             <div className="mt-4 rounded-xl border border-primary/40 p-3">

@@ -27,7 +27,9 @@ function SeriesChaptersTab() {
                 <span className="font-display w-8 shrink-0 text-lg text-primary">{c.sequence}</span>
                 <span className="min-w-0">
                   <span className="block font-semibold">{c.title}</span>
-                  <span className="mt-1 line-clamp-2 block text-sm text-muted-foreground">{c.summary}</span>
+                  <span className="mt-1 line-clamp-2 block text-sm text-muted-foreground">
+                    {c.summary}
+                  </span>
                 </span>
               </Link>
             </li>
@@ -50,7 +52,10 @@ function SeriesChaptersTab() {
                     <span className="text-muted-foreground">{pct}%</span>
                   </div>
                   <div className="mt-2 h-1.5 rounded-full bg-background">
-                    <div className="surface-ember h-full rounded-full" style={{ width: `${pct}%` }} />
+                    <div
+                      className="surface-ember h-full rounded-full"
+                      style={{ width: `${pct}%` }}
+                    />
                   </div>
                 </li>
               );

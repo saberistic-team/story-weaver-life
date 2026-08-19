@@ -2,7 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import { Clock, Sparkles, Users, Wand2 } from "lucide-react";
+import { Clock, Sparkles, Users, Wand2, Wifi, WifiOff } from "lucide-react";
 
 import { PageShell } from "@/components/site-shell";
 import { Badge } from "@/components/ui/badge";
@@ -46,6 +46,11 @@ function GameRoom() {
   const navigate = useNavigate();
   const [text, setText] = useState("");
   const [busy, setBusy] = useState(false);
+  const [optimisticContribs, setOptimisticContribs] = useState<
+    { id: string; original_text: string; author?: { display_name: string } | null }[]
+  >([]);
+  const [onlineIds, setOnlineIds] = useState<Set<string>>(new Set());
+  const [connected, setConnected] = useState(true);
   const joined = useRef(false);
 
   const game = useQuery({ queryKey: ["game", id], queryFn: () => getGame({ data: { id } }) });
@@ -54,17 +59,63 @@ function GameRoom() {
   // Realtime: any change to this game's tables re-reads authoritative state.
   useEffect(() => {
     const channel = supabase
-      .channel(`game:${id}`)
-      .on("postgres_changes", { event: "*", schema: "public", table: "game_turns", filter: `game_id=eq.${id}` }, refresh)
-      .on("postgres_changes", { event: "*", schema: "public", table: "contributions", filter: `game_id=eq.${id}` }, refresh)
-      .on("postgres_changes", { event: "*", schema: "public", table: "game_players", filter: `game_id=eq.${id}` }, refresh)
-      .on("postgres_changes", { event: "*", schema: "public", table: "games", filter: `id=eq.${id}` }, refresh)
-      .subscribe();
+      .channel(`game:${id}`, {
+        config: { presence: { key: user?.id ?? "guest" } },
+      })
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "game_turns", filter: `game_id=eq.${id}` },
+        refresh,
+      )
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "contributions", filter: `game_id=eq.${id}` },
+        () => {
+          setOptimisticContribs([]);
+          refresh();
+        },
+      )
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "game_players", filter: `game_id=eq.${id}` },
+        refresh,
+      )
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "games", filter: `id=eq.${id}` },
+        refresh,
+      )
+      .on("presence", { event: "sync" }, () => {
+        const state = channel.presenceState();
+        const ids = new Set<string>();
+        Object.values(state).forEach((presences) => {
+          presences.forEach((p) => {
+            const uid = (p as { user_id?: string }).user_id;
+            if (uid) ids.add(uid);
+          });
+        });
+        setOnlineIds(ids);
+      })
+      .subscribe((status) => setConnected(status === "SUBSCRIBED"));
+
+    // Track own presence.
+    if (user) {
+      void channel.track({ user_id: user.id, online_at: new Date().toISOString() });
+    }
+
+    // Reconnect handler: refresh state when browser comes back online.
+    const onOnline = () => {
+      refresh();
+      if (user) void channel.track({ user_id: user.id, online_at: new Date().toISOString() });
+    };
+    window.addEventListener("online", onOnline);
+
     return () => {
+      window.removeEventListener("online", onOnline);
       void supabase.removeChannel(channel);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id]);
+  }, [id, user?.id]);
 
   const data = game.data;
   const isPlayer = !!data?.players.some((p) => p.user_id === user?.id);
@@ -73,7 +124,9 @@ function GameRoom() {
   useEffect(() => {
     if (!data || !user || joined.current) return;
     joined.current = true;
-    const run = isPlayer ? advanceGameFn({ data: { gameId: id } }) : joinGameFn({ data: { gameId: id } });
+    const run = isPlayer
+      ? advanceGameFn({ data: { gameId: id } })
+      : joinGameFn({ data: { gameId: id } });
     void run.then(refresh).catch((e: Error) => toast.error(e.message));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, user, isPlayer, id]);
@@ -83,7 +136,9 @@ function GameRoom() {
 
   useEffect(() => {
     if (!activeTurn || secondsLeft > 0) return;
-    void advanceGameFn({ data: { gameId: id } }).then(refresh).catch(() => {});
+    void advanceGameFn({ data: { gameId: id } })
+      .then(refresh)
+      .catch(() => {});
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [secondsLeft, activeTurn?.id, id]);
 
@@ -112,19 +167,32 @@ function GameRoom() {
 
   const context =
     g.visibility_mode === "open"
-      ? contributions
+      ? [...contributions, ...optimisticContribs]
       : g.visibility_mode === "contextual"
-        ? contributions.slice(-1)
+        ? [...contributions.slice(-1), ...optimisticContribs]
         : [];
 
   async function submit() {
+    const body = text.trim();
+    if (body.length < 20) return;
     setBusy(true);
+    // Optimistically show the contribution locally until Realtime confirms it.
+    const optimisticId = `opt-${Date.now()}`;
+    setOptimisticContribs((prev) => [
+      ...prev,
+      {
+        id: optimisticId,
+        original_text: body,
+        author: user ? { display_name: user.user_metadata?.["display_name"] ?? "You" } : null,
+      },
+    ]);
     try {
-      await submitTurnFn({ data: { gameId: id, text } });
+      await submitTurnFn({ data: { gameId: id, text: body } });
       setText("");
       toast.success(`+${g.reward_sparks} Sparks — passed to the next player.`);
       await refresh();
     } catch (error) {
+      setOptimisticContribs((prev) => prev.filter((c) => c.id !== optimisticId));
       toast.error(error instanceof Error ? error.message : "Could not submit your turn");
     } finally {
       setBusy(false);
@@ -135,7 +203,18 @@ function GameRoom() {
     <PageShell>
       <div className="mx-auto max-w-2xl">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <Badge variant={g.status === "active" ? "destructive" : "secondary"}>{g.status}</Badge>
+          <div className="flex items-center gap-2">
+            <Badge variant={g.status === "active" ? "destructive" : "secondary"}>{g.status}</Badge>
+            {!connected ? (
+              <span className="inline-flex items-center gap-1 text-xs text-live">
+                <WifiOff className="size-3" /> Reconnecting…
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
+                <Wifi className="size-3" /> Live
+              </span>
+            )}
+          </div>
           <div className="flex items-center gap-4 text-sm text-muted-foreground">
             <span className="flex items-center gap-1.5">
               <Users className="size-4" /> {players.length}/{g.max_players}
@@ -162,10 +241,16 @@ function GameRoom() {
           <span className="rounded-full border border-border px-2.5 py-1">
             Round {g.current_round}/{g.rounds}
           </span>
-          <span className="rounded-full border border-border px-2.5 py-1">{g.visibility_mode} context</span>
-          <span className="rounded-full border border-border px-2.5 py-1">{g.max_chars} chars max</span>
+          <span className="rounded-full border border-border px-2.5 py-1">
+            {g.visibility_mode} context
+          </span>
+          <span className="rounded-full border border-border px-2.5 py-1">
+            {g.max_chars} chars max
+          </span>
           {g.ai_gm_enabled ? (
-            <span className="rounded-full border border-primary/40 px-2.5 py-1 text-primary">AI Game Master</span>
+            <span className="rounded-full border border-primary/40 px-2.5 py-1 text-primary">
+              AI Game Master
+            </span>
           ) : null}
         </div>
 
@@ -217,7 +302,11 @@ function GameRoom() {
           <section className="mt-8 rounded-xl border border-border bg-card p-5">
             <div className="flex items-center justify-between">
               <h2 className="font-display text-lg">
-                {myTurn ? "Your turn" : activeTurn ? "Waiting on another player" : "Waiting for players"}
+                {myTurn
+                  ? "Your turn"
+                  : activeTurn
+                    ? "Waiting on another player"
+                    : "Waiting for players"}
               </h2>
               {activeTurn ? (
                 <span
@@ -239,7 +328,10 @@ function GameRoom() {
               <span className="text-xs text-muted-foreground">
                 {text.length}/{g.max_chars}
               </span>
-              <Button disabled={!myTurn || busy || text.trim().length < 20} onClick={() => void submit()}>
+              <Button
+                disabled={!myTurn || busy || text.trim().length < 20}
+                onClick={() => void submit()}
+              >
                 Submit & pass
               </Button>
             </div>
@@ -253,10 +345,18 @@ function GameRoom() {
               <li
                 key={p.id}
                 className={`flex items-center justify-between rounded-lg border p-3 text-sm ${
-                  activeTurn?.player_id === p.user_id ? "border-primary/60 bg-primary/5" : "border-border bg-card"
+                  activeTurn?.player_id === p.user_id
+                    ? "border-primary/60 bg-primary/5"
+                    : "border-border bg-card"
                 }`}
               >
-                <span>{p.profile?.display_name ?? "Player"}</span>
+                <span className="flex items-center gap-2">
+                  <span
+                    className={`inline-block size-2 rounded-full ${onlineIds.has(p.user_id) ? "bg-green-500" : "bg-muted-foreground/40"}`}
+                    aria-hidden
+                  />
+                  {p.profile?.display_name ?? "Player"}
+                </span>
                 <span className="text-xs text-muted-foreground">
                   {p.is_host ? "host" : `seat ${p.seat_order + 1}`}
                   {activeTurn?.player_id === p.user_id ? " · writing" : ""}

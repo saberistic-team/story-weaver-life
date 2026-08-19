@@ -28,12 +28,16 @@ export const getComments = createServerFn({ method: "GET" })
 export const getMyLikes = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .inputValidator((data: { targetType: string; targetIds: string[] }) => data)
-  .handler(async ({ data, context }) => fetchMyLikes(context.userId, data.targetType, data.targetIds));
+  .handler(async ({ data, context }) =>
+    fetchMyLikes(context.userId, data.targetType, data.targetIds),
+  );
 
 export const getMyFollows = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .inputValidator((data: { targetType: string; targetIds: string[] }) => data)
-  .handler(async ({ data, context }) => fetchMyFollows(context.userId, data.targetType, data.targetIds));
+  .handler(async ({ data, context }) =>
+    fetchMyFollows(context.userId, data.targetType, data.targetIds),
+  );
 
 export const getBlockedIds = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
@@ -41,13 +45,20 @@ export const getBlockedIds = createServerFn({ method: "GET" })
 
 export const likeFn = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((data: { targetType: "chapter" | "contribution" | "series"; targetId: string }) => data)
+  .inputValidator(
+    (data: { targetType: "chapter" | "contribution" | "series"; targetId: string }) => data,
+  )
   .handler(async ({ data, context }) => toggleLike(context.userId, data.targetType, data.targetId));
 
 export const commentFn = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((data: { targetType: "chapter" | "series" | "game"; targetId: string; body: string }) => data)
-  .handler(async ({ data, context }) => postComment(context.userId, data.targetType, data.targetId, data.body) as Promise<Comment>);
+  .inputValidator(
+    (data: { targetType: "chapter" | "series" | "game"; targetId: string; body: string }) => data,
+  )
+  .handler(
+    async ({ data, context }) =>
+      postComment(context.userId, data.targetType, data.targetId, data.body) as Promise<Comment>,
+  );
 
 export const deleteCommentFn = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
@@ -56,13 +67,19 @@ export const deleteCommentFn = createServerFn({ method: "POST" })
 
 export const followFn = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((data: { targetType: "series" | "creator" | "universe"; targetId: string }) => data)
-  .handler(async ({ data, context }) => toggleFollow(context.userId, data.targetType, data.targetId));
+  .inputValidator(
+    (data: { targetType: "series" | "creator" | "universe"; targetId: string }) => data,
+  )
+  .handler(async ({ data, context }) =>
+    toggleFollow(context.userId, data.targetType, data.targetId),
+  );
 
 export const reportFn = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((data: { targetType: string; targetId: string; reason: string }) => data)
-  .handler(async ({ data, context }) => submitReport(context.userId, data.targetType, data.targetId, data.reason));
+  .handler(async ({ data, context }) =>
+    submitReport(context.userId, data.targetType, data.targetId, data.reason),
+  );
 
 export const blockFn = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
@@ -82,7 +99,10 @@ export const votePollFn = createServerFn({ method: "POST" })
 export const getNotifications = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .inputValidator((data: { unreadOnly?: boolean }) => data)
-  .handler(async ({ data, context }) => fetchNotifications(context.userId, data.unreadOnly) as Promise<NotificationItem[]>);
+  .handler(
+    async ({ data, context }) =>
+      fetchNotifications(context.userId, data.unreadOnly) as Promise<NotificationItem[]>,
+  );
 
 export const markReadFn = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])

@@ -21,7 +21,10 @@ export const Route = createFileRoute("/_authenticated/studio/")({
       { title: "Creator Studio — StoryWeaver" },
       { name: "description", content: "Manage your series, chapters, Story Bible, and earnings." },
       { property: "og:title", content: "Creator Studio — StoryWeaver" },
-      { property: "og:description", content: "Manage your series, chapters, Story Bible, and earnings." },
+      {
+        property: "og:description",
+        content: "Manage your series, chapters, Story Bible, and earnings.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
@@ -39,7 +42,9 @@ function StudioPage() {
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h1 className="font-display text-3xl tracking-tight">Creator Studio</h1>
-            <p className="mt-1 text-muted-foreground">Manage worlds, curate canon, and grow your readership.</p>
+            <p className="mt-1 text-muted-foreground">
+              Manage worlds, curate canon, and grow your readership.
+            </p>
           </div>
           <Button asChild size="sm">
             <Link to="/studio/series/new">
@@ -63,7 +68,9 @@ function StudioPage() {
             <CardContent>
               {data.series.length === 0 ? (
                 <div className="rounded-lg border border-dashed border-border p-6 text-center">
-                  <p className="text-sm text-muted-foreground">You have not created a series yet.</p>
+                  <p className="text-sm text-muted-foreground">
+                    You have not created a series yet.
+                  </p>
                   <Button asChild className="mt-4" size="sm">
                     <Link to="/studio/series/new">Start your first universe</Link>
                   </Button>
@@ -71,7 +78,10 @@ function StudioPage() {
               ) : (
                 <div className="divide-y divide-border">
                   {data.series.map((s) => (
-                    <div key={s.id} className="flex items-start justify-between py-4 first:pt-0 last:pb-0">
+                    <div
+                      key={s.id}
+                      className="flex items-start justify-between py-4 first:pt-0 last:pb-0"
+                    >
                       <div>
                         <Link
                           to="/series/$slug"
@@ -80,7 +90,9 @@ function StudioPage() {
                         >
                           {s.title}
                         </Link>
-                        <p className="mt-0.5 text-xs text-muted-foreground line-clamp-1">{s.tagline ?? s.description}</p>
+                        <p className="mt-0.5 text-xs text-muted-foreground line-clamp-1">
+                          {s.tagline ?? s.description}
+                        </p>
                         <div className="mt-2 flex flex-wrap gap-2">
                           <Badge variant="secondary" className="text-[10px]">
                             {s.genre}
@@ -154,7 +166,12 @@ function StudioPage() {
                     {data.chapters.slice(0, 5).map((c) => (
                       <div key={c.id} className="flex items-center justify-between gap-3 text-sm">
                         <span className="truncate">{c.title}</span>
-                        <Button asChild variant="ghost" size="sm" className="h-auto px-2 py-0 text-xs">
+                        <Button
+                          asChild
+                          variant="ghost"
+                          size="sm"
+                          className="h-auto px-2 py-0 text-xs"
+                        >
                           <Link to="/studio/chapters/$slug/edit" params={{ slug: c.slug }}>
                             Edit
                           </Link>

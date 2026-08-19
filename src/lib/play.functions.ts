@@ -5,7 +5,10 @@ export const bootstrapAccount = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     const { ensureProfile } = await import("./play.server");
-    const claims = context.claims as { email?: string; user_metadata?: { full_name?: string; name?: string } };
+    const claims = context.claims as {
+      email?: string;
+      user_metadata?: { full_name?: string; name?: string };
+    };
     return ensureProfile(
       context.userId,
       claims.email ?? null,

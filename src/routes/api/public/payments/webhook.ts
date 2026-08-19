@@ -1,19 +1,33 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { createClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
-import { verifyWebhook, EventName, type PaddleEnv } from "@/lib/paddle.server";
+import {
+  verifyWebhook,
+  EventName,
+  type PaddleEnv,
+} from "@/lib/paddle.server";
+import type {
+  SubscriptionCreatedNotification,
+  SubscriptionUpdatedNotification,
+  SubscriptionCanceledNotification,
+  TransactionCompletedNotification,
+} from "@paddle/paddle-node-sdk";
+
 
 type SupabaseClient = ReturnType<typeof createClient<Database>>;
 
 let _supabase: SupabaseClient | null = null;
 function getSupabase(): SupabaseClient {
   if (!_supabase) {
-    _supabase = createClient<Database>(process.env["SUPABASE_URL"]!, process.env["SUPABASE_SERVICE_ROLE_KEY"]!);
+    _supabase = createClient<Database>(
+      process.env["SUPABASE_URL"]!,
+      process.env["SUPABASE_SERVICE_ROLE_KEY"]!,
+    );
   }
   return _supabase;
 }
 
-async function handleSubscriptionCreated(data: any, env: PaddleEnv) {
+async function handleSubscriptionCreated(data: Record<string, unknown>, env: PaddleEnv) {
   const { id, customerId, items, status, currentBillingPeriod, customData } = data;
 
   const userId = customData?.userId as string | undefined;
@@ -93,15 +107,17 @@ async function handleTransactionCompleted(data: any, env: PaddleEnv) {
   const productId = item?.price?.productId;
   const amountCents = Math.round(Number(item?.totals?.total || 0));
 
-  await getSupabase().from("creator_earnings").insert({
-    creator_id: creatorId,
-    period: new Date().toISOString().slice(0, 7),
-    amount_cents: amountCents,
-    status: "pending",
-    paddle_transaction_id: id as string,
-    paddle_subscription_id: (data.subscriptionId as string) || null,
-    environment: env,
-  });
+  await getSupabase()
+    .from("creator_earnings")
+    .insert({
+      creator_id: creatorId,
+      period: new Date().toISOString().slice(0, 7),
+      amount_cents: amountCents,
+      status: "pending",
+      paddle_transaction_id: id as string,
+      paddle_subscription_id: (data.subscriptionId as string) || null,
+      environment: env,
+    });
 }
 
 async function handleWebhook(req: Request, env: PaddleEnv) {

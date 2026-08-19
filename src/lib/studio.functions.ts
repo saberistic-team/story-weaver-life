@@ -27,7 +27,9 @@ export const getStudioSeries = createServerFn({ method: "GET" })
 export const getStudioChapters = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .inputValidator((data: { seriesId: string }) => data)
-  .handler(async ({ data, context }) => fetchStudioChaptersForSeries(context.userId, data.seriesId));
+  .handler(async ({ data, context }) =>
+    fetchStudioChaptersForSeries(context.userId, data.seriesId),
+  );
 
 export const getStudioChapter = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])

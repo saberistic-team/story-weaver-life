@@ -17,7 +17,10 @@ export const Route = createFileRoute("/_authenticated/notifications")({
   loader: ({ context }) => context.queryClient.ensureQueryData(notificationsQuery()),
   component: NotificationsPage,
   head: () => ({
-    meta: [{ title: "Notifications — StoryWeaver" }, { name: "description", content: "Your StoryWeaver notifications." }],
+    meta: [
+      { title: "Notifications — StoryWeaver" },
+      { name: "description", content: "Your StoryWeaver notifications." },
+    ],
   }),
 });
 
@@ -61,11 +64,15 @@ function NotificationsPage() {
                 key={n.id}
                 className={`flex items-start gap-3 rounded-xl border border-border p-4 ${n.read_at ? "bg-background" : "bg-card"}`}
               >
-                <div className="mt-0.5 text-primary">{ICONS[n.kind] ?? <MessageCircle className="size-4" />}</div>
+                <div className="mt-0.5 text-primary">
+                  {ICONS[n.kind] ?? <MessageCircle className="size-4" />}
+                </div>
                 <div className="flex-1">
                   <p className="text-sm font-medium">{n.title}</p>
                   {n.body ? <p className="text-sm text-muted-foreground">{n.body}</p> : null}
-                  <p className="mt-1 text-xs text-muted-foreground">{new Date(n.created_at).toLocaleString()}</p>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    {new Date(n.created_at).toLocaleString()}
+                  </p>
                 </div>
                 <div className="flex flex-col items-end gap-2">
                   {n.link ? (

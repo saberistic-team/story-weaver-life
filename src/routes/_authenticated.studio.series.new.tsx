@@ -7,7 +7,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { useServerFn } from "@tanstack/react-start";
 import { createSeriesFn } from "@/lib/studio.functions";
@@ -36,8 +42,12 @@ function NewSeriesPage() {
   const [description, setDescription] = useState("");
   const [genre, setGenre] = useState("Sci-Fi");
   const [voice, setVoice] = useState("");
-  const [canonMode, setCanonMode] = useState<"creator" | "collaborative" | "chaos">("collaborative");
-  const [polishStyle, setPolishStyle] = useState<"light" | "balanced" | "cinematic" | "disabled">("balanced");
+  const [canonMode, setCanonMode] = useState<"creator" | "collaborative" | "chaos">(
+    "collaborative",
+  );
+  const [polishStyle, setPolishStyle] = useState<"light" | "balanced" | "cinematic" | "disabled">(
+    "balanced",
+  );
   const [isPublic, setIsPublic] = useState(true);
   const [allowForks, setAllowForks] = useState(true);
 
@@ -79,22 +89,42 @@ function NewSeriesPage() {
         </Button>
 
         <h1 className="mt-6 font-display text-3xl tracking-tight">Create a new series</h1>
-        <p className="mt-2 text-muted-foreground">Define the world, canon rules, and voice for your universe.</p>
+        <p className="mt-2 text-muted-foreground">
+          Define the world, canon rules, and voice for your universe.
+        </p>
 
         <form onSubmit={onSubmit} className="mt-8 space-y-6">
           <div className="space-y-2">
             <Label htmlFor="title">Title</Label>
-            <Input id="title" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="The Last Train" required />
+            <Input
+              id="title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="The Last Train"
+              required
+            />
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="tagline">Tagline</Label>
-            <Input id="tagline" value={tagline} onChange={(e) => setTagline(e.target.value)} placeholder="One carriage. Forty strangers. No destination." />
+            <Input
+              id="tagline"
+              value={tagline}
+              onChange={(e) => setTagline(e.target.value)}
+              placeholder="One carriage. Forty strangers. No destination."
+            />
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="description">Description</Label>
-            <Textarea id="description" value={description} onChange={(e) => setDescription(e.target.value)} rows={5} placeholder="What is this series about?" required />
+            <Textarea
+              id="description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              rows={5}
+              placeholder="What is this series about?"
+              required
+            />
           </div>
 
           <div className="grid gap-6 sm:grid-cols-2">
@@ -104,7 +134,12 @@ function NewSeriesPage() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="voice">Voice</Label>
-              <Input id="voice" value={voice} onChange={(e) => setVoice(e.target.value)} placeholder="Atmospheric, cinematic" />
+              <Input
+                id="voice"
+                value={voice}
+                onChange={(e) => setVoice(e.target.value)}
+                placeholder="Atmospheric, cinematic"
+              />
             </div>
           </div>
 
@@ -124,7 +159,10 @@ function NewSeriesPage() {
             </div>
             <div className="space-y-2">
               <Label>Polish style</Label>
-              <Select value={polishStyle} onValueChange={(v) => setPolishStyle(v as typeof polishStyle)}>
+              <Select
+                value={polishStyle}
+                onValueChange={(v) => setPolishStyle(v as typeof polishStyle)}
+              >
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>

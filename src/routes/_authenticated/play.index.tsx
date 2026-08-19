@@ -16,10 +16,14 @@ export const Route = createFileRoute("/_authenticated/play/")({
       { title: "Play — StoryWeaver" },
       {
         name: "description",
-        content: "Join a live Pass the Story game, take your turn, and watch AI weave it into a chapter.",
+        content:
+          "Join a live Pass the Story game, take your turn, and watch AI weave it into a chapter.",
       },
       { property: "og:title", content: "Play — StoryWeaver" },
-      { property: "og:description", content: "Live collaborative storytelling games, on the clock." },
+      {
+        property: "og:description",
+        content: "Live collaborative storytelling games, on the clock.",
+      },
     ],
   }),
   component: PlayHub,

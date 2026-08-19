@@ -22,7 +22,9 @@ export const Route = createFileRoute("/books/$slug/read")({
   loader: ({ context, params }) => context.queryClient.ensureQueryData(readQuery(params.slug)),
   head: ({ loaderData }) => {
     if (!loaderData) {
-      return { meta: [{ title: "Book unavailable — StoryWeaver" }, { name: "robots", content: "noindex" }] };
+      return {
+        meta: [{ title: "Book unavailable — StoryWeaver" }, { name: "robots", content: "noindex" }],
+      };
     }
     const title = `Read ${loaderData.title} — ${loaderData.series?.title ?? "StoryWeaver"}`;
     return {
@@ -30,7 +32,10 @@ export const Route = createFileRoute("/books/$slug/read")({
         { title },
         { name: "description", content: `Read ${loaderData.title} continuously on StoryWeaver.` },
         { property: "og:title", content: title },
-        { property: "og:description", content: `Read ${loaderData.title} continuously on StoryWeaver.` },
+        {
+          property: "og:description",
+          content: `Read ${loaderData.title} continuously on StoryWeaver.`,
+        },
       ],
     };
   },

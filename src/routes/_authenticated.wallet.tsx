@@ -32,7 +32,10 @@ export const Route = createFileRoute("/_authenticated/wallet")({
     ]),
   component: WalletPage,
   head: () => ({
-    meta: [{ title: "Wallet — StoryWeaver" }, { name: "description", content: "Your Sparks and Story Points." }],
+    meta: [
+      { title: "Wallet — StoryWeaver" },
+      { name: "description", content: "Your Sparks and Story Points." },
+    ],
   }),
 });
 
@@ -52,7 +55,9 @@ function WalletPage() {
               <span className="text-sm font-medium uppercase tracking-wide">Sparks</span>
             </div>
             <p className="font-display mt-2 text-4xl">{wallet.sparks.toLocaleString()}</p>
-            <p className="text-sm text-muted-foreground">Spend to join premium games and unlock polish styles.</p>
+            <p className="text-sm text-muted-foreground">
+              Spend to join premium games and unlock polish styles.
+            </p>
           </div>
           <div className="rounded-xl border border-border bg-card p-6">
             <div className="flex items-center gap-2 text-primary">
@@ -60,7 +65,9 @@ function WalletPage() {
               <span className="text-sm font-medium uppercase tracking-wide">Story Points</span>
             </div>
             <p className="font-display mt-2 text-4xl">{wallet.storyPoints.toLocaleString()}</p>
-            <p className="text-sm text-muted-foreground">Earned by writing, reading, and being loved.</p>
+            <p className="text-sm text-muted-foreground">
+              Earned by writing, reading, and being loved.
+            </p>
           </div>
         </div>
 
@@ -72,9 +79,14 @@ function WalletPage() {
             ) : (
               <ul className="mt-4 space-y-2">
                 {sparks.map((tx) => (
-                  <li key={tx.id} className="flex items-center justify-between rounded-lg border border-border p-3">
+                  <li
+                    key={tx.id}
+                    className="flex items-center justify-between rounded-lg border border-border p-3"
+                  >
                     <span className="text-sm">{tx.reason}</span>
-                    <span className={`text-sm font-medium ${tx.amount >= 0 ? "text-green-500" : "text-red-400"}`}>
+                    <span
+                      className={`text-sm font-medium ${tx.amount >= 0 ? "text-green-500" : "text-red-400"}`}
+                    >
                       {tx.amount >= 0 ? "+" : ""}
                       {tx.amount}
                     </span>
@@ -91,7 +103,10 @@ function WalletPage() {
             ) : (
               <ul className="mt-4 space-y-2">
                 {points.map((tx) => (
-                  <li key={tx.id} className="flex items-center justify-between rounded-lg border border-border p-3">
+                  <li
+                    key={tx.id}
+                    className="flex items-center justify-between rounded-lg border border-border p-3"
+                  >
                     <span className="text-sm">{tx.reason}</span>
                     <span className="text-sm font-medium text-green-500">+{tx.amount}</span>
                   </li>

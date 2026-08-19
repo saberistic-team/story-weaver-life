@@ -3,6 +3,7 @@
 Milestone 1 shipped the core loop: discover, read, sign up, play, polish, reveal. Milestone 2 makes the platform feel like a living canon — tools for continuity, lineage, and long-form reading.
 
 ## Goals
+
 - Give creators and players a shared memory of every story (Story Bible).
 - Let stories branch while preserving what "really happened" (canon + forks).
 - Turn completed chapters into books and series with real reading progression.
@@ -11,6 +12,7 @@ Milestone 1 shipped the core loop: discover, read, sign up, play, polish, reveal
 ## Scope
 
 ### 1. Story Bible
+
 A per-universe (and optionally per-series/book) reference wiki that keeps multiplayer games coherent.
 
 - Entries: characters, locations, factions, rules/magic systems, timeline, mysteries, themes, voice notes.
@@ -21,6 +23,7 @@ A per-universe (and optionally per-series/book) reference wiki that keeps multip
 - AI ContinuityManager can read bible entries when generating challenges or checking continuity.
 
 ### 2. Canon modes and lineage
+
 Define what counts as "official" story and let creators approve or branch contributions.
 
 - Canon modes per contribution/chapter: canon, alternate, apocryphal, draft.
@@ -29,6 +32,7 @@ Define what counts as "official" story and let creators approve or branch contri
 - Creator/studio review queue: approve polished contributions into canon or mark as alternate.
 
 ### 3. Book assembly
+
 Move from "a chapter is a published game" to "books are curated collections of chapters".
 
 - Book creation UI: add/remove/reorder chapters, set front matter, dedication, cover.
@@ -37,6 +41,7 @@ Move from "a chapter is a published game" to "books are curated collections of c
 - Table of contents, next/previous, "last read" bookmark.
 
 ### 4. Series pages
+
 A richer home for a series than the Milestone 1 grid.
 
 - Series overview: description, genre, tone, cover, creator team, stats.
@@ -45,6 +50,7 @@ A richer home for a series than the Milestone 1 grid.
 - "Catch up" CTA for new readers.
 
 ### 5. Reading progression
+
 Track and resume reading across the library.
 
 - `reading_progress` table already exists; wire it to the reader UI.
@@ -53,6 +59,7 @@ Track and resume reading across the library.
 - Mark chapters as read, bookmark favorite passages.
 
 ### 6. Streaks, achievements, and levels
+
 Gamification layer built on the existing `achievements`, `wallets`, and `spark_transactions` tables.
 
 - Daily/weekly streak tracking for reading and writing.
@@ -70,9 +77,11 @@ Gamification layer built on the existing `achievements`, `wallets`, and `spark_t
 - UI routes: `/universes/:slug/bible`, `/series/:slug/books`, `/books/:slug/read`, `/creators/:username/achievements`, plus studio review pages under `_authenticated`.
 
 ## Out of scope for Milestone 2
+
 - Stripe/plans (Milestone 4).
 - Full social feed, moderation queue, reports (Milestone 3 and 5).
 - Advanced analytics/revenue dashboard (Milestone 5).
 
 ## Deliverable
+
 A coherent "depth" layer: readers can follow series and books with progress; players write inside a canon-aware world; creators maintain a Story Bible and review lineage; streaks and achievements reward habit.

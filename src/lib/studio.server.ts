@@ -55,14 +55,25 @@ export async function fetchStudioDashboard(userId: string): Promise<{
 }> {
   const db = publicDb();
   const [{ data: series }, { data: chapters }, { data: earnings }] = await Promise.all([
-    db.from("series").select("*").eq("creator_id", userId).order("updated_at", { ascending: false }),
+    db
+      .from("series")
+      .select("*")
+      .eq("creator_id", userId)
+      .order("updated_at", { ascending: false }),
     db
       .from("chapters")
       .select("*")
-      .or(`series_id.in.(select id from series where creator_id = eq.${userId}),source_game_id.in.(select game_id from game_players where user_id = eq.${userId})`)
+      .or(
+        `series_id.in.(select id from series where creator_id = eq.${userId}),source_game_id.in.(select game_id from game_players where user_id = eq.${userId})`,
+      )
       .order("updated_at", { ascending: false })
       .limit(50),
-    db.from("creator_earnings").select("period, amount_cents, status").eq("creator_id", userId).order("period", { ascending: false }).limit(12),
+    db
+      .from("creator_earnings")
+      .select("period, amount_cents, status")
+      .eq("creator_id", userId)
+      .order("period", { ascending: false })
+      .limit(12),
   ]);
   return {
     series: (series ?? []) as StudioSeries[],
@@ -71,14 +82,25 @@ export async function fetchStudioDashboard(userId: string): Promise<{
   };
 }
 
-export async function fetchStudioSeries(userId: string, slug: string): Promise<StudioSeries | null> {
+export async function fetchStudioSeries(
+  userId: string,
+  slug: string,
+): Promise<StudioSeries | null> {
   const db = publicDb();
-  const { data, error } = await db.from("series").select("*").eq("slug", slug).eq("creator_id", userId).maybeSingle();
+  const { data, error } = await db
+    .from("series")
+    .select("*")
+    .eq("slug", slug)
+    .eq("creator_id", userId)
+    .maybeSingle();
   if (error || !data) return null;
   return data as StudioSeries;
 }
 
-export async function fetchStudioChaptersForSeries(userId: string, seriesId: string): Promise<StudioChapter[]> {
+export async function fetchStudioChaptersForSeries(
+  userId: string,
+  seriesId: string,
+): Promise<StudioChapter[]> {
   const db = publicDb();
   const { data, error } = await db
     .from("chapters")
@@ -89,17 +111,28 @@ export async function fetchStudioChaptersForSeries(userId: string, seriesId: str
   return data as StudioChapter[];
 }
 
-export async function fetchStudioChapter(userId: string, slug: string): Promise<Database["public"]["Tables"]["chapters"]["Row"] | null> {
+export async function fetchStudioChapter(
+  userId: string,
+  slug: string,
+): Promise<Database["public"]["Tables"]["chapters"]["Row"] | null> {
   const db = publicDb();
   const { data, error } = await db.from("chapters").select("*").eq("slug", slug).maybeSingle();
   if (error || !data) return null;
   const chapter = data as Database["public"]["Tables"]["chapters"]["Row"];
 
   // Must own the series or be the source game's host.
-  const { data: series } = await db.from("series").select("creator_id").eq("id", chapter.series_id).maybeSingle();
+  const { data: series } = await db
+    .from("series")
+    .select("creator_id")
+    .eq("id", chapter.series_id)
+    .maybeSingle();
   let canEdit = series?.creator_id === userId;
   if (!canEdit && chapter.source_game_id) {
-    const { data: game } = await db.from("games").select("host_id").eq("id", chapter.source_game_id).maybeSingle();
+    const { data: game } = await db
+      .from("games")
+      .select("host_id")
+      .eq("id", chapter.source_game_id)
+      .maybeSingle();
     canEdit = game?.host_id === userId;
   }
   if (!canEdit) return null;
@@ -180,7 +213,11 @@ export async function updateSeries(
   },
 ): Promise<{ ok: boolean }> {
   const db = await admin();
-  const { data: existing } = await db.from("series").select("creator_id").eq("id", seriesId).maybeSingle();
+  const { data: existing } = await db
+    .from("series")
+    .select("creator_id")
+    .eq("id", seriesId)
+    .maybeSingle();
   if (!existing || existing.creator_id !== userId) throw new Error("Forbidden");
 
   const update: Database["public"]["Tables"]["series"]["Update"] = {};
@@ -221,10 +258,18 @@ export async function updateChapter(
     .maybeSingle();
   if (!chapter) throw new Error("Chapter not found");
 
-  const { data: series } = await db.from("series").select("creator_id").eq("id", chapter.series_id).maybeSingle();
+  const { data: series } = await db
+    .from("series")
+    .select("creator_id")
+    .eq("id", chapter.series_id)
+    .maybeSingle();
   let canEdit = series?.creator_id === userId;
   if (!canEdit && chapter.source_game_id) {
-    const { data: game } = await db.from("games").select("host_id").eq("id", chapter.source_game_id).maybeSingle();
+    const { data: game } = await db
+      .from("games")
+      .select("host_id")
+      .eq("id", chapter.source_game_id)
+      .maybeSingle();
     canEdit = game?.host_id === userId;
   }
   if (!canEdit) throw new Error("Forbidden");
@@ -233,7 +278,8 @@ export async function updateChapter(
   if (input.title !== undefined) update["title"] = input.title.trim().slice(0, 120);
   if (input.subtitle !== undefined) update["subtitle"] = input.subtitle?.trim() ?? null;
   if (input.summary !== undefined) update["summary"] = input.summary.trim();
-  if (input.published_content !== undefined) update["published_content"] = input.published_content.trim();
+  if (input.published_content !== undefined)
+    update["published_content"] = input.published_content.trim();
   if (input.status !== undefined) update["status"] = input.status;
   if (input.is_canon !== undefined) update["is_canon"] = input.is_canon;
   if (input.is_published !== undefined) {
@@ -259,7 +305,11 @@ export async function createBibleEntry(
   },
 ): Promise<{ id: string }> {
   const db = await admin();
-  const { data: series } = await db.from("series").select("creator_id").eq("id", input.seriesId).maybeSingle();
+  const { data: series } = await db
+    .from("series")
+    .select("creator_id")
+    .eq("id", input.seriesId)
+    .maybeSingle();
   if (!series || series.creator_id !== userId) throw new Error("Forbidden");
 
   const meta = (input.meta ?? {}) as Json;
@@ -276,7 +326,11 @@ export async function createBibleEntry(
     sort_order: 0,
   };
 
-  const { data, error } = await db.from("story_bible_entries").insert(insert).select("id").maybeSingle();
+  const { data, error } = await db
+    .from("story_bible_entries")
+    .insert(insert)
+    .select("id")
+    .maybeSingle();
   if (error || !data) throw new Error(error?.message ?? "Could not create bible entry");
   return { id: data.id };
 }
@@ -302,7 +356,11 @@ export async function updateBibleEntry(
     .maybeSingle();
   if (!entry) throw new Error("Entry not found");
 
-  const { data: series } = await db.from("series").select("creator_id").eq("id", entry.series_id).maybeSingle();
+  const { data: series } = await db
+    .from("series")
+    .select("creator_id")
+    .eq("id", entry.series_id)
+    .maybeSingle();
   if (!series || series.creator_id !== userId) throw new Error("Forbidden");
 
   const update: Database["public"]["Tables"]["story_bible_entries"]["Update"] = {};
@@ -344,7 +402,10 @@ export async function fetchSubscription(userId: string) {
   const active =
     ["active", "trialing"].includes(data.status) &&
     (data.current_period_end === null || new Date(data.current_period_end) > new Date());
-  const grace = data.status === "canceled" && data.current_period_end && new Date(data.current_period_end) > new Date();
+  const grace =
+    data.status === "canceled" &&
+    data.current_period_end &&
+    new Date(data.current_period_end) > new Date();
   return {
     tier,
     status: data.status,

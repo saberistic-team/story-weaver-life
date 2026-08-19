@@ -99,7 +99,8 @@ function BiblePage() {
           <div className="mt-10 rounded-xl border border-border bg-card p-6 text-center">
             <BookOpen className="mx-auto size-6 text-muted-foreground" />
             <p className="mt-3 text-muted-foreground">
-              This Story Bible is still being written. Entries appear once the creator approves them.
+              This Story Bible is still being written. Entries appear once the creator approves
+              them.
             </p>
           </div>
         ) : (
@@ -124,7 +125,9 @@ function BiblePage() {
                         <dl className="mt-4 grid grid-cols-2 gap-x-4 gap-y-2 text-xs">
                           {Object.entries(e.meta).map(([k, v]) => (
                             <div key={k}>
-                              <dt className="uppercase tracking-wider text-muted-foreground">{k}</dt>
+                              <dt className="uppercase tracking-wider text-muted-foreground">
+                                {k}
+                              </dt>
                               <dd className="mt-0.5 text-foreground">{String(v)}</dd>
                             </div>
                           ))}

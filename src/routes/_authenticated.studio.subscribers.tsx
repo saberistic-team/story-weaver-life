@@ -44,7 +44,9 @@ function SubscribersPage() {
         </Button>
 
         <h1 className="mt-6 font-display text-3xl tracking-tight">Subscribers</h1>
-        <p className="mt-1 text-muted-foreground">Readers supporting your work through paid tiers.</p>
+        <p className="mt-1 text-muted-foreground">
+          Readers supporting your work through paid tiers.
+        </p>
 
         <Card className="mt-8">
           <CardHeader>
@@ -55,9 +57,9 @@ function SubscribersPage() {
           </CardHeader>
           <CardContent>
             <p className="text-sm text-muted-foreground">
-              StoryWeaver subscriptions are platform-wide for now. As readers upgrade to Supporter or Patron, they
-              unlock every premium series on the platform. Per-creator subscription splits and direct tipping are on
-              the roadmap.
+              StoryWeaver subscriptions are platform-wide for now. As readers upgrade to Supporter
+              or Patron, they unlock every premium series on the platform. Per-creator subscription
+              splits and direct tipping are on the roadmap.
             </p>
           </CardContent>
         </Card>

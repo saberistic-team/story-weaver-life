@@ -15,18 +15,23 @@ export function usePaddleCheckout() {
     try {
       await initializePaddle();
       const paddlePriceId = await getPaddlePriceId(options.priceId);
+      const paddle = window.Paddle;
+      if (!paddle) throw new Error("Paddle SDK not available");
 
-      window.Paddle.Checkout.open({
+      const checkoutOptions: Parameters<typeof paddle.Checkout.open>[0] = {
         items: [{ priceId: paddlePriceId, quantity: options.quantity }],
-        customer: options.customerEmail ? { email: options.customerEmail } : undefined,
-        customData: options.customData,
         settings: {
           displayMode: "overlay",
           successUrl: options.successUrl || `${window.location.origin}/checkout/success`,
           allowLogout: false,
           variant: "one-page",
         },
-      });
+      };
+      if (options.customerEmail) checkoutOptions.customer = { email: options.customerEmail };
+      if (options.customData) checkoutOptions.customData = options.customData;
+      paddle.Checkout.open(checkoutOptions);
+
+
     } finally {
       setLoading(false);
     }

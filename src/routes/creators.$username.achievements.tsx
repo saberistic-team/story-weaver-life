@@ -29,9 +29,15 @@ export const Route = createFileRoute("/creators/$username/achievements")({
     return {
       meta: [
         { title },
-        { name: "description", content: `See badges and achievements earned by @${params.username}.` },
+        {
+          name: "description",
+          content: `See badges and achievements earned by @${params.username}.`,
+        },
         { property: "og:title", content: title },
-        { property: "og:description", content: `See badges and achievements earned by @${params.username}.` },
+        {
+          property: "og:description",
+          content: `See badges and achievements earned by @${params.username}.`,
+        },
       ],
     };
   },
@@ -104,7 +110,9 @@ function AchievementsPage() {
                     <span>
                       {a.progress} / {a.target}
                     </span>
-                    <span className="text-muted-foreground">{Math.min(100, Math.round((a.progress / a.target) * 100))}%</span>
+                    <span className="text-muted-foreground">
+                      {Math.min(100, Math.round((a.progress / a.target) * 100))}%
+                    </span>
                   </div>
                   <Progress value={Math.min(100, (a.progress / a.target) * 100)} className="mt-2" />
                 </div>
