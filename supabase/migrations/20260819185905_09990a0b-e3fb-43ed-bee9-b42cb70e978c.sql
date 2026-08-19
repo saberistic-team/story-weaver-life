@@ -1,0 +1,2 @@
+UPDATE public.achievements SET description = replace(description, 'StoryPass', 'StoryWeaver') WHERE description LIKE '%StoryPass%';
+UPDATE public.spark_transactions SET reason = replace(reason, 'StoryPass', 'StoryWeaver') WHERE reason LIKE '%StoryPass%';
