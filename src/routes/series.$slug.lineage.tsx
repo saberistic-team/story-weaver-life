@@ -17,7 +17,7 @@ export const Route = createFileRoute("/series/$slug/lineage")({
   loader: ({ context, params }) => context.queryClient.ensureQueryData(lineageQuery(params.slug)),
   head: () => ({
     meta: [
-      { title: "Canon Lineage — StoryPass" },
+      { title: "Canon Lineage — StoryWeaver" },
       { name: "description", content: "Explore how chapters branch and merge in this series." },
     ],
   }),

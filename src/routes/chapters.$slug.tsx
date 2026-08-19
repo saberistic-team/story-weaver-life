@@ -44,9 +44,9 @@ export const Route = createFileRoute("/chapters/$slug")({
   },
   head: ({ loaderData }) => {
     if (!loaderData) {
-      return { meta: [{ title: "Chapter unavailable — StoryPass" }, { name: "robots", content: "noindex" }] };
+      return { meta: [{ title: "Chapter unavailable — StoryWeaver" }, { name: "robots", content: "noindex" }] };
     }
-    const title = `${loaderData.chapter.title} — ${loaderData.series.title} — StoryPass`;
+    const title = `${loaderData.chapter.title} — ${loaderData.series.title} — StoryWeaver`;
     const description = loaderData.chapter.summary.slice(0, 155);
     return {
       meta: [
@@ -74,7 +74,7 @@ export const Route = createFileRoute("/chapters/$slug")({
   ),
 });
 
-const READ_KEY = "storypass:chapters-read";
+const READ_KEY = "storyweaver:chapters-read";
 
 function ChapterPage() {
   const { slug } = Route.useParams();
@@ -110,7 +110,7 @@ function ChapterPage() {
     const list: string[] = raw ? JSON.parse(raw) : [];
     if (!list.includes(chapter.id)) list.push(chapter.id);
     localStorage.setItem(READ_KEY, JSON.stringify(list));
-    localStorage.setItem("storypass:resume", `/chapters/${chapter.slug}`);
+    localStorage.setItem("storyweaver:resume", `/chapters/${chapter.slug}`);
     setReadCount(list.length);
 
     if (user) {
@@ -194,7 +194,7 @@ function ChapterPage() {
               <Button
                 className="mt-5"
                 onClick={() => {
-                  sessionStorage.setItem("storypass:next", `/chapters/${chapter.slug}`);
+                  sessionStorage.setItem("storyweaver:next", `/chapters/${chapter.slug}`);
                   window.location.href = "/auth";
                 }}
               >

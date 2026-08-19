@@ -18,9 +18,9 @@ const dashboardQueryOptions = () =>
 export const Route = createFileRoute("/_authenticated/studio/")({
   head: () => ({
     meta: [
-      { title: "Creator Studio — StoryPass" },
+      { title: "Creator Studio — StoryWeaver" },
       { name: "description", content: "Manage your series, chapters, Story Bible, and earnings." },
-      { property: "og:title", content: "Creator Studio — StoryPass" },
+      { property: "og:title", content: "Creator Studio — StoryWeaver" },
       { property: "og:description", content: "Manage your series, chapters, Story Bible, and earnings." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

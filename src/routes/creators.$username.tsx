@@ -29,10 +29,10 @@ export const Route = createFileRoute("/creators/$username")({
     context.queryClient.ensureQueryData(creatorQuery(params.username)),
   head: ({ loaderData }) => {
     if (!loaderData) {
-      return { meta: [{ title: "Creator unavailable — StoryPass" }, { name: "robots", content: "noindex" }] };
+      return { meta: [{ title: "Creator unavailable — StoryWeaver" }, { name: "robots", content: "noindex" }] };
     }
-    const title = `${loaderData.profile.display_name} on StoryPass`;
-    const description = (loaderData.profile.bio ?? "A StoryPass storyteller.").slice(0, 155);
+    const title = `${loaderData.profile.display_name} on StoryWeaver`;
+    const description = (loaderData.profile.bio ?? "A StoryWeaver storyteller.").slice(0, 155);
     return {
       meta: [
         { title },

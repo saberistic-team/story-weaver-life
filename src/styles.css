@@ -5,7 +5,7 @@
 @custom-variant dark (&:is(.dark *));
 
 /*
- * StoryPass design system.
+ * StoryWeaver design system.
  * App surface: deep cinematic ink. Reading surface: warm paper.
  * Accent: a single ember/gold "magical" accent.
  * Never hardcode colors in components — use these tokens.

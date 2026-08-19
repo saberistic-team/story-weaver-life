@@ -32,9 +32,9 @@ const KINDS = ["character", "location", "item", "lore", "event", "faction"];
 export const Route = createFileRoute("/_authenticated/studio/series/$slug/bible")({
   head: () => ({
     meta: [
-      { title: "Story Bible — StoryPass Studio" },
+      { title: "Story Bible — StoryWeaver Studio" },
       { name: "description", content: "Edit Story Bible entries for your series." },
-      { property: "og:title", content: "Story Bible — StoryPass Studio" },
+      { property: "og:title", content: "Story Bible — StoryWeaver Studio" },
       { property: "og:description", content: "Edit Story Bible entries for your series." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

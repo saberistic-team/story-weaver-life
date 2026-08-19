@@ -79,7 +79,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "StoryPass — stories written together" },
+      { title: "StoryWeaver — stories written together" },
       {
         name: "description",
         content: "A storytelling game: take a timed turn, AI polishes the table's words into a chapter.",

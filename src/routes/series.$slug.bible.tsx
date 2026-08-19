@@ -33,7 +33,7 @@ export const Route = createFileRoute("/series/$slug/bible")({
     return context.queryClient.ensureQueryData(bibleQuery(params.slug));
   },
   head: ({ params }) => {
-    const title = `Story Bible — ${params.slug} — StoryPass`;
+    const title = `Story Bible — ${params.slug} — StoryWeaver`;
     const description = `Explore the characters, places, and rules of this series.`;
     return {
       meta: [

@@ -18,13 +18,13 @@ export const Route = createFileRoute("/discover")({
   loader: ({ context }) => context.queryClient.ensureQueryData(discoverQuery),
   head: () => ({
     meta: [
-      { title: "Discover collaborative stories — StoryPass" },
+      { title: "Discover collaborative stories — StoryWeaver" },
       {
         name: "description",
         content:
           "Browse living series written by hundreds of players, read chapters free, and jump into a live storytelling game.",
       },
-      { property: "og:title", content: "Discover collaborative stories — StoryPass" },
+      { property: "og:title", content: "Discover collaborative stories — StoryWeaver" },
       {
         property: "og:description",
         content: "Living series written by players, polished by AI. Read free, then take a turn.",

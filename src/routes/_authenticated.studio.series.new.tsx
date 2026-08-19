@@ -16,10 +16,10 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/_authenticated/studio/series/new")({
   head: () => ({
     meta: [
-      { title: "New Series — StoryPass Studio" },
-      { name: "description", content: "Create a new series universe on StoryPass." },
-      { property: "og:title", content: "New Series — StoryPass Studio" },
-      { property: "og:description", content: "Create a new series universe on StoryPass." },
+      { title: "New Series — StoryWeaver Studio" },
+      { name: "description", content: "Create a new series universe on StoryWeaver." },
+      { property: "og:title", content: "New Series — StoryWeaver Studio" },
+      { property: "og:description", content: "Create a new series universe on StoryWeaver." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],

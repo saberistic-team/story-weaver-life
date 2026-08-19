@@ -26,9 +26,9 @@ const chapterQueryOptions = (slug: string) =>
 export const Route = createFileRoute("/_authenticated/studio/chapters/$slug/edit")({
   head: () => ({
     meta: [
-      { title: "Edit Chapter — StoryPass Studio" },
+      { title: "Edit Chapter — StoryWeaver Studio" },
       { name: "description", content: "Edit chapter content, metadata, and canon status." },
-      { property: "og:title", content: "Edit Chapter — StoryPass Studio" },
+      { property: "og:title", content: "Edit Chapter — StoryWeaver Studio" },
       { property: "og:description", content: "Edit chapter content, metadata, and canon status." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

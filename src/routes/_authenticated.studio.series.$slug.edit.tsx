@@ -32,9 +32,9 @@ const chaptersQueryOptions = (seriesId: string) =>
 export const Route = createFileRoute("/_authenticated/studio/series/$slug/edit")({
   head: () => ({
     meta: [
-      { title: "Edit Series — StoryPass Studio" },
+      { title: "Edit Series — StoryWeaver Studio" },
       { name: "description", content: "Edit series metadata, chapters, and Story Bible." },
-      { property: "og:title", content: "Edit Series — StoryPass Studio" },
+      { property: "og:title", content: "Edit Series — StoryWeaver Studio" },
       { property: "og:description", content: "Edit series metadata, chapters, and Story Bible." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

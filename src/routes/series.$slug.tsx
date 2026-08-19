@@ -28,9 +28,9 @@ export const Route = createFileRoute("/series/$slug")({
   loader: ({ context, params }) => context.queryClient.ensureQueryData(seriesQuery(params.slug)),
   head: ({ loaderData }) => {
     if (!loaderData) {
-      return { meta: [{ title: "Series unavailable — StoryPass" }, { name: "robots", content: "noindex" }] };
+      return { meta: [{ title: "Series unavailable — StoryWeaver" }, { name: "robots", content: "noindex" }] };
     }
-    const title = `${loaderData.series.title} — StoryPass`;
+    const title = `${loaderData.series.title} — StoryWeaver`;
     const description = loaderData.series.tagline ?? loaderData.series.description.slice(0, 155);
     return {
       meta: [

@@ -25,7 +25,7 @@ export const Route = createFileRoute("/creators/$username/achievements")({
     return context.queryClient.ensureQueryData(achievementsQuery());
   },
   head: ({ params }) => {
-    const title = `Achievements — @${params.username} — StoryPass`;
+    const title = `Achievements — @${params.username} — StoryWeaver`;
     return {
       meta: [
         { title },
