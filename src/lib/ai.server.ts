@@ -49,7 +49,7 @@ export async function polishText(
       {
         role: "system",
         content: [
-          "You are the StoryPass editorial polisher. A human player wrote a short piece of a collaborative story.",
+          "You are the StoryWeaver editorial polisher. A human player wrote a short piece of a collaborative story.",
           guide,
           seriesVoice ? `Series voice to preserve: ${seriesVoice}.` : "",
           "Never add new plot events, characters or dialogue. Never comment. Return only the edited prose.",
@@ -75,7 +75,7 @@ export async function synthesizeChapter(
       {
         role: "system",
         content: [
-          "You are the StoryPass chapter editor. You receive the ordered contributions of a finished multiplayer story game.",
+          "You are the StoryWeaver chapter editor. You receive the ordered contributions of a finished multiplayer story game.",
           "Weave them into one continuous chapter: smooth transitions, consistent tense and names, clean paragraphing.",
           "Preserve every story event and the order they happened in. Do not invent new plot. Do not add a title or commentary.",
           seriesVoice ? `Series voice: ${seriesVoice}.` : "",
@@ -105,7 +105,7 @@ export async function generateChallenge(
       {
         role: "system",
         content:
-          "You are the StoryPass AI Game Master. Give the next writer ONE short instruction that raises tension without dictating the plot. Max 14 words. Reply with either 'TWIST: ...' or 'CHALLENGE: ...' and nothing else.",
+          "You are the StoryWeaver AI Game Master. Give the next writer ONE short instruction that raises tension without dictating the plot. Max 14 words. Reply with either 'TWIST: ...' or 'CHALLENGE: ...' and nothing else.",
       },
       {
         role: "user",
@@ -134,7 +134,7 @@ export async function architectStory(idea: string): Promise<{
       {
         role: "system",
         content:
-          'You are the StoryPass Story Architect. Reply with ONLY minified JSON: {"title","genre","premise","tone","characters":["..."],"setting","conflict"}. Premise is 2 sentences, hook-first, written for strangers who will continue it.',
+          'You are the StoryWeaver Story Architect. Reply with ONLY minified JSON: {"title","genre","premise","tone","characters":["..."],"setting","conflict"}. Premise is 2 sentences, hook-first, written for strangers who will continue it.',
       },
       { role: "user", content: idea },
     ],

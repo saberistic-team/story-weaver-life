@@ -22,9 +22,9 @@ const GENRES = ["Science Fiction", "Fantasy", "Mystery", "Horror", "Literary", "
 export const Route = createFileRoute("/_authenticated/play/new")({
   head: () => ({
     meta: [
-      { title: "Start a story game — StoryPass" },
+      { title: "Start a story game — StoryWeaver" },
       { name: "description", content: "Set a premise, pick the rules, and invite players to write with you." },
-      { property: "og:title", content: "Start a story game — StoryPass" },
+      { property: "og:title", content: "Start a story game — StoryWeaver" },
       { property: "og:description", content: "Set the premise. The table writes the rest." },
       { name: "robots", content: "noindex" },
     ],

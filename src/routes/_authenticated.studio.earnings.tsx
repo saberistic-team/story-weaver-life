@@ -17,10 +17,10 @@ const dashboardQueryOptions = () =>
 export const Route = createFileRoute("/_authenticated/studio/earnings")({
   head: () => ({
     meta: [
-      { title: "Earnings — StoryPass Studio" },
-      { name: "description", content: "Track your StoryPass creator earnings." },
-      { property: "og:title", content: "Earnings — StoryPass Studio" },
-      { property: "og:description", content: "Track your StoryPass creator earnings." },
+      { title: "Earnings — StoryWeaver Studio" },
+      { name: "description", content: "Track your StoryWeaver creator earnings." },
+      { property: "og:title", content: "Earnings — StoryWeaver Studio" },
+      { property: "og:description", content: "Track your StoryWeaver creator earnings." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],

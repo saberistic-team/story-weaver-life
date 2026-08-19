@@ -18,10 +18,10 @@ const subscriptionQueryOptions = () =>
 export const Route = createFileRoute("/_authenticated/studio/subscribers")({
   head: () => ({
     meta: [
-      { title: "Subscribers — StoryPass Studio" },
-      { name: "description", content: "View your StoryPass subscribers." },
-      { property: "og:title", content: "Subscribers — StoryPass Studio" },
-      { property: "og:description", content: "View your StoryPass subscribers." },
+      { title: "Subscribers — StoryWeaver Studio" },
+      { name: "description", content: "View your StoryWeaver subscribers." },
+      { property: "og:title", content: "Subscribers — StoryWeaver Studio" },
+      { property: "og:description", content: "View your StoryWeaver subscribers." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
@@ -55,7 +55,7 @@ function SubscribersPage() {
           </CardHeader>
           <CardContent>
             <p className="text-sm text-muted-foreground">
-              StoryPass subscriptions are platform-wide for now. As readers upgrade to Supporter or Patron, they
+              StoryWeaver subscriptions are platform-wide for now. As readers upgrade to Supporter or Patron, they
               unlock every premium series on the platform. Per-creator subscription splits and direct tipping are on
               the roadmap.
             </p>

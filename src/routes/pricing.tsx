@@ -47,10 +47,10 @@ export const Route = createFileRoute("/pricing")({
   loader: ({ context }) => context.queryClient.ensureQueryData(queryOptions({ queryKey: ["pricing-empty"], queryFn: () => ({}) })),
   head: () => ({
     meta: [
-      { title: "Pricing — StoryPass" },
-      { name: "description", content: "Support creators and unlock premium series with StoryPass subscriptions." },
-      { property: "og:title", content: "Pricing — StoryPass" },
-      { property: "og:description", content: "Support creators and unlock premium series with StoryPass subscriptions." },
+      { title: "Pricing — StoryWeaver" },
+      { name: "description", content: "Support creators and unlock premium series with StoryWeaver subscriptions." },
+      { property: "og:title", content: "Pricing — StoryWeaver" },
+      { property: "og:description", content: "Support creators and unlock premium series with StoryWeaver subscriptions." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
@@ -120,7 +120,7 @@ function PricingPage() {
                   disabled={loading}
                   onClick={() => {
                     if (!user) {
-                      sessionStorage.setItem("storypass:next", "/pricing");
+                      sessionStorage.setItem("storyweaver:next", "/pricing");
                       window.location.href = "/auth";
                       return;
                     }

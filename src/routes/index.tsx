@@ -14,13 +14,13 @@ export const Route = createFileRoute("/")({
   loader: ({ context }) => context.queryClient.ensureQueryData(landingQuery),
   head: () => ({
     meta: [
-      { title: "StoryPass — stories written together, one turn at a time" },
+      { title: "StoryWeaver — stories written together, one turn at a time" },
       {
         name: "description",
         content:
           "Join a timed storytelling game, write a few sentences, and watch AI polish the table's turns into a published chapter. Read hundreds of chapters free.",
       },
-      { property: "og:title", content: "StoryPass — stories written together, one turn at a time" },
+      { property: "og:title", content: "StoryWeaver — stories written together, one turn at a time" },
       {
         property: "og:description",
         content: "Humans make it unpredictable. AI makes it a book. Read free, then take a turn.",
@@ -60,7 +60,7 @@ function Landing() {
               <span className="text-primary"> one turn at a time.</span>
             </h1>
             <p className="mt-5 max-w-xl text-lg text-muted-foreground">
-              StoryPass is a storytelling game. Players take timed turns writing a few sentences each.
+              StoryWeaver is a storytelling game. Players take timed turns writing a few sentences each.
               AI plays Game Master, polishes the prose, and weaves every turn into a real chapter —
               with everyone's original words preserved.
             </p>

@@ -32,7 +32,7 @@ export const Route = createFileRoute("/_authenticated/wallet")({
     ]),
   component: WalletPage,
   head: () => ({
-    meta: [{ title: "Wallet — StoryPass" }, { name: "description", content: "Your Sparks and Story Points." }],
+    meta: [{ title: "Wallet — StoryWeaver" }, { name: "description", content: "Your Sparks and Story Points." }],
   }),
 });
 

@@ -14,12 +14,12 @@ import { bootstrapAccount } from "@/lib/play.functions";
 export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
-      { title: "Sign in to StoryPass" },
+      { title: "Sign in to StoryWeaver" },
       {
         name: "description",
-        content: "Create a free StoryPass account to keep reading, join live games, and earn Sparks.",
+        content: "Create a free StoryWeaver account to keep reading, join live games, and earn Sparks.",
       },
-      { property: "og:title", content: "Sign in to StoryPass" },
+      { property: "og:title", content: "Sign in to StoryWeaver" },
       { property: "og:description", content: "Free account. Keep reading and take your turn." },
     ],
   }),
@@ -37,8 +37,8 @@ function AuthPage() {
   useEffect(() => {
     if (loading || !user) return;
     void bootstrapAccount().finally(() => {
-      const next = typeof window !== "undefined" ? sessionStorage.getItem("storypass:next") : null;
-      sessionStorage.removeItem("storypass:next");
+      const next = typeof window !== "undefined" ? sessionStorage.getItem("storyweaver:next") : null;
+      sessionStorage.removeItem("storyweaver:next");
       void navigate({ to: next && next.startsWith("/") ? next : "/play" });
     });
   }, [user, loading, navigate]);
@@ -54,7 +54,7 @@ function AuthPage() {
           options: { emailRedirectTo: `${window.location.origin}/auth` },
         });
         if (error) throw error;
-        toast.success("Account created — welcome to StoryPass.");
+        toast.success("Account created — welcome to StoryWeaver.");
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;

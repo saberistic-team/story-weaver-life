@@ -16,9 +16,9 @@ import { useSession } from "@/hooks/use-session";
 export const Route = createFileRoute("/_authenticated/play/$id")({
   head: () => ({
     meta: [
-      { title: "Live game — StoryPass" },
+      { title: "Live game — StoryWeaver" },
       { name: "description", content: "Take your turn in a live Pass the Story game." },
-      { property: "og:title", content: "Live game — StoryPass" },
+      { property: "og:title", content: "Live game — StoryWeaver" },
       { property: "og:description", content: "One sentence at a time, on the clock." },
       { name: "robots", content: "noindex" },
     ],

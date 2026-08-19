@@ -16,7 +16,7 @@ export const Route = createFileRoute("/_authenticated/following")({
   loader: ({ context }) => context.queryClient.ensureQueryData(feedQuery()),
   component: FollowingPage,
   head: () => ({
-    meta: [{ title: "Following — StoryPass" }, { name: "description", content: "Updates from creators and series you follow." }],
+    meta: [{ title: "Following — StoryWeaver" }, { name: "description", content: "Updates from creators and series you follow." }],
   }),
 });
 

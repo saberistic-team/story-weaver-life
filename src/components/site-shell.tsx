@@ -67,7 +67,7 @@ export function SiteHeader() {
           <span className="surface-ember flex size-8 items-center justify-center rounded-lg">
             <Flame className="size-4 text-primary-foreground" />
           </span>
-          <span className="font-display text-lg tracking-tight">StoryPass</span>
+          <span className="font-display text-lg tracking-tight">StoryWeaver</span>
         </Link>
 
         <nav className="hidden items-center gap-1 md:flex">
@@ -155,7 +155,7 @@ export function SiteFooter() {
   return (
     <footer className="mt-24 border-t border-border py-10">
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-3 px-4 text-sm text-muted-foreground sm:flex-row sm:items-center">
-        <p className="font-display text-base text-foreground">StoryPass</p>
+        <p className="font-display text-base text-foreground">StoryWeaver</p>
         <p>Humans make it unpredictable. AI makes it a book.</p>
         <div className="sm:ml-auto flex gap-4">
           <Link to="/discover" className="hover:text-foreground">

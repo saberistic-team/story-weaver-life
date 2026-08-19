@@ -76,7 +76,7 @@ export const Route = createFileRoute("/_authenticated/studio/moderation")({
   loader: ({ context }) => context.queryClient.ensureQueryData(moderationQuery()),
   component: ModerationPage,
   head: () => ({
-    meta: [{ title: "Moderation — StoryPass" }, { name: "description", content: "Moderation queue for StoryPass." }],
+    meta: [{ title: "Moderation — StoryWeaver" }, { name: "description", content: "Moderation queue for StoryWeaver." }],
   }),
 });
 

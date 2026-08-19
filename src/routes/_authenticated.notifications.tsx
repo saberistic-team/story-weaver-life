@@ -17,7 +17,7 @@ export const Route = createFileRoute("/_authenticated/notifications")({
   loader: ({ context }) => context.queryClient.ensureQueryData(notificationsQuery()),
   component: NotificationsPage,
   head: () => ({
-    meta: [{ title: "Notifications — StoryPass" }, { name: "description", content: "Your StoryPass notifications." }],
+    meta: [{ title: "Notifications — StoryWeaver" }, { name: "description", content: "Your StoryWeaver notifications." }],
   }),
 });
 
