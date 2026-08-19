@@ -1,13 +1,15 @@
 import { Link } from "@tanstack/react-router";
-import { Bell, Flame, Menu, Sparkles } from "lucide-react";
+import { Bell, Flame, Menu, Sparkles, Crown } from "lucide-react";
 import { useEffect, useState, type ReactNode } from "react";
 
 import { Button } from "@/components/ui/button";
+import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
 import { useSession } from "@/hooks/use-session";
 import { supabase } from "@/integrations/supabase/client";
 import { getNotifications } from "@/lib/social.functions";
 import { useServerFn } from "@tanstack/react-start";
 import { cn } from "@/lib/utils";
+
 
 const NAV = [
   { to: "/discover", label: "Discover" },

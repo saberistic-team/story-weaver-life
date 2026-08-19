@@ -19,6 +19,7 @@ import { Route as AuthenticatedNotificationsRouteImport } from './routes/_authen
 import { Route as AuthenticatedWalletRouteImport } from './routes/_authenticated.wallet'
 import { Route as BooksSlugRouteImport } from './routes/books.$slug'
 import { Route as ChaptersSlugRouteImport } from './routes/chapters.$slug'
+import { Route as CheckoutSuccessRouteImport } from './routes/checkout.success'
 import { Route as CreatorsUsernameRouteImport } from './routes/creators.$username'
 import { Route as SeriesSlugRouteImport } from './routes/series.$slug'
 import { Route as AuthenticatedPlayIndexRouteImport } from './routes/_authenticated/play.index'
@@ -89,6 +90,11 @@ const BooksSlugRoute = BooksSlugRouteImport.update({
 const ChaptersSlugRoute = ChaptersSlugRouteImport.update({
   id: '/chapters/$slug',
   path: '/chapters/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CheckoutSuccessRoute = CheckoutSuccessRouteImport.update({
+  id: '/checkout/success',
+  path: '/checkout/success',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CreatorsUsernameRoute = CreatorsUsernameRouteImport.update({
@@ -217,6 +223,7 @@ export interface FileRoutesByFullPath {
   '/wallet': typeof AuthenticatedWalletRoute
   '/books/$slug': typeof BooksSlugRouteWithChildren
   '/chapters/$slug': typeof ChaptersSlugRoute
+  '/checkout/success': typeof CheckoutSuccessRoute
   '/creators/$username': typeof CreatorsUsernameRouteWithChildren
   '/series/$slug': typeof SeriesSlugRouteWithChildren
   '/play/$id': typeof AuthenticatedPlayIdRoute
@@ -249,6 +256,7 @@ export interface FileRoutesByTo {
   '/wallet': typeof AuthenticatedWalletRoute
   '/books/$slug': typeof BooksSlugRouteWithChildren
   '/chapters/$slug': typeof ChaptersSlugRoute
+  '/checkout/success': typeof CheckoutSuccessRoute
   '/play/$id': typeof AuthenticatedPlayIdRoute
   '/play/new': typeof AuthenticatedPlayNewRoute
   '/studio/earnings': typeof AuthenticatedStudioEarningsRoute
@@ -281,6 +289,7 @@ export interface FileRoutesById {
   '/_authenticated/wallet': typeof AuthenticatedWalletRoute
   '/books/$slug': typeof BooksSlugRouteWithChildren
   '/chapters/$slug': typeof ChaptersSlugRoute
+  '/checkout/success': typeof CheckoutSuccessRoute
   '/creators/$username': typeof CreatorsUsernameRouteWithChildren
   '/series/$slug': typeof SeriesSlugRouteWithChildren
   '/_authenticated/play/$id': typeof AuthenticatedPlayIdRoute
@@ -315,6 +324,7 @@ export interface FileRouteTypes {
     | '/wallet'
     | '/books/$slug'
     | '/chapters/$slug'
+    | '/checkout/success'
     | '/creators/$username'
     | '/series/$slug'
     | '/play/$id'
@@ -347,6 +357,7 @@ export interface FileRouteTypes {
     | '/wallet'
     | '/books/$slug'
     | '/chapters/$slug'
+    | '/checkout/success'
     | '/play/$id'
     | '/play/new'
     | '/studio/earnings'
@@ -378,6 +389,7 @@ export interface FileRouteTypes {
     | '/_authenticated/wallet'
     | '/books/$slug'
     | '/chapters/$slug'
+    | '/checkout/success'
     | '/creators/$username'
     | '/series/$slug'
     | '/_authenticated/play/$id'
@@ -409,6 +421,7 @@ export interface RootRouteChildren {
   PricingRoute: typeof PricingRoute
   BooksSlugRoute: typeof BooksSlugRouteWithChildren
   ChaptersSlugRoute: typeof ChaptersSlugRoute
+  CheckoutSuccessRoute: typeof CheckoutSuccessRoute
   CreatorsUsernameRoute: typeof CreatorsUsernameRouteWithChildren
   SeriesSlugRoute: typeof SeriesSlugRouteWithChildren
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
@@ -484,6 +497,13 @@ declare module '@tanstack/react-router' {
       path: '/chapters/$slug'
       fullPath: '/chapters/$slug'
       preLoaderRoute: typeof ChaptersSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/checkout/success': {
+      id: '/checkout/success'
+      path: '/checkout/success'
+      fullPath: '/checkout/success'
+      preLoaderRoute: typeof CheckoutSuccessRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/creators/$username': {
@@ -727,6 +747,7 @@ const rootRouteChildren: RootRouteChildren = {
   PricingRoute: PricingRoute,
   BooksSlugRoute: BooksSlugRouteWithChildren,
   ChaptersSlugRoute: ChaptersSlugRoute,
+  CheckoutSuccessRoute: CheckoutSuccessRoute,
   CreatorsUsernameRoute: CreatorsUsernameRouteWithChildren,
   SeriesSlugRoute: SeriesSlugRouteWithChildren,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
