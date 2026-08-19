@@ -181,7 +181,7 @@ function ChapterPage() {
           ))}
         </article>
 
-        {gated ? (
+        {guestGated ? (
           <div className="relative -mt-16">
             <div className="h-16 bg-gradient-to-b from-transparent to-background" />
             <div className="rounded-xl border border-primary/40 bg-card p-6 text-center">
@@ -204,7 +204,7 @@ function ChapterPage() {
           </div>
         ) : null}
 
-        {!gated ? (
+        {!guestGated ? (
           <>
             <div className="mt-8 flex flex-wrap items-center gap-3">
               <Button
