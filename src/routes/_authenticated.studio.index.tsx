@@ -100,7 +100,9 @@ function StudioPage() {
                           </Link>
                         </Button>
                         <Button asChild variant="ghost" size="sm">
-                          <Link to="/studio/series/$slug/bible">Bible</Link>
+                          <Link to="/studio/series/$slug/bible" params={{ slug: s.slug }}>
+                            Bible
+                          </Link>
                         </Button>
                       </div>
                     </div>
