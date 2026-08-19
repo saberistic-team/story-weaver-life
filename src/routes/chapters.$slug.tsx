@@ -88,6 +88,8 @@ function ChapterPage() {
   const [blockedIds, setBlockedIds] = useState<Set<string>>(new Set());
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(data.chapter.like_count);
+  const [userTier, setUserTier] = useState<UserTier>("free");
+  const [tierLoading, setTierLoading] = useState(true);
   const saveProgress = useServerFn(saveReadingProgress);
   const doLike = useServerFn(likeFn);
   const doComment = useServerFn(commentFn);
@@ -97,8 +99,10 @@ function ChapterPage() {
   const fetchComments = useServerFn(getComments);
   const fetchMyLikes = useServerFn(getMyLikes);
   const fetchBlockedIds = useServerFn(getBlockedIds);
+  const fetchTier = useServerFn(getCurrentTier);
 
   const { chapter, series, creator, prev, next, contributions, contributors, chapterNumber } = data;
+
 
   useEffect(() => {
     if (typeof window === "undefined") return;
