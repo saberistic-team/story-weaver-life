@@ -127,12 +127,24 @@ async function decorateGames(games: GameRow[]): Promise<LiveGame[]> {
   }));
 }
 
-export async function fetchConfig(): Promise<Record<string, unknown>> {
+export type AppConfig = {
+  guestFreeChapters: number;
+  starterSparks: number;
+  rewards: Record<string, number>;
+  plans: { code: string; name: string; price: number; ai_actions: number; max_series: number; max_players: number }[];
+};
+
+export async function fetchConfig(): Promise<AppConfig> {
   const db = publicDb();
   const { data } = await db.from("app_config").select("key, value");
-  const out: Record<string, unknown> = {};
-  for (const row of (data ?? []) as { key: string; value: unknown }[]) out[row.key] = row.value;
-  return out;
+  const raw: Record<string, unknown> = {};
+  for (const row of (data ?? []) as { key: string; value: unknown }[]) raw[row.key] = row.value;
+  return {
+    guestFreeChapters: Number(raw["guest_free_chapters"] ?? 3),
+    starterSparks: Number(raw["starter_sparks"] ?? 100),
+    rewards: (raw["rewards"] ?? {}) as Record<string, number>,
+    plans: (raw["plans"] ?? []) as AppConfig["plans"],
+  };
 }
 
 export async function fetchDiscover(genre?: string, sort?: string) {
