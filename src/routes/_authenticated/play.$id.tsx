@@ -120,13 +120,10 @@ function GameRoom() {
   async function submit() {
     setBusy(true);
     try {
-      const result = await submitTurnFn({ data: { gameId: id, text } });
+      await submitTurnFn({ data: { gameId: id, text } });
       setText("");
-      toast.success(`+${result?.sparks ?? g.reward_sparks} Sparks — passed to the next player.`);
+      toast.success(`+${g.reward_sparks} Sparks — passed to the next player.`);
       await refresh();
-      if (result?.chapterSlug) {
-        void navigate({ to: "/chapters/$slug", params: { slug: result.chapterSlug } });
-      }
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Could not submit your turn");
     } finally {
