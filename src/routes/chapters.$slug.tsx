@@ -317,31 +317,61 @@ function ChapterPage() {
               ) : (
                 <p className="mt-2 text-sm text-muted-foreground">Sign in to leave a reaction.</p>
               )}
-              {localComments.length > 0 ? (
-                <ul className="mt-6 space-y-3">
-                  {localComments.map((c) => (
-                    <li key={c.id} className="rounded-xl border border-border bg-card p-4">
-                      <div className="flex items-center justify-between">
-                        <p className="text-sm font-semibold">{c.author?.display_name ?? "Reader"}</p>
-                        {user && c.user_id === user.id ? (
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-auto py-0 text-xs text-muted-foreground"
-                            onClick={async () => {
-                              await doDeleteComment({ data: { commentId: c.id } });
-                              setLocalComments((prev) => prev.filter((x) => x.id !== c.id));
-                            }}
-                          >
-                            Delete
-                          </Button>
-                        ) : null}
-                      </div>
-                      <p className="mt-1 text-sm text-muted-foreground">{c.body}</p>
-                    </li>
-                  ))}
-                </ul>
-              ) : null}
+                {localComments.length > 0 ? (
+                  <ul className="mt-6 space-y-3">
+                    {localComments
+                      .filter((c) => !blockedIds.has(c.user_id))
+                      .map((c) => (
+                        <li key={c.id} className="rounded-xl border border-border bg-card p-4">
+                          <div className="flex items-center justify-between">
+                            <p className="text-sm font-semibold">{c.author?.display_name ?? "Reader"}</p>
+                            {user && c.user_id === user.id ? (
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-auto py-0 text-xs text-muted-foreground"
+                                onClick={async () => {
+                                  await doDeleteComment({ data: { commentId: c.id } });
+                                  setLocalComments((prev) => prev.filter((x) => x.id !== c.id));
+                                }}
+                              >
+                                Delete
+                              </Button>
+                            ) : user && c.user_id !== user.id ? (
+                              <div className="flex gap-1">
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="h-auto py-0 text-xs text-muted-foreground"
+                                  onClick={async () => {
+                                    await doReport({
+                                      data: { targetType: "comment", targetId: c.id, reason: "Inappropriate comment" },
+                                    });
+                                    toast.success("Report submitted");
+                                  }}
+                                >
+                                  Report
+                                </Button>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="h-auto py-0 text-xs text-muted-foreground"
+                                  onClick={async () => {
+                                    await doBlock({ data: { blockedId: c.user_id } });
+                                    setBlockedIds((prev) => new Set([...prev, c.user_id]));
+                                    toast.success("User blocked");
+                                  }}
+                                >
+                                  Block
+                                </Button>
+                              </div>
+                            ) : null}
+                          </div>
+                          <p className="mt-1 text-sm text-muted-foreground">{c.body}</p>
+                        </li>
+                      ))}
+                  </ul>
+                ) : null}
             </section>
           </>
         ) : null}
