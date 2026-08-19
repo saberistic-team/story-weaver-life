@@ -12,6 +12,7 @@ import {
   getReadingProgress,
   fetchContinueReading,
   fetchUserAchievements,
+  awardAchievementInternal,
   type AchievementDef,
   type BibleEntry,
   type CanonNode,
@@ -89,44 +90,7 @@ export const getMyAchievements = createServerFn({ method: "GET" })
 export const awardAchievement = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((data: { code: string }) => z.object({ code: z.string() }).parse(data))
-  .handler(async ({ data, context }) => {
-    const { supabase, userId } = context;
-    const defs = await fetchAchievements();
-    const def = defs.find((d) => d.code === data.code);
-    if (!def) throw new Error("Unknown achievement");
-
-    const { data: existing } = await supabase
-      .from("user_achievements")
-      .select("id")
-      .eq("user_id", userId)
-      .eq("achievement_code", data.code)
-      .maybeSingle();
-    if (existing) return { ok: true, alreadyHad: true };
-
-    const { error } = await supabase.from("user_achievements").insert({
-      user_id: userId,
-      achievement_code: data.code,
-      earned_at: new Date().toISOString(),
-    });
-    if (error) throw new Error(error.message);
-
-    // Grant story points
-    await supabase.from("story_point_transactions").insert({
-      user_id: userId,
-      amount: def.story_points,
-      reason: `Achievement: ${def.name}`,
-    });
-    const { data: profile } = await supabase.from("profiles").select("story_points").eq("id", userId).single();
-    if (profile) {
-      const total = profile.story_points + def.story_points;
-      await supabase
-        .from("profiles")
-        .update({ story_points: total, level: Math.max(1, Math.floor(total / 500) + 1) })
-        .eq("id", userId);
-    }
-
-    return { ok: true, alreadyHad: false, storyPoints: def.story_points };
-  });
+  .handler(async ({ data, context }) => awardAchievementInternal(context.supabase, context.userId, data.code));
 
 async function recordActivityInternal(
   supabase: SupabaseClient<Database>,

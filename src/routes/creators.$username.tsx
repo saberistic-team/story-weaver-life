@@ -1,9 +1,13 @@
 import { createFileRoute, Link, notFound, Outlet } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 
 import { PageShell } from "@/components/site-shell";
 import { Button } from "@/components/ui/button";
 import { getCreator } from "@/lib/content.functions";
+import { followFn, getMyFollows } from "@/lib/social.functions";
+import { useSession } from "@/hooks/use-session";
+import { useServerFn } from "@tanstack/react-start";
 
 export const creatorQuery = (username: string) =>
   queryOptions({
@@ -59,20 +63,52 @@ function CreatorLayout() {
   const { username } = Route.useParams();
   const { data } = useSuspenseQuery(creatorQuery(username));
   const { profile, followers } = data;
+  const { user } = useSession();
+  const [following, setFollowing] = useState(false);
+  const [followerCount, setFollowerCount] = useState(followers);
+  const toggleFollow = useServerFn(followFn);
+  const fetchMyFollows = useServerFn(getMyFollows);
+
+  useEffect(() => {
+    if (user && user.id !== profile.id) {
+      fetchMyFollows({ data: { targetType: "creator", targetIds: [profile.id] } })
+        .then((set) => setFollowing(set.has(profile.id)))
+        .catch(() => {});
+    }
+  }, [user, profile.id, fetchMyFollows]);
 
   return (
     <PageShell>
       <header className="flex flex-wrap items-center gap-5">
         <div className="surface-ember size-20 rounded-full" />
-        <div>
+        <div className="flex-1">
           <h1 className="font-display text-3xl tracking-tight">{profile.display_name}</h1>
           <p className="text-sm text-muted-foreground">@{profile.username}</p>
           <div className="mt-2 flex flex-wrap gap-4 text-sm text-muted-foreground">
             <span>Storyteller level {profile.level}</span>
             <span>{profile.story_points} story points</span>
-            <span>{followers} followers</span>
+            <span>{followerCount} followers</span>
           </div>
         </div>
+        {user && user.id !== profile.id ? (
+          <Button
+            variant={following ? "outline" : "default"}
+            onClick={async () => {
+              setFollowing((v) => !v);
+              setFollowerCount((n) => (following ? n - 1 : n + 1));
+              try {
+                const res = await toggleFollow({ data: { targetType: "creator", targetId: profile.id } });
+                setFollowing(res.following);
+                setFollowerCount(res.count);
+              } catch {
+                setFollowing((v) => !v);
+                setFollowerCount((n) => (following ? n + 1 : n - 1));
+              }
+            }}
+          >
+            {following ? "Following" : "Follow"}
+          </Button>
+        ) : null}
       </header>
 
       <nav className="mt-8 flex gap-6 border-b border-border pb-px">

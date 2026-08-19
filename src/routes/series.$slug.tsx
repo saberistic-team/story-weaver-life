@@ -1,5 +1,6 @@
 import { createFileRoute, Link, notFound, Outlet } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 import { BookOpen, Radio, Users } from "lucide-react";
 
 import { PageShell } from "@/components/site-shell";
@@ -7,6 +8,9 @@ import { StoryCover } from "@/components/story-cover";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { getSeries } from "@/lib/content.functions";
+import { followFn, getMyFollows } from "@/lib/social.functions";
+import { useSession } from "@/hooks/use-session";
+import { useServerFn } from "@tanstack/react-start";
 import { cn } from "@/lib/utils";
 
 export const seriesQuery = (slug: string) =>
@@ -63,6 +67,19 @@ function SeriesLayout() {
   const { slug } = Route.useParams();
   const { data } = useSuspenseQuery(seriesQuery(slug));
   const { series, creator, chapters, contributorCount, liveGames } = data;
+  const { user } = useSession();
+  const [following, setFollowing] = useState(false);
+  const [followerCount, setFollowerCount] = useState(series.follower_count);
+  const toggleFollow = useServerFn(followFn);
+  const fetchMyFollows = useServerFn(getMyFollows);
+
+  useEffect(() => {
+    if (user) {
+      fetchMyFollows({ data: { targetType: "series", targetIds: [series.id] } })
+        .then((set) => setFollowing(set.has(series.id)))
+        .catch(() => {});
+    }
+  }, [user, series.id, fetchMyFollows]);
 
   return (
     <PageShell>
@@ -85,7 +102,7 @@ function SeriesLayout() {
             <span className="flex items-center gap-1.5">
               <Users className="size-4" /> {contributorCount} contributors
             </span>
-            <span>{series.reader_count} readers</span>
+            <span>{followerCount} followers</span>
           </div>
           <div className="mt-6 flex flex-wrap gap-3">
             {chapters[0] ? (
@@ -98,6 +115,25 @@ function SeriesLayout() {
             <Button asChild variant="outline">
               <Link to="/play">Join the next chapter</Link>
             </Button>
+            {user ? (
+              <Button
+                variant={following ? "outline" : "secondary"}
+                onClick={async () => {
+                  setFollowing((v) => !v);
+                  setFollowerCount((n) => (following ? n - 1 : n + 1));
+                  try {
+                    const res = await toggleFollow({ data: { targetType: "series", targetId: series.id } });
+                    setFollowing(res.following);
+                    setFollowerCount(res.count);
+                  } catch {
+                    setFollowing((v) => !v);
+                    setFollowerCount((n) => (following ? n + 1 : n - 1));
+                  }
+                }}
+              >
+                {following ? "Following" : "Follow series"}
+              </Button>
+            ) : null}
           </div>
         </div>
       </div>

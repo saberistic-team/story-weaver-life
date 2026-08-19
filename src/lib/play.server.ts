@@ -1,6 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
 import { AIUnavailableError, generateChallenge, polishText, synthesizeChapter } from "./ai.server";
+import { awardAchievementInternal } from "./depth.server";
 
 type Admin = SupabaseClient<Database>;
 
@@ -255,6 +256,7 @@ export async function submitTurn(userId: string, gameId: string, text: string) {
 
   await awardSparks(db, userId, game.reward_sparks, "turn_submitted");
   await awardStoryPoints(db, userId, 25, "turn_submitted");
+  await awardAchievementInternal(db, userId, "first_contribution");
 
   let polished: string | null = null;
   if (contribution && game.polish_style !== "disabled") {
@@ -374,6 +376,8 @@ export async function finalizeGame(gameId: string) {
         .from("chapter_contributors")
         .insert({ chapter_id: chapter.id, user_id: userId, contribution_count });
       await awardStoryPoints(db, userId, 60, "chapter_published");
+      await awardAchievementInternal(db, userId, "first_completed_game");
+      if (contribution_count >= 3) await awardAchievementInternal(db, userId, "chapter_hero");
     }
   }
 

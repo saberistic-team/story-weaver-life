@@ -1,5 +1,7 @@
 import { publicDb } from "./supabase-public.server";
 import type { Database } from "@/integrations/supabase/types";
+import type { SupabaseClient } from "@supabase/supabase-js";
+
 
 type Tables = Database["public"]["Tables"];
 type ProfileRow = Tables["profiles"]["Row"];
@@ -339,4 +341,45 @@ export async function fetchUserAchievements(userId: string): Promise<{
     });
 
   return { earned, available };
+}
+
+export async function awardAchievementInternal(
+  db: SupabaseClient<Database>,
+  userId: string,
+  code: string,
+): Promise<{ ok: boolean; alreadyHad: boolean }> {
+  const defs = await fetchAchievements();
+  const def = defs.find((d) => d.code === code);
+  if (!def) return { ok: false, alreadyHad: false };
+
+  const { data: existing } = await db
+    .from("user_achievements")
+    .select("id")
+    .eq("user_id", userId)
+    .eq("achievement_code", code)
+    .maybeSingle();
+  if (existing) return { ok: true, alreadyHad: true };
+
+  const { error } = await db.from("user_achievements").insert({
+    user_id: userId,
+    achievement_code: code,
+    earned_at: new Date().toISOString(),
+  });
+  if (error) throw new Error(error.message);
+
+  await db.from("story_point_transactions").insert({
+    user_id: userId,
+    amount: def.story_points,
+    reason: `Achievement: ${def.name}`,
+  });
+  const { data: profile } = await db.from("profiles").select("story_points").eq("id", userId).single();
+  if (profile) {
+    const total = profile.story_points + def.story_points;
+    await db
+      .from("profiles")
+      .update({ story_points: total, level: Math.max(1, Math.floor(total / 500) + 1) })
+      .eq("id", userId);
+  }
+
+  return { ok: true, alreadyHad: false };
 }
