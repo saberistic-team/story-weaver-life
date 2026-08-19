@@ -376,6 +376,8 @@ export async function finalizeGame(gameId: string) {
         .from("chapter_contributors")
         .insert({ chapter_id: chapter.id, user_id: userId, contribution_count });
       await awardStoryPoints(db, userId, 60, "chapter_published");
+      await awardAchievementInternal(db, userId, "first_completed_game");
+      if (contribution_count >= 3) await awardAchievementInternal(db, userId, "chapter_hero");
     }
   }
 
