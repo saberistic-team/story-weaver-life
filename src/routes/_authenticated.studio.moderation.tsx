@@ -48,7 +48,7 @@ const getModerationQueue = createServerFn({ method: "GET" })
 
 const resolveReport = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((data: { reportId: string; hideTarget?: boolean }) => data)
+  .inputValidator((data: { reportId: string; targetType: string; targetId: string; hideTarget?: boolean }) => data)
   .handler(async ({ data, context }) => {
     const { data: isMod } = await context.supabase.rpc("has_role", {
       _user_id: context.userId,

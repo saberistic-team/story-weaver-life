@@ -23,6 +23,7 @@ import { Route as AuthenticatedPlayIndexRouteImport } from './routes/_authentica
 import { Route as AuthenticatedPlayIdRouteImport } from './routes/_authenticated/play.$id'
 import { Route as AuthenticatedPlayNewRouteImport } from './routes/_authenticated/play.new'
 import { Route as AuthenticatedStudioIndexRouteImport } from './routes/_authenticated.studio.index'
+import { Route as AuthenticatedStudioModerationRouteImport } from './routes/_authenticated.studio.moderation'
 import { Route as BooksSlugReadRouteImport } from './routes/books.$slug.read'
 import { Route as CreatorsUsernameIndexRouteImport } from './routes/creators.$username.index'
 import { Route as CreatorsUsernameAchievementsRouteImport } from './routes/creators.$username.achievements'
@@ -102,6 +103,12 @@ const AuthenticatedStudioIndexRoute =
     path: '/studio/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedStudioModerationRoute =
+  AuthenticatedStudioModerationRouteImport.update({
+    id: '/studio/moderation',
+    path: '/studio/moderation',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const BooksSlugReadRoute = BooksSlugReadRouteImport.update({
   id: '/read',
   path: '/read',
@@ -151,6 +158,7 @@ export interface FileRoutesByFullPath {
   '/series/$slug': typeof SeriesSlugRouteWithChildren
   '/play/$id': typeof AuthenticatedPlayIdRoute
   '/play/new': typeof AuthenticatedPlayNewRoute
+  '/studio/moderation': typeof AuthenticatedStudioModerationRoute
   '/books/$slug/read': typeof BooksSlugReadRoute
   '/creators/$username/achievements': typeof CreatorsUsernameAchievementsRoute
   '/series/$slug/bible': typeof SeriesSlugBibleRoute
@@ -171,6 +179,7 @@ export interface FileRoutesByTo {
   '/chapters/$slug': typeof ChaptersSlugRoute
   '/play/$id': typeof AuthenticatedPlayIdRoute
   '/play/new': typeof AuthenticatedPlayNewRoute
+  '/studio/moderation': typeof AuthenticatedStudioModerationRoute
   '/books/$slug/read': typeof BooksSlugReadRoute
   '/creators/$username/achievements': typeof CreatorsUsernameAchievementsRoute
   '/series/$slug/bible': typeof SeriesSlugBibleRoute
@@ -195,6 +204,7 @@ export interface FileRoutesById {
   '/series/$slug': typeof SeriesSlugRouteWithChildren
   '/_authenticated/play/$id': typeof AuthenticatedPlayIdRoute
   '/_authenticated/play/new': typeof AuthenticatedPlayNewRoute
+  '/_authenticated/studio/moderation': typeof AuthenticatedStudioModerationRoute
   '/books/$slug/read': typeof BooksSlugReadRoute
   '/creators/$username/achievements': typeof CreatorsUsernameAchievementsRoute
   '/series/$slug/bible': typeof SeriesSlugBibleRoute
@@ -219,6 +229,7 @@ export interface FileRouteTypes {
     | '/series/$slug'
     | '/play/$id'
     | '/play/new'
+    | '/studio/moderation'
     | '/books/$slug/read'
     | '/creators/$username/achievements'
     | '/series/$slug/bible'
@@ -239,6 +250,7 @@ export interface FileRouteTypes {
     | '/chapters/$slug'
     | '/play/$id'
     | '/play/new'
+    | '/studio/moderation'
     | '/books/$slug/read'
     | '/creators/$username/achievements'
     | '/series/$slug/bible'
@@ -262,6 +274,7 @@ export interface FileRouteTypes {
     | '/series/$slug'
     | '/_authenticated/play/$id'
     | '/_authenticated/play/new'
+    | '/_authenticated/studio/moderation'
     | '/books/$slug/read'
     | '/creators/$username/achievements'
     | '/series/$slug/bible'
@@ -384,6 +397,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedStudioIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/studio/moderation': {
+      id: '/_authenticated/studio/moderation'
+      path: '/studio/moderation'
+      fullPath: '/studio/moderation'
+      preLoaderRoute: typeof AuthenticatedStudioModerationRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/books/$slug/read': {
       id: '/books/$slug/read'
       path: '/read'
@@ -441,6 +461,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedNotificationsRoute: typeof AuthenticatedNotificationsRoute
   AuthenticatedPlayIdRoute: typeof AuthenticatedPlayIdRoute
   AuthenticatedPlayNewRoute: typeof AuthenticatedPlayNewRoute
+  AuthenticatedStudioModerationRoute: typeof AuthenticatedStudioModerationRoute
   AuthenticatedPlayIndexRoute: typeof AuthenticatedPlayIndexRoute
   AuthenticatedStudioIndexRoute: typeof AuthenticatedStudioIndexRoute
 }
@@ -450,6 +471,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedNotificationsRoute: AuthenticatedNotificationsRoute,
   AuthenticatedPlayIdRoute: AuthenticatedPlayIdRoute,
   AuthenticatedPlayNewRoute: AuthenticatedPlayNewRoute,
+  AuthenticatedStudioModerationRoute: AuthenticatedStudioModerationRoute,
   AuthenticatedPlayIndexRoute: AuthenticatedPlayIndexRoute,
   AuthenticatedStudioIndexRoute: AuthenticatedStudioIndexRoute,
 }
