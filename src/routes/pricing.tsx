@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
+import { useState } from "react";
 import { Check } from "lucide-react";
 
 import { PageShell } from "@/components/site-shell";
@@ -7,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { useSession } from "@/hooks/use-session";
 import { usePaddleCheckout } from "@/hooks/usePaddleCheckout";
 import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
+
 
 const PRICES = [
   {
