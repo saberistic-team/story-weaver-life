@@ -1,11 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { createClient } from "@supabase/supabase-js";
+import type { Database } from "@/integrations/supabase/types";
 import { verifyWebhook, EventName, type PaddleEnv } from "@/lib/paddle.server";
 
-let _supabase: ReturnType<typeof createClient> | null = null;
-function getSupabase() {
+type SupabaseClient = ReturnType<typeof createClient<Database>>;
+
+let _supabase: SupabaseClient | null = null;
+function getSupabase(): SupabaseClient {
   if (!_supabase) {
-    _supabase = createClient(process.env["SUPABASE_URL"]!, process.env["SUPABASE_SERVICE_ROLE_KEY"]!);
+    _supabase = createClient<Database>(process.env["SUPABASE_URL"]!, process.env["SUPABASE_SERVICE_ROLE_KEY"]!);
   }
   return _supabase;
 }
@@ -13,19 +16,19 @@ function getSupabase() {
 async function handleSubscriptionCreated(data: any, env: PaddleEnv) {
   const { id, customerId, items, status, currentBillingPeriod, customData } = data;
 
-  const userId = customData?.userId;
+  const userId = customData?.userId as string | undefined;
   if (!userId) {
     console.error("No userId in customData");
     return;
   }
 
-  const item = items[0];
-  const priceId = item.price.importMeta?.externalId;
-  const productId = item.product.importMeta?.externalId;
+  const item = items?.[0];
+  const priceId = item?.price?.importMeta?.externalId as string | undefined;
+  const productId = item?.product?.importMeta?.externalId as string | undefined;
   if (!priceId || !productId) {
     console.warn("Skipping subscription: missing importMeta.externalId", {
-      rawPriceId: item.price.id,
-      rawProductId: item.product.id,
+      rawPriceId: item?.price?.id,
+      rawProductId: item?.product?.id,
     });
     return;
   }
@@ -35,13 +38,13 @@ async function handleSubscriptionCreated(data: any, env: PaddleEnv) {
     .upsert(
       {
         user_id: userId,
-        paddle_subscription_id: id,
-        paddle_customer_id: customerId,
+        paddle_subscription_id: id as string,
+        paddle_customer_id: customerId as string,
         product_id: productId,
         price_id: priceId,
-        status: status,
-        current_period_start: currentBillingPeriod?.startsAt,
-        current_period_end: currentBillingPeriod?.endsAt,
+        status: status as string,
+        current_period_start: currentBillingPeriod?.startsAt as string | undefined,
+        current_period_end: currentBillingPeriod?.endsAt as string | undefined,
         environment: env,
         updated_at: new Date().toISOString(),
       },
@@ -55,13 +58,13 @@ async function handleSubscriptionUpdated(data: any, env: PaddleEnv) {
   await getSupabase()
     .from("subscriptions")
     .update({
-      status: status,
-      current_period_start: currentBillingPeriod?.startsAt,
-      current_period_end: currentBillingPeriod?.endsAt,
+      status: status as string,
+      current_period_start: currentBillingPeriod?.startsAt as string | undefined,
+      current_period_end: currentBillingPeriod?.endsAt as string | undefined,
       cancel_at_period_end: scheduledChange?.action === "cancel",
       updated_at: new Date().toISOString(),
     })
-    .eq("paddle_subscription_id", id)
+    .eq("paddle_subscription_id", id as string)
     .eq("environment", env);
 }
 
@@ -72,27 +75,31 @@ async function handleSubscriptionCanceled(data: any, env: PaddleEnv) {
       status: "canceled",
       updated_at: new Date().toISOString(),
     })
-    .eq("paddle_subscription_id", data.id)
+    .eq("paddle_subscription_id", data.id as string)
     .eq("environment", env);
 }
 
 async function handleTransactionCompleted(data: any, env: PaddleEnv) {
-  const { id, customerId, items, customData } = data;
-  const creatorId = customData?.creatorId;
-  if (!creatorId || !items?.length) return;
+  const { id, customData } = data;
+  const creatorId = customData?.creatorId as string | undefined;
+  if (!creatorId) return;
 
-  const item = items[0];
-  const priceId = item.price?.importMeta?.externalId;
-  const productId = item.price?.productId;
-  const amountCents = Number(item.totals?.total || 0);
+  const items = data.items as Array<{
+    price?: { importMeta?: { externalId?: string }; productId?: string };
+    totals?: { total?: string };
+  }>;
+  const item = items?.[0];
+  const priceId = item?.price?.importMeta?.externalId;
+  const productId = item?.price?.productId;
+  const amountCents = Math.round(Number(item?.totals?.total || 0));
 
   await getSupabase().from("creator_earnings").insert({
     creator_id: creatorId,
     period: new Date().toISOString().slice(0, 7),
     amount_cents: amountCents,
     status: "pending",
-    paddle_transaction_id: id,
-    paddle_subscription_id: data.subscriptionId,
+    paddle_transaction_id: id as string,
+    paddle_subscription_id: (data.subscriptionId as string) || null,
     environment: env,
   });
 }
