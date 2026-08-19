@@ -22,6 +22,7 @@ import { Route as AuthenticatedPlayIdRouteImport } from './routes/_authenticated
 import { Route as AuthenticatedPlayNewRouteImport } from './routes/_authenticated/play.new'
 import { Route as AuthenticatedStudioIndexRouteImport } from './routes/_authenticated.studio.index'
 import { Route as BooksSlugReadRouteImport } from './routes/books.$slug.read'
+import { Route as CreatorsUsernameIndexRouteImport } from './routes/creators.$username.index'
 import { Route as CreatorsUsernameAchievementsRouteImport } from './routes/creators.$username.achievements'
 import { Route as SeriesSlugIndexRouteImport } from './routes/series.$slug.index'
 import { Route as SeriesSlugBibleRouteImport } from './routes/series.$slug.bible'
@@ -93,6 +94,11 @@ const BooksSlugReadRoute = BooksSlugReadRouteImport.update({
   path: '/read',
   getParentRoute: () => BooksSlugRoute,
 } as any)
+const CreatorsUsernameIndexRoute = CreatorsUsernameIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => CreatorsUsernameRoute,
+} as any)
 const CreatorsUsernameAchievementsRoute =
   CreatorsUsernameAchievementsRouteImport.update({
     id: '/achievements',
@@ -137,6 +143,7 @@ export interface FileRoutesByFullPath {
   '/series/$slug/lineage': typeof SeriesSlugLineageRoute
   '/play/': typeof AuthenticatedPlayIndexRoute
   '/studio/': typeof AuthenticatedStudioIndexRoute
+  '/creators/$username/': typeof CreatorsUsernameIndexRoute
   '/series/$slug/': typeof SeriesSlugIndexRoute
 }
 export interface FileRoutesByTo {
@@ -145,7 +152,6 @@ export interface FileRoutesByTo {
   '/discover': typeof DiscoverRoute
   '/books/$slug': typeof BooksSlugRouteWithChildren
   '/chapters/$slug': typeof ChaptersSlugRoute
-  '/creators/$username': typeof CreatorsUsernameRouteWithChildren
   '/play/$id': typeof AuthenticatedPlayIdRoute
   '/play/new': typeof AuthenticatedPlayNewRoute
   '/books/$slug/read': typeof BooksSlugReadRoute
@@ -155,6 +161,7 @@ export interface FileRoutesByTo {
   '/series/$slug/lineage': typeof SeriesSlugLineageRoute
   '/play': typeof AuthenticatedPlayIndexRoute
   '/studio': typeof AuthenticatedStudioIndexRoute
+  '/creators/$username': typeof CreatorsUsernameIndexRoute
   '/series/$slug': typeof SeriesSlugIndexRoute
 }
 export interface FileRoutesById {
@@ -176,6 +183,7 @@ export interface FileRoutesById {
   '/series/$slug/lineage': typeof SeriesSlugLineageRoute
   '/_authenticated/play/': typeof AuthenticatedPlayIndexRoute
   '/_authenticated/studio/': typeof AuthenticatedStudioIndexRoute
+  '/creators/$username/': typeof CreatorsUsernameIndexRoute
   '/series/$slug/': typeof SeriesSlugIndexRoute
 }
 export interface FileRouteTypes {
@@ -197,6 +205,7 @@ export interface FileRouteTypes {
     | '/series/$slug/lineage'
     | '/play/'
     | '/studio/'
+    | '/creators/$username/'
     | '/series/$slug/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -205,7 +214,6 @@ export interface FileRouteTypes {
     | '/discover'
     | '/books/$slug'
     | '/chapters/$slug'
-    | '/creators/$username'
     | '/play/$id'
     | '/play/new'
     | '/books/$slug/read'
@@ -215,6 +223,7 @@ export interface FileRouteTypes {
     | '/series/$slug/lineage'
     | '/play'
     | '/studio'
+    | '/creators/$username'
     | '/series/$slug'
   id:
     | '__root__'
@@ -235,6 +244,7 @@ export interface FileRouteTypes {
     | '/series/$slug/lineage'
     | '/_authenticated/play/'
     | '/_authenticated/studio/'
+    | '/creators/$username/'
     | '/series/$slug/'
   fileRoutesById: FileRoutesById
 }
@@ -342,6 +352,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BooksSlugReadRouteImport
       parentRoute: typeof BooksSlugRoute
     }
+    '/creators/$username/': {
+      id: '/creators/$username/'
+      path: '/'
+      fullPath: '/creators/$username/'
+      preLoaderRoute: typeof CreatorsUsernameIndexRouteImport
+      parentRoute: typeof CreatorsUsernameRoute
+    }
     '/creators/$username/achievements': {
       id: '/creators/$username/achievements'
       path: '/achievements'
@@ -411,10 +428,12 @@ const BooksSlugRouteWithChildren = BooksSlugRoute._addFileChildren(
 
 interface CreatorsUsernameRouteChildren {
   CreatorsUsernameAchievementsRoute: typeof CreatorsUsernameAchievementsRoute
+  CreatorsUsernameIndexRoute: typeof CreatorsUsernameIndexRoute
 }
 
 const CreatorsUsernameRouteChildren: CreatorsUsernameRouteChildren = {
   CreatorsUsernameAchievementsRoute: CreatorsUsernameAchievementsRoute,
+  CreatorsUsernameIndexRoute: CreatorsUsernameIndexRoute,
 }
 
 const CreatorsUsernameRouteWithChildren =

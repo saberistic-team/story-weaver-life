@@ -1,13 +1,11 @@
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { createFileRoute, Link, notFound, Outlet } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 
 import { PageShell } from "@/components/site-shell";
-import { StoryCover } from "@/components/story-cover";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { getCreator } from "@/lib/content.functions";
 
-const creatorQuery = (username: string) =>
+export const creatorQuery = (username: string) =>
   queryOptions({
     queryKey: ["creator", username],
     queryFn: async () => {
@@ -16,6 +14,11 @@ const creatorQuery = (username: string) =>
       return data;
     },
   });
+
+const TAB_LINKS = [
+  { to: "/creators/$username" as const, label: "Profile" },
+  { to: "/creators/$username/achievements" as const, label: "Achievements" },
+];
 
 export const Route = createFileRoute("/creators/$username")({
   loader: ({ context, params }) =>
@@ -36,7 +39,7 @@ export const Route = createFileRoute("/creators/$username")({
       ],
     };
   },
-  component: CreatorPage,
+  component: CreatorLayout,
   errorComponent: () => (
     <PageShell>
       <p className="text-muted-foreground">This profile didn't load.</p>
