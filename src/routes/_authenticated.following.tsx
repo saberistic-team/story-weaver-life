@@ -69,7 +69,7 @@ function FollowingPage() {
                     <div className="flex items-center gap-2 text-xs text-primary">
                       <BookOpen className="size-3.5" /> Canon update
                     </div>
-                    <p className="mt-1 font-medium">{item.title}</p>
+                    <p className="mt-1 font-medium">{(item as Extract<typeof item, { type: "bible" }>).name}</p>
                     <p className="text-sm text-muted-foreground">{item.series_title}</p>
                   </>
                 )}
