@@ -3,11 +3,9 @@ import { createClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
 import { verifyWebhook, EventName, type PaddleEnv } from "@/lib/paddle.server";
 
-type WebhookData = Record<string, unknown>;
-
-
-
 type SupabaseClient = ReturnType<typeof createClient<Database>>;
+
+type WebhookData = Record<string, unknown>;
 
 let _supabase: SupabaseClient | null = null;
 function getSupabase(): SupabaseClient {
@@ -20,38 +18,48 @@ function getSupabase(): SupabaseClient {
   return _supabase;
 }
 
-async function handleSubscriptionCreated(data: Record<string, unknown>, env: PaddleEnv) {
-  const { id, customerId, items, status, currentBillingPeriod, customData } = data;
+function asRecord(value: unknown): WebhookData {
+  return (value as WebhookData) ?? {};
+}
 
-  const userId = customData?.userId as string | undefined;
+async function handleSubscriptionCreated(data: WebhookData, env: PaddleEnv) {
+  const customData = asRecord(data.customData);
+  const userId = customData.userId as string | undefined;
   if (!userId) {
     console.error("No userId in customData");
     return;
   }
 
-  const item = items?.[0];
-  const priceId = item?.price?.importMeta?.externalId as string | undefined;
-  const productId = item?.product?.importMeta?.externalId as string | undefined;
+  const items = (data.items as unknown[]) ?? [];
+  const firstItem = asRecord(items[0]);
+  const price = asRecord(firstItem.price);
+  const product = asRecord(firstItem.product);
+  const priceMeta = asRecord(price.importMeta);
+  const productMeta = asRecord(product.importMeta);
+  const priceId = priceMeta.externalId as string | undefined;
+  const productId = productMeta.externalId as string | undefined;
   if (!priceId || !productId) {
     console.warn("Skipping subscription: missing importMeta.externalId", {
-      rawPriceId: item?.price?.id,
-      rawProductId: item?.product?.id,
+      rawPriceId: price.id,
+      rawProductId: product.id,
     });
     return;
   }
+
+  const currentBillingPeriod = asRecord(data.currentBillingPeriod);
 
   await getSupabase()
     .from("subscriptions")
     .upsert(
       {
         user_id: userId,
-        paddle_subscription_id: id as string,
-        paddle_customer_id: customerId as string,
+        paddle_subscription_id: data.id as string,
+        paddle_customer_id: data.customerId as string,
         product_id: productId,
         price_id: priceId,
-        status: status as string,
-        current_period_start: (currentBillingPeriod?.startsAt as string | undefined) ?? null,
-        current_period_end: (currentBillingPeriod?.endsAt as string | undefined) ?? null,
+        status: data.status as string,
+        current_period_start: (currentBillingPeriod.startsAt as string | undefined) ?? null,
+        current_period_end: (currentBillingPeriod.endsAt as string | undefined) ?? null,
         environment: env,
         updated_at: new Date().toISOString(),
       },
@@ -59,23 +67,24 @@ async function handleSubscriptionCreated(data: Record<string, unknown>, env: Pad
     );
 }
 
-async function handleSubscriptionUpdated(data: any, env: PaddleEnv) {
-  const { id, status, currentBillingPeriod, scheduledChange } = data;
+async function handleSubscriptionUpdated(data: WebhookData, env: PaddleEnv) {
+  const currentBillingPeriod = asRecord(data.currentBillingPeriod);
+  const scheduledChange = asRecord(data.scheduledChange);
 
   await getSupabase()
     .from("subscriptions")
     .update({
-      status: status as string,
-      current_period_start: (currentBillingPeriod?.startsAt as string | undefined) ?? null,
-      current_period_end: (currentBillingPeriod?.endsAt as string | undefined) ?? null,
-      cancel_at_period_end: scheduledChange?.action === "cancel",
+      status: data.status as string,
+      current_period_start: (currentBillingPeriod.startsAt as string | undefined) ?? null,
+      current_period_end: (currentBillingPeriod.endsAt as string | undefined) ?? null,
+      cancel_at_period_end: scheduledChange.action === "cancel",
       updated_at: new Date().toISOString(),
     })
-    .eq("paddle_subscription_id", id as string)
+    .eq("paddle_subscription_id", data.id as string)
     .eq("environment", env);
 }
 
-async function handleSubscriptionCanceled(data: any, env: PaddleEnv) {
+async function handleSubscriptionCanceled(data: WebhookData, env: PaddleEnv) {
   await getSupabase()
     .from("subscriptions")
     .update({
@@ -86,19 +95,19 @@ async function handleSubscriptionCanceled(data: any, env: PaddleEnv) {
     .eq("environment", env);
 }
 
-async function handleTransactionCompleted(data: any, env: PaddleEnv) {
-  const { id, customData } = data;
-  const creatorId = customData?.creatorId as string | undefined;
+async function handleTransactionCompleted(data: WebhookData, env: PaddleEnv) {
+  const customData = asRecord(data.customData);
+  const creatorId = customData.creatorId as string | undefined;
   if (!creatorId) return;
 
-  const items = data.items as Array<{
-    price?: { importMeta?: { externalId?: string }; productId?: string };
-    totals?: { total?: string };
-  }>;
-  const item = items?.[0];
-  const priceId = item?.price?.importMeta?.externalId;
-  const productId = item?.price?.productId;
-  const amountCents = Math.round(Number(item?.totals?.total || 0));
+  const items = (data.items as unknown[]) ?? [];
+  const firstItem = asRecord(items[0]);
+  const price = asRecord(firstItem.price);
+  const priceMeta = asRecord(price.importMeta);
+  const priceId = priceMeta.externalId as string | undefined;
+  const productId = price.productId as string | undefined;
+  const totals = asRecord(firstItem.totals);
+  const amountCents = Math.round(Number(totals.total || 0));
 
   await getSupabase()
     .from("creator_earnings")
@@ -107,7 +116,7 @@ async function handleTransactionCompleted(data: any, env: PaddleEnv) {
       period: new Date().toISOString().slice(0, 7),
       amount_cents: amountCents,
       status: "pending",
-      paddle_transaction_id: id as string,
+      paddle_transaction_id: data.id as string,
       paddle_subscription_id: (data.subscriptionId as string) || null,
       environment: env,
     });
@@ -118,16 +127,16 @@ async function handleWebhook(req: Request, env: PaddleEnv) {
 
   switch (event.eventType) {
     case EventName.SubscriptionCreated:
-      await handleSubscriptionCreated(event.data, env);
+      await handleSubscriptionCreated(event.data as WebhookData, env);
       break;
     case EventName.SubscriptionUpdated:
-      await handleSubscriptionUpdated(event.data, env);
+      await handleSubscriptionUpdated(event.data as WebhookData, env);
       break;
     case EventName.SubscriptionCanceled:
-      await handleSubscriptionCanceled(event.data, env);
+      await handleSubscriptionCanceled(event.data as WebhookData, env);
       break;
     case EventName.TransactionCompleted:
-      await handleTransactionCompleted(event.data, env);
+      await handleTransactionCompleted(event.data as WebhookData, env);
       break;
     default:
       console.log("Unhandled event:", event.eventType);
