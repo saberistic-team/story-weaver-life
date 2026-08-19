@@ -148,7 +148,7 @@ function BiblePage() {
                     <SelectContent>
                       {KINDS.map((k) => (
                         <SelectItem key={k} value={k}>
-                          {k[0].toUpperCase() + k.slice(1)}
+                          {k.charAt(0).toUpperCase() + k.slice(1)}
                         </SelectItem>
                       ))}
                     </SelectContent>
