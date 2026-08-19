@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as DiscoverRouteImport } from './routes/discover'
+import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as AuthenticatedFollowingRouteImport } from './routes/_authenticated.following'
 import { Route as AuthenticatedNotificationsRouteImport } from './routes/_authenticated.notifications'
 import { Route as AuthenticatedWalletRouteImport } from './routes/_authenticated.wallet'
@@ -57,6 +58,11 @@ const AuthRoute = AuthRouteImport.update({
 const DiscoverRoute = DiscoverRouteImport.update({
   id: '/discover',
   path: '/discover',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PricingRoute = PricingRouteImport.update({
+  id: '/pricing',
+  path: '/pricing',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedFollowingRoute = AuthenticatedFollowingRouteImport.update({
@@ -205,6 +211,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/discover': typeof DiscoverRoute
+  '/pricing': typeof PricingRoute
   '/following': typeof AuthenticatedFollowingRoute
   '/notifications': typeof AuthenticatedNotificationsRoute
   '/wallet': typeof AuthenticatedWalletRoute
@@ -236,6 +243,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/discover': typeof DiscoverRoute
+  '/pricing': typeof PricingRoute
   '/following': typeof AuthenticatedFollowingRoute
   '/notifications': typeof AuthenticatedNotificationsRoute
   '/wallet': typeof AuthenticatedWalletRoute
@@ -267,6 +275,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/discover': typeof DiscoverRoute
+  '/pricing': typeof PricingRoute
   '/_authenticated/following': typeof AuthenticatedFollowingRoute
   '/_authenticated/notifications': typeof AuthenticatedNotificationsRoute
   '/_authenticated/wallet': typeof AuthenticatedWalletRoute
@@ -300,6 +309,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/discover'
+    | '/pricing'
     | '/following'
     | '/notifications'
     | '/wallet'
@@ -331,6 +341,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/discover'
+    | '/pricing'
     | '/following'
     | '/notifications'
     | '/wallet'
@@ -361,6 +372,7 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/auth'
     | '/discover'
+    | '/pricing'
     | '/_authenticated/following'
     | '/_authenticated/notifications'
     | '/_authenticated/wallet'
@@ -394,6 +406,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
   DiscoverRoute: typeof DiscoverRoute
+  PricingRoute: typeof PricingRoute
   BooksSlugRoute: typeof BooksSlugRouteWithChildren
   ChaptersSlugRoute: typeof ChaptersSlugRoute
   CreatorsUsernameRoute: typeof CreatorsUsernameRouteWithChildren
@@ -429,6 +442,13 @@ declare module '@tanstack/react-router' {
       path: '/discover'
       fullPath: '/discover'
       preLoaderRoute: typeof DiscoverRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pricing': {
+      id: '/pricing'
+      path: '/pricing'
+      fullPath: '/pricing'
+      preLoaderRoute: typeof PricingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/following': {
@@ -704,6 +724,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   DiscoverRoute: DiscoverRoute,
+  PricingRoute: PricingRoute,
   BooksSlugRoute: BooksSlugRouteWithChildren,
   ChaptersSlugRoute: ChaptersSlugRoute,
   CreatorsUsernameRoute: CreatorsUsernameRouteWithChildren,
