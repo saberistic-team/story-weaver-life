@@ -1265,6 +1265,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      game_is_visible: { Args: { _game_id: string }; Returns: boolean }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
