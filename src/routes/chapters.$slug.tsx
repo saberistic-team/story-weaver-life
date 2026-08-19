@@ -88,6 +88,8 @@ function ChapterPage() {
   const doLike = useServerFn(likeFn);
   const doComment = useServerFn(commentFn);
   const doDeleteComment = useServerFn(deleteCommentFn);
+  const doReport = useServerFn(reportFn);
+  const doBlock = useServerFn(blockFn);
   const fetchComments = useServerFn(getComments);
   const fetchMyLikes = useServerFn(getMyLikes);
 
