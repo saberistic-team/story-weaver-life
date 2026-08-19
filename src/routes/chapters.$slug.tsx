@@ -204,7 +204,23 @@ function ChapterPage() {
           </div>
         ) : null}
 
-        {!guestGated ? (
+        {!guestGated && !hasAccess ? (
+          <div className="relative -mt-16">
+            <div className="h-16 bg-gradient-to-b from-transparent to-background" />
+            <div className="rounded-xl border border-primary/40 bg-card p-6 text-center">
+              <Lock className="mx-auto size-5 text-primary" />
+              <h2 className="font-display mt-3 text-2xl">{series.title} is {requiredTier}</h2>
+              <p className="mx-auto mt-2 max-w-sm text-sm text-muted-foreground">
+                This chapter is part of a premium series. Subscribe to unlock every chapter and support the creator.
+              </p>
+              <Button className="mt-5" asChild>
+                <Link to="/pricing">View plans</Link>
+              </Button>
+            </div>
+          </div>
+        ) : null}
+
+        {!guestGated && hasAccess ? (
           <>
             <div className="mt-8 flex flex-wrap items-center gap-3">
               <Button
