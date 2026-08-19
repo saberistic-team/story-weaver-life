@@ -63,10 +63,10 @@ export const updateSeriesFn = createServerFn({ method: "POST" })
     (data: {
       seriesId: string;
       title?: string;
-      tagline?: string;
+      tagline?: string | undefined;
       description?: string;
       genre?: string;
-      voice?: string;
+      voice?: string | undefined;
       canon_mode?: Database["public"]["Enums"]["canon_mode"];
       polish_style?: Database["public"]["Enums"]["polish_style"];
       allow_forks?: boolean;
