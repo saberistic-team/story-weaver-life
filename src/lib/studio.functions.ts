@@ -82,7 +82,7 @@ export const updateChapterFn = createServerFn({ method: "POST" })
     (data: {
       chapterId: string;
       title?: string;
-      subtitle?: string;
+      subtitle?: string | undefined;
       summary?: string;
       published_content?: string;
       status?: Database["public"]["Enums"]["content_status"];
