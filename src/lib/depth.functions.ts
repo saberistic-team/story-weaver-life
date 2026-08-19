@@ -10,11 +10,13 @@ import {
   fetchCanonTree,
   fetchBookReadState,
   getReadingProgress,
+  fetchContinueReading,
   fetchUserAchievements,
   type AchievementDef,
   type BibleEntry,
   type CanonNode,
   type ReadingProgressItem,
+  type ContinueReadingItem,
 } from "./depth.server";
 
 export const getAchievements = createServerFn({ method: "GET" }).handler(async () => fetchAchievements());
