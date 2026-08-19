@@ -40,17 +40,27 @@ export const Route = createFileRoute("/_authenticated/studio/chapters/$slug/edit
 
 function EditChapterPage() {
   const { slug } = Route.useParams();
-  const { data: chapter } = useSuspenseQuery(chapterQueryOptions(slug));
+  const { data } = useSuspenseQuery(chapterQueryOptions(slug));
   const updateChapter = useServerFn(updateChapterFn);
   const [loading, setLoading] = useState(false);
 
-  const [title, setTitle] = useState(chapter.title ?? "");
-  const [subtitle, setSubtitle] = useState(chapter.subtitle ?? "");
-  const [summary, setSummary] = useState(chapter.summary ?? "");
-  const [content, setContent] = useState(chapter.published_content ?? chapter.raw_content ?? "");
-  const [status, setStatus] = useState(chapter.status ?? "published");
-  const [isCanon, setIsCanon] = useState(chapter.is_canon ?? true);
-  const [isPublished, setIsPublished] = useState(chapter.is_published ?? false);
+  const chapter = data ?? null;
+
+  const [title, setTitle] = useState(chapter?.title ?? "");
+  const [subtitle, setSubtitle] = useState(chapter?.subtitle ?? "");
+  const [summary, setSummary] = useState(chapter?.summary ?? "");
+  const [content, setContent] = useState(chapter?.published_content ?? chapter?.raw_content ?? "");
+  const [status, setStatus] = useState(chapter?.status ?? "published");
+  const [isCanon, setIsCanon] = useState(chapter?.is_canon ?? true);
+  const [isPublished, setIsPublished] = useState(chapter?.is_published ?? false);
+
+  if (!chapter) {
+    return (
+      <PageShell>
+        <p>Chapter not found.</p>
+      </PageShell>
+    );
+  }
 
   const onSave = async (e: React.FormEvent) => {
     e.preventDefault();
